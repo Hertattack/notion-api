@@ -1,6 +1,6 @@
-﻿using NotionApi.Commands.Search.Attributes;
+﻿using NotionApi.Commands.Attributes;
 
-namespace NotionApi.Commands.Search.BodyParameters
+namespace NotionApi.Commands.BodyParameters
 {
     public class SearchSort
     {

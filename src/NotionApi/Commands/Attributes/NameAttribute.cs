@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NotionApi.Commands.Search.Attributes
+namespace NotionApi.Commands.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class NameAttribute : Attribute
