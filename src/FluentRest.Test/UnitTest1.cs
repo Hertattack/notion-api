@@ -17,11 +17,32 @@ namespace FluentRest.Test
             var dtb = new DynamicTypeBuilder();
             Console.WriteLine(dtb.RoslynBuildDefinition<ITest>());
         }
+
+
     }
+
+    public class bla
+    {
+        public bla(string input)
+        {
+            
+        }
+
+        public IOtherElement Other
+        {
+            get
+            {
+                // spec.SetContext(this, "Other", "Get")
+
+                return null;
+            }
+        }
+    }
+    
 
     public interface ITest
     {
-        public IOtherElement Other { get; set; }
+        //public IOtherElement Other { get; set; }
     }
 
     public interface IOtherElement
