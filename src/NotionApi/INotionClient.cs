@@ -1,8 +1,10 @@
-﻿namespace NotionApi
+﻿using NotionApi.Request;
+using NotionApi.Rest;
+
+namespace NotionApi
 {
     public interface INotionClient
     {
-        Version ApiVersion { get; set; }
-        //ICommandBuilder<T> GetCommandBuilder<T>() where T : ICommand;
+        TRequestType CreateRequest<TRequestType>() where TRequestType : IRequest;
     }
 }

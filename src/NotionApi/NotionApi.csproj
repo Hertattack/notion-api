@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Rest" />
+      <Folder Include="Response" />
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,7 @@
-﻿using System.Net.Http;
-using FluentRest;
-using FluentRest.Extensions;
+﻿using System;
 using Microsoft.Extensions.Logging;
-using NotionApi.Structure;
+using NotionApi.Request;
+using NotionApi.Rest;
 
 namespace NotionApi
 {
@@ -19,16 +18,11 @@ namespace NotionApi
         {
             _logger = logger;
             _tokenProvider = tokenProvider;
-
-            var builder = new FluentRestApiBuilder(Version.V20210513.ToString());
-
-            builder.WithBase("/v1")
-                .AddPath("search")
-                .AddOperation(HttpMethod.Post)
-                .AddBodySpecification<ISearchBody>()
-                .Sort.IsRequired();
         }
 
-        public Version ApiVersion { get; set; }
+        public TRequestType CreateRequest<TRequestType>() where TRequestType : IRequest
+        {
+            return (TRequestType) Activator.CreateInstance(typeof(TRequestType), this);
+        }
     }
 }
