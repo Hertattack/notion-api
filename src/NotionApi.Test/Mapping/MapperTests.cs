@@ -91,8 +91,7 @@ namespace NotionApi.Test.Mapping
                 result.Should().BeAssignableTo<Dictionary<string, object>>();
                 var dict = (Dictionary<string, object>) result;
 
-                dict.Should().ContainKey("Third");
-                dict["Third"].Should().BeNull();
+                dict.Should().NotContainKey("Third");
             }
         }
 
@@ -102,8 +101,8 @@ namespace NotionApi.Test.Mapping
             public void The_structure_should_be_represented_as_nested_dictionaries()
             {
                 // Arrange
-                
-                
+
+
                 // Act
 
                 // Assert

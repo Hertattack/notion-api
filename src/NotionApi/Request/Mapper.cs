@@ -20,10 +20,10 @@ namespace NotionApi.Request
 
             var values = new Dictionary<string, object>();
 
-            foreach (var property in type.GetProperties(BindingFlags.Public))
+            foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var propertyMapping = (MappingAttribute) property.GetCustomAttributes(typeof(MappingAttribute)).FirstOrDefault();
-                if (propertyMapping == null)
+                if (propertyMapping is null)
                     continue;
 
                 if (property.GetMethod is null)
@@ -33,15 +33,19 @@ namespace NotionApi.Request
                 var propertyValue = property.GetMethod.Invoke(objectToMap, Array.Empty<object>());
                 var strategy = GetStrategy(propertyMapping);
                 var name = propertyMapping.Name.HasValue ? propertyMapping.Name.Value : property.Name;
+                IOption value;
                 if (IsOption(propertyType, propertyValue, out var isNoneOption))
                 {
                     if (isNoneOption)
                         continue;
 
-                    values[name] = strategy.GetValue(propertyType.GetGenericTypeDefinition().GetGenericArguments()[0], propertyValue);
+                    value = strategy.GetValue(propertyType.GetGenericTypeDefinition().GetGenericArguments()[0], propertyValue);
                 }
                 else
-                    values[name] = strategy.GetValue(propertyType, propertyValue);
+                    value = strategy.GetValue(propertyType, propertyValue);
+
+                if (value.HasValue)
+                    values[name] = value.GetValue();
             }
 
             if (typeMapping is null)
@@ -82,9 +86,10 @@ namespace NotionApi.Request
             {
                 var strategy = GetStrategy(mapping, useDefaultIfNonSpecified: false);
                 if (strategy != null)
-                    return strategy.GetValue(type, valueToMap);
+                    return strategy.GetValue(type, valueToMap).Value;
 
-                return mapping.Name;
+                if (mapping.Name.HasValue)
+                    return mapping.Name.Value;
             }
 
             return valueToMap.ToString();

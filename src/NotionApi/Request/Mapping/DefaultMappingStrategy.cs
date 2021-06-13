@@ -11,12 +11,10 @@ namespace NotionApi.Request.Mapping
         {
         }
 
-        public override Option<object> GetValue(Type genericTypeArgument, object value)
+        public override Option<object> GetValue(Type type, object value)
         {
             if (value is null)
                 return Option.None;
-
-            var type = value.GetType();
 
             if (type == typeof(string))
                 return value;
