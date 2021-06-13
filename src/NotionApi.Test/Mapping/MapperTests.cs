@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using NotionApi.Request;
 using NotionApi.Test.Mapping.Strategies.Fixtures;
 using NUnit.Framework;
@@ -37,7 +38,7 @@ namespace NotionApi.Test.Mapping
                 // Assert
                 mappedValue.Should().Be("should-use-this");
             }
-            
+
             [Test]
             public void With_mapping_and_strategy_it_should_return_the_value_using_the_strategy()
             {
@@ -49,6 +50,63 @@ namespace NotionApi.Test.Mapping
 
                 // Assert
                 mappedValue.Should().Be("ishouldbecomelowercase");
+            }
+        }
+
+        class When_mapping_a_non_nested_structure : MapperTests
+        {
+            [Test]
+            public void The_structure_can_be_converted_to_a_dictionary()
+            {
+                // Arrange
+                var basicStructure = new NonNestedBasicStructure() {First = false, Second = 123, Third = "Ok"};
+
+                // Act
+                var result = mapper.Map(basicStructure);
+
+                // Assert
+                result.Should().BeAssignableTo<Dictionary<string, object>>();
+                var dict = (Dictionary<string, object>) result;
+
+                dict.Should().ContainKey("a");
+                dict["a"].Should().Be(false);
+
+                dict.Should().ContainKey("b");
+                dict["b"].Should().Be(123);
+
+                dict.Should().ContainKey("Third");
+                dict["Third"].Should().Be("Ok");
+            }
+
+            [Test]
+            public void The_structure_can_be_converted_to_a_dictionary_null_is_included()
+            {
+                // Arrange
+                var basicStructure = new NonNestedBasicStructure() {Third = null};
+
+                // Act
+                var result = mapper.Map(basicStructure);
+
+                // Assert
+                result.Should().BeAssignableTo<Dictionary<string, object>>();
+                var dict = (Dictionary<string, object>) result;
+
+                dict.Should().ContainKey("Third");
+                dict["Third"].Should().BeNull();
+            }
+        }
+
+        class When_mapping_a_nested_structure : MapperTests
+        {
+            [Test]
+            public void The_structure_should_be_represented_as_nested_dictionaries()
+            {
+                // Arrange
+                
+                
+                // Act
+
+                // Assert
             }
         }
     }

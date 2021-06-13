@@ -1,7 +1,10 @@
-﻿namespace NotionApi.Request.Mapping
+﻿using System;
+using NotionApi.Util;
+
+namespace NotionApi.Request.Mapping
 {
     public interface IMappingStrategy
     {
-        object GetValue(object valueToMap);
+        Option<object> GetValue(Type type, object value);
     }
 }

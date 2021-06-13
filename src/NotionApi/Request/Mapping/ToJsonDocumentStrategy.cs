@@ -1,4 +1,7 @@
-﻿namespace NotionApi.Request.Mapping
+﻿using System;
+using NotionApi.Util;
+
+namespace NotionApi.Request.Mapping
 {
     public class ToJsonDocumentStrategy : BaseMappingStrategy
     {
@@ -6,7 +9,7 @@
         {
         }
 
-        public override object GetValue(object valueToMap)
+        public override Option<object> GetValue(Type genericTypeArgument, object value)
         {
             throw new System.NotImplementedException();
         }

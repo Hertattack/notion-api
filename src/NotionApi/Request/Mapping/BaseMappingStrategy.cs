@@ -1,4 +1,7 @@
-﻿namespace NotionApi.Request.Mapping
+﻿using System;
+using NotionApi.Util;
+
+namespace NotionApi.Request.Mapping
 {
     public abstract class BaseMappingStrategy : IMappingStrategy
     {
@@ -9,6 +12,6 @@
             _mapper = mapper;
         }
         
-        public abstract object GetValue(object propertyValue);
+        public abstract Option<object> GetValue(Type type, object value);
     }
 }

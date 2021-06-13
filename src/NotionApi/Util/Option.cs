@@ -2,7 +2,7 @@
 
 namespace NotionApi.Util
 {
-    public struct Option<T>
+    public struct Option<T> : IOption
     {
         public bool HasValue { get; }
 
@@ -10,6 +10,9 @@ namespace NotionApi.Util
 
         public T Value =>
             HasValue ? value : throw new NullReferenceException("Option has no value.");
+
+        public object GetValue() =>
+            Value;
 
         private Option(T value, bool hasValue)
         {

@@ -1,4 +1,7 @@
-﻿namespace NotionApi.Request.Mapping
+﻿using System;
+using NotionApi.Util;
+
+namespace NotionApi.Request.Mapping
 {
     public class ToLowerCaseStrategy : BaseMappingStrategy
     {
@@ -6,12 +9,12 @@
         {
         }
 
-        public override object GetValue(object propertyValue)
+        public override Option<object> GetValue(Type genericTypeArgument, object value)
         {
-            if (propertyValue == null)
+            if (value == null)
                 return "";
 
-            return propertyValue.ToString()?.ToLower() ?? "";
+            return value.ToString()?.ToLower() ?? "";
         }
     }
 }

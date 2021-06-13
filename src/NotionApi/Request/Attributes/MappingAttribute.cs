@@ -1,5 +1,6 @@
 ﻿using System;
 using NotionApi.Request.Mapping;
+using NotionApi.Util;
 
 namespace NotionApi.Request.Attributes
 {
@@ -8,7 +9,7 @@ namespace NotionApi.Request.Attributes
     {
         public MappingAttribute()
         {
-            Name = "";
+            Name = Option.None;
         }
 
         public MappingAttribute(string name)
@@ -16,7 +17,7 @@ namespace NotionApi.Request.Attributes
             Name = name;
         }
 
-        public string Name { get; }
+        public Option<string> Name { get; }
 
         private Type _strategy;
 

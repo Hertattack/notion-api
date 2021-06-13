@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NotionApi.Request.Attributes;
 using NotionApi.Request.Mapping;
+using NotionApi.Util;
 
 namespace NotionApi.Request
 {
@@ -18,18 +20,53 @@ namespace NotionApi.Request
 
             var values = new Dictionary<string, object>();
 
-            foreach (var property in type.GetProperties())
+            foreach (var property in type.GetProperties(BindingFlags.Public))
             {
-                var attributeMapping = (MappingAttribute) property.GetCustomAttributes(mappingAttributeType, inherit: true).FirstOrDefault();
-
-                if (attributeMapping == null)
+                var propertyMapping = (MappingAttribute) property.GetCustomAttributes(typeof(MappingAttribute)).FirstOrDefault();
+                if (propertyMapping == null)
                     continue;
 
-                var strategy = GetStrategy(attributeMapping);
-                values[attributeMapping.Name] = strategy.GetValue(property.GetMethod.Invoke(objectToMap, new object[0]));
+                if (property.GetMethod is null)
+                    continue;
+
+                var propertyType = property.PropertyType;
+                var propertyValue = property.GetMethod.Invoke(objectToMap, Array.Empty<object>());
+                var strategy = GetStrategy(propertyMapping);
+                var name = propertyMapping.Name.HasValue ? propertyMapping.Name.Value : property.Name;
+                if (IsOption(propertyType, propertyValue, out var isNoneOption))
+                {
+                    if (isNoneOption)
+                        continue;
+
+                    values[name] = strategy.GetValue(propertyType.GetGenericTypeDefinition().GetGenericArguments()[0], propertyValue);
+                }
+                else
+                    values[name] = strategy.GetValue(propertyType, propertyValue);
             }
 
-            return values;
+            if (typeMapping is null)
+                return values;
+
+            var typeMappingStrategy = GetStrategy(typeMapping, useDefaultIfNonSpecified: false);
+
+            if (typeMappingStrategy == null)
+                return values;
+
+            var mappedValue = typeMappingStrategy.GetValue(type, values);
+            return mappedValue.HasValue ? mappedValue.Value : null;
+        }
+
+        private bool IsOption(Type type, object value, out bool isNoneOption)
+        {
+            isNoneOption = false;
+
+            if (!type.IsGenericType || !type.IsAssignableFrom(typeof(Option<>)))
+                return false;
+
+            if (!((IOption) value).HasValue)
+                isNoneOption = true;
+
+            return true;
         }
 
         public object MapEnumeration(Type type, Enum valueToMap)
@@ -45,7 +82,7 @@ namespace NotionApi.Request
             {
                 var strategy = GetStrategy(mapping, useDefaultIfNonSpecified: false);
                 if (strategy != null)
-                    return strategy.GetValue(valueToMap);
+                    return strategy.GetValue(type, valueToMap);
 
                 return mapping.Name;
             }

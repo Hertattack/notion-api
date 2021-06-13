@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using NotionApi.Util;
 
 namespace NotionApi.Request.Mapping
 {
@@ -10,23 +11,26 @@ namespace NotionApi.Request.Mapping
         {
         }
 
-        public override object GetValue(object valueToMap)
+        public override Option<object> GetValue(Type genericTypeArgument, object value)
         {
-            if (valueToMap is null)
-                return null;
+            if (value is null)
+                return Option.None;
 
-            var type = valueToMap.GetType();
+            var type = value.GetType();
+
+            if (type == typeof(string))
+                return value;
 
             if (typeof(IEnumerable).IsAssignableFrom(type))
-                return MapEnumerable(valueToMap);
+                return MapEnumerable(value);
 
             if (type.IsEnum)
-                return _mapper.MapEnumeration(type, (Enum) valueToMap);
+                return _mapper.MapEnumeration(type, (Enum) value);
 
             if (type.IsClass)
-                return _mapper.Map(valueToMap);
+                return _mapper.Map(value);
 
-            return valueToMap.ToString();
+            return value;
         }
 
 

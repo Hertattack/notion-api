@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using NotionApi.Util;
 
 namespace NotionApi.Request.Mapping
 {
@@ -8,7 +10,7 @@ namespace NotionApi.Request.Mapping
         {
         }
 
-        public override object GetValue(object valueToMap)
+        public override Option<object> GetValue(Type genericTypeArgument, object value)
         {
             var result = new Dictionary<string, object>();
             
