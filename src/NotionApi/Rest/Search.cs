@@ -15,7 +15,7 @@ namespace NotionApi.Rest
         private readonly INotionClient _client;
         private readonly IRequestBuilder _requestBuilder;
 
-        protected Search(INotionClient client, IRequestBuilder requestBuilder)
+        internal Search(INotionClient client, IRequestBuilder requestBuilder)
         {
             _client = client;
             _requestBuilder = requestBuilder;
@@ -24,11 +24,11 @@ namespace NotionApi.Rest
         [Mapping("query")] public Option<string> Query { get; set; }
 
         public Option<SortParameter> Sort { get; set; }
-        
+
         public Option<FilterParameter> Filter { get; set; }
-        
+
         private PaginationOptions Pagination { get; } = new PaginationOptions();
-        
+
         public Option<string> StartCursor
         {
             get => Pagination.StartCursor;
@@ -44,7 +44,7 @@ namespace NotionApi.Rest
         public async Task<ISearchResults> Execute()
         {
             var request = _requestBuilder.BuildRequest(HttpMethod.Post, this);
-            
+
             return null;
         }
     }

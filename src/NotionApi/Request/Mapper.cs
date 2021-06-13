@@ -42,7 +42,7 @@ namespace NotionApi.Request
                     if (!optionValue.Value.HasValue)
                         continue;
 
-                    value = strategy.GetValue(propertyType.GetGenericTypeDefinition().GetGenericArguments()[0], optionValue.Value.GetValue());
+                    value = strategy.GetValue(propertyType.GetGenericArguments()[0], optionValue.Value.GetValue());
                 }
                 else
                     value = strategy.GetValue(propertyType, propertyValue);
