@@ -2,6 +2,7 @@
 using FluentAssertions;
 using NotionApi.Request;
 using NotionApi.Test.Mapping.Strategies.Fixtures;
+using NotionApi.Util;
 using NUnit.Framework;
 
 namespace NotionApi.Test.Mapping
@@ -101,11 +102,22 @@ namespace NotionApi.Test.Mapping
             public void The_structure_should_be_represented_as_nested_dictionaries()
             {
                 // Arrange
-
+                var nested = new BasicNestedStructure
+                {
+                    Nested = new BasicNestedStructure {SomeValue = "Val2", Nested = Option.None},
+                    SomeValue = "val1"
+                };
 
                 // Act
+                var result = mapper.Map(nested);
 
                 // Assert
+                result.Should().BeAssignableTo<Dictionary<string, object>>();
+                result.Should().BeEquivalentTo(new Dictionary<string, object>
+                {
+                    {"Nested", new Dictionary<string, object> {{"SomeValue", "Val2"}}},
+                    {"SomeValue", "val1"}
+                });
             }
         }
     }

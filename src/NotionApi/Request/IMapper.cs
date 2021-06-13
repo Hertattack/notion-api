@@ -1,4 +1,5 @@
 ﻿using System;
+using NotionApi.Util;
 
 namespace NotionApi.Request
 {
@@ -6,5 +7,6 @@ namespace NotionApi.Request
     {
         object Map(object search);
         object MapEnumeration(Type type, Enum valueToMap);
+        Option<IOption> ToOption(Type type, object value);
     }
 }

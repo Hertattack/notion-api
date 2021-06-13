@@ -25,6 +25,9 @@ namespace NotionApi.Util
 
         public static implicit operator Option<T>(T value) =>
             new Option<T>(value, !(value is null));
+
+        public static Option<T> From(T optionValue) =>
+            new Option<T>(optionValue, !(optionValue is null));
     }
 
     public struct Option

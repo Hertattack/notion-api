@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using NotionApi.Util;
 
 namespace NotionApi.Request.Mapping
@@ -10,13 +9,16 @@ namespace NotionApi.Request.Mapping
         {
         }
 
-        public override Option<object> GetValue(Type genericTypeArgument, object value)
+        public override Option<object> GetValue(Type type, object value)
         {
-            var result = new Dictionary<string, object>();
-            
-            
-            
-            return result;
+            if (value == null)
+                return null;
+
+            var optionValue = _mapper.ToOption(type, value);
+            if (optionValue.HasValue && !optionValue.Value.HasValue)
+                return Option.None;
+
+            return _mapper.Map(optionValue.HasValue ? optionValue.Value : value);
         }
     }
 }

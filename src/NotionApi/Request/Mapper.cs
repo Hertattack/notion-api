@@ -33,13 +33,16 @@ namespace NotionApi.Request
                 var propertyValue = property.GetMethod.Invoke(objectToMap, Array.Empty<object>());
                 var strategy = GetStrategy(propertyMapping);
                 var name = propertyMapping.Name.HasValue ? propertyMapping.Name.Value : property.Name;
+
                 IOption value;
-                if (IsOption(propertyType, propertyValue, out var isNoneOption))
+
+                var optionValue = ToOption(propertyType, propertyValue);
+                if (optionValue.HasValue)
                 {
-                    if (isNoneOption)
+                    if (!optionValue.Value.HasValue)
                         continue;
 
-                    value = strategy.GetValue(propertyType.GetGenericTypeDefinition().GetGenericArguments()[0], propertyValue);
+                    value = strategy.GetValue(propertyType.GetGenericTypeDefinition().GetGenericArguments()[0], optionValue.Value.GetValue());
                 }
                 else
                     value = strategy.GetValue(propertyType, propertyValue);
@@ -60,17 +63,12 @@ namespace NotionApi.Request
             return mappedValue.HasValue ? mappedValue.Value : null;
         }
 
-        private bool IsOption(Type type, object value, out bool isNoneOption)
+        public Option<IOption> ToOption(Type type, object value)
         {
-            isNoneOption = false;
+            if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Option<>))
+                return Option.None;
 
-            if (!type.IsGenericType || !type.IsAssignableFrom(typeof(Option<>)))
-                return false;
-
-            if (!((IOption) value).HasValue)
-                isNoneOption = true;
-
-            return true;
+            return Option<IOption>.From((IOption) value);
         }
 
         public object MapEnumeration(Type type, Enum valueToMap)
