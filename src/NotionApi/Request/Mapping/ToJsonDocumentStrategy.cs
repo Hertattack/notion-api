@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using NotionApi.Util;
 
 namespace NotionApi.Request.Mapping
@@ -11,7 +12,11 @@ namespace NotionApi.Request.Mapping
 
         public override Option<object> GetValue(Type genericTypeArgument, object value)
         {
-            throw new System.NotImplementedException();
+            var settings = new JsonSerializerSettings();
+            settings.Formatting = Formatting.Indented;
+            settings.NullValueHandling = NullValueHandling.Include;
+
+            return JsonConvert.SerializeObject(value, Formatting.Indented);
         }
     }
 }
