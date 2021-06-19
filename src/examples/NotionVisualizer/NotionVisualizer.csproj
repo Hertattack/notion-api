@@ -19,10 +19,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="appsettings.Debug.json">
+      <None Update="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="appsettings.json">
+      <None Update="appsettings.Debug.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

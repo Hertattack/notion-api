@@ -31,6 +31,12 @@ namespace NotionApi
             _notionClientOptions = options.Value;
 
             _logger.LogInformation($"Using base uri: {_notionClientOptions.BaseUri}", _notionClientOptions.BaseUri);
+
+            _restClient.BaseUri = new Uri(new Uri(_notionClientOptions.BaseUri), "/v1");
+            _restClient.Token = _notionClientOptions.Token;
+
+            _restClient.AddDefaultHeader("Notion-Version", _notionClientOptions.ApiVersion);
+            _restClient.Get();
         }
 
         public TRequestType CreateRequest<TRequestType>() where TRequestType : IRequest

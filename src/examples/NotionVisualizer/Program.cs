@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NotionApi;
 using NotionApi.Rest;
 using RestUtil;
@@ -39,7 +38,7 @@ namespace NotionVisualizer
             configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             if (IsDebug)
-                configurationBuilder.AddJsonFile("appsettings.Debug.json", optional: false, reloadOnChange: true);
+                configurationBuilder.AddJsonFile("appsettings.Debug.json", optional: true, reloadOnChange: true);
 
             IConfiguration configuration = configurationBuilder
                 .AddEnvironmentVariables()
@@ -66,7 +65,7 @@ namespace NotionVisualizer
             ServiceConfigurator.Configure(serviceCollection);
 
             serviceCollection.AddSingleton<ITokenProvider, TokenProvider>();
-            
+
             serviceCollection.AddTransient<INotionClient, NotionClient>();
 
             return serviceCollection.BuildServiceProvider();
