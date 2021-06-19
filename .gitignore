@@ -5,6 +5,3 @@
 .idea/
 .theia/
 .vs/
-
-# Specific to the app
-appsettings.Debug.json
