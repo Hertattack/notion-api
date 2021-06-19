@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NotionApi.Request;
-using NotionApi.Rest;
+using RestUtil.Request;
 
 namespace NotionApi
 {

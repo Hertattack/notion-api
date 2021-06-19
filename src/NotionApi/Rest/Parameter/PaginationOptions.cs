@@ -1,5 +1,5 @@
 ﻿using System;
-using NotionApi.Util;
+using Util;
 
 namespace NotionApi.Rest.Parameter
 {

@@ -1,10 +1,10 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using NotionApi.Request;
-using NotionApi.Request.Attributes;
-using NotionApi.Request.Mapping;
 using NotionApi.Rest.Parameter;
-using NotionApi.Util;
+using RestUtil.Mapping;
+using RestUtil.Request;
+using RestUtil.Request.Attributes;
+using Util;
 
 namespace NotionApi.Rest
 {

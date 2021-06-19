@@ -1,5 +1,4 @@
-﻿using NotionApi.Request;
-using NotionApi.Rest;
+﻿using RestUtil.Request;
 
 namespace NotionApi
 {

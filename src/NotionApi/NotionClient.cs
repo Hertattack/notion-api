@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using NotionApi.Request;
+using RestUtil.Request;
 
 namespace NotionApi
 {

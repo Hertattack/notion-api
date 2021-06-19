@@ -1,4 +1,4 @@
-﻿using NotionApi.Request.Attributes;
+﻿using RestUtil.Request.Attributes;
 
 namespace NotionApi.Rest.Parameter
 {

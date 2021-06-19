@@ -1,5 +1,6 @@
-﻿using NotionApi.Request.Attributes;
-using NotionApi.Request.Mapping;
+﻿
+using RestUtil.Mapping;
+using RestUtil.Request.Attributes;
 
 namespace NotionApi.Rest.Parameter
 {
