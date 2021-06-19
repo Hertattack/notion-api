@@ -25,9 +25,4 @@
     <None Remove="Fixtures\Resources\jsondocument.json" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resources" />
-    <Folder Include="Util" />
-  </ItemGroup>
-
 </Project>
