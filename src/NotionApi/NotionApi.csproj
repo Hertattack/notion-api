@@ -17,7 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\FluentRest\FluentRest.csproj" />
         <ProjectReference Include="..\RestUtil\RestUtil.csproj" />
         <ProjectReference Include="..\Util\Util.csproj" />
     </ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,23 @@ namespace NotionVisualizer
 
             var searchRequest = new SearchRequest();
 
-            var _ = await notionClient.Execute(searchRequest);
+            var response = await notionClient.Execute(searchRequest);
+
+            var result = response.Result.Value;
+
+            var distinctPropertyTypes = new HashSet<string>();
+            foreach (var page in result.Results)
+            {
+                foreach (var property in page.Properties.Values)
+                {
+                    distinctPropertyTypes.Add(property.Type);
+                }
+            }
+
+            foreach (var ptype in distinctPropertyTypes)
+            {
+                Console.WriteLine(ptype);
+            }
 
             return 0;
         }
@@ -52,12 +69,13 @@ namespace NotionVisualizer
             var serviceCollection = new ServiceCollection();
 
             serviceCollection.Configure<NotionClientOptions>(o => configuration.GetSection(nameof(NotionClient)).Bind(o));
+            serviceCollection.Configure<RestClientOptions>(o => configuration.GetSection(nameof(RestClient)).Bind(o));
 
             serviceCollection.AddLogging(loggingBuilder =>
             {
                 loggingBuilder
-                    .AddConfiguration(configuration)
-                    .AddConsole();
+                    .AddConsole()
+                    .AddConfiguration(configuration.GetSection("Logging"));
             });
 
             serviceCollection.AddTransient<IRestClient, RestClient>();

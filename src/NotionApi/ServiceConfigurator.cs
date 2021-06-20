@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using NotionApi.Util;
 using RestUtil.Request;
 
 namespace NotionApi
@@ -9,6 +11,8 @@ namespace NotionApi
         {
             serviceCollection.AddTransient<IMapper, Mapper>();
             serviceCollection.AddTransient<IRequestBuilder, RequestBuilder>();
+
+            serviceCollection.AddTransient<JsonConverter, NotionPropertyConverter>();
         }
     }
 }

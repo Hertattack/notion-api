@@ -1,7 +1,9 @@
-﻿namespace RestUtil.Response
+﻿using Util;
+
+namespace RestUtil.Response
 {
-    public interface IResponse
+    public interface IResponse<TResult>
     {
-        TResult As<TResult>();
+        Option<TResult> Value { get; }
     }
 }

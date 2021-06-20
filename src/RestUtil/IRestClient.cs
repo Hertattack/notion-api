@@ -10,6 +10,6 @@ namespace RestUtil
         Uri BaseUri { get; set; }
         string Token { set; }
         void AddDefaultHeader(string name, string value);
-        Task<IResponse> Execute(IRequest request);
+        Task<IResponse<TResult>> ExecuteAsync<TResult>(IRequest request);
     }
 }

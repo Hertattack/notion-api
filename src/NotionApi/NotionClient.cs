@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NotionApi.Rest;
 using RestUtil;
 using RestUtil.Request;
 
@@ -37,8 +38,12 @@ namespace NotionApi
         {
             var request = _requestBuilder.BuildRequest(notionRequest);
 
-            var result = await _restClient.Execute(request);
-            return null;
+            var result = await _restClient.ExecuteAsync<TResult>(request);
+
+            if (result.Value.HasValue)
+                return new NotionResponse<TResult>(result.Value.Value);
+            else
+                return new NotionResponse<TResult>(default);
         }
     }
 }
