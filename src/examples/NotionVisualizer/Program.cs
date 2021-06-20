@@ -26,7 +26,7 @@ namespace NotionVisualizer
             var searchRequest = notionClient.CreateRequest<Search>();
             searchRequest.Query = "test";
 
-            var result = await searchRequest.Execute();
+            var _ = await searchRequest.Execute();
 
             return 0;
         }
@@ -63,8 +63,6 @@ namespace NotionVisualizer
 
             serviceCollection.AddTransient<IRestClient, RestClient>();
             ServiceConfigurator.Configure(serviceCollection);
-
-            serviceCollection.AddSingleton<ITokenProvider, TokenProvider>();
 
             serviceCollection.AddTransient<INotionClient, NotionClient>();
 

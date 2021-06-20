@@ -6,11 +6,11 @@ namespace RestUtil.Mapping
 {
     public abstract class BaseMappingStrategy : IMappingStrategy
     {
-        protected readonly IMapper _mapper;
+        protected readonly IMapper mapper;
 
         protected BaseMappingStrategy(IMapper mapper)
         {
-            _mapper = mapper;
+            this.mapper = mapper;
         }
         
         public abstract Option<object> GetValue(Type type, object value);

@@ -14,8 +14,10 @@ namespace RestUtil.Request
         public IRequest BuildRequest(HttpMethod method, object search)
         {
             var parameters = _mapper.Map(search);
-
-            return null;
+            
+            var request = new Request();
+            
+            return request;
         }
     }
 }

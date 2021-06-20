@@ -23,11 +23,11 @@ namespace RestUtil.Mapping
             if (typeof(IEnumerable).IsAssignableFrom(type))
                 return MapEnumerable(value);
 
-            if (type.IsEnum)
-                return _mapper.MapEnumeration(type, (Enum) value);
+            if (type?.IsEnum == true)
+                return mapper.MapEnumeration(type, (Enum) value);
 
-            if (type.IsClass)
-                return _mapper.Map(value);
+            if (type?.IsClass == true)
+                return mapper.Map(value);
 
             return value;
         }
@@ -47,7 +47,7 @@ namespace RestUtil.Mapping
                 if (item.GetType().IsPrimitive)
                     values.Add(item.ToString());
                 else
-                    values.Add(_mapper.Map(item));
+                    values.Add(mapper.Map(item));
             }
 
             return values;

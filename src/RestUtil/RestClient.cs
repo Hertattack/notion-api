@@ -7,36 +7,36 @@ namespace RestUtil
 {
     public class RestClient : IRestClient
     {
-        private readonly RestSharp.IRestClient implementation = new RestSharp.RestClient();
+        private readonly RestSharp.IRestClient _implementation = new RestSharp.RestClient();
 
-        private readonly IDictionary<string, string> defaultHeaders = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> _defaultHeaders = new Dictionary<string, string>();
 
         public Uri BaseUri
         {
-            get => implementation.BaseUrl;
-            set => implementation.BaseUrl = value;
+            get => _implementation.BaseUrl;
+            set => _implementation.BaseUrl = value;
         }
 
         public string Token
         {
-            set => implementation.Authenticator = new JwtAuthenticator(value);
+            set => _implementation.Authenticator = new JwtAuthenticator(value);
         }
 
         public void Get()
         {
             var request = new RestRequest("users");
 
-            foreach (var (headerName, value) in defaultHeaders)
+            foreach (var (headerName, value) in _defaultHeaders)
             {
                 request.AddHeader(headerName, value);
             }
 
-            Console.Write(implementation.Get(request).Content);
+            Console.Write(_implementation.Get(request).Content);
         }
 
         public void AddDefaultHeader(string name, string value)
         {
-            defaultHeaders[name] = value;
+            _defaultHeaders[name] = value;
         }
     }
 }

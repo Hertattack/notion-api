@@ -15,11 +15,11 @@ namespace RestUtil.Mapping
             if (value == null)
                 return null;
 
-            var optionValue = _mapper.ToOption(type, value);
+            var optionValue = mapper.ToOption(type, value);
             if (optionValue.HasValue && !optionValue.Value.HasValue)
                 return Option.None;
 
-            return _mapper.Map(optionValue.HasValue ? optionValue.Value : value);
+            return mapper.Map(optionValue.HasValue ? optionValue.Value : value);
         }
     }
 }

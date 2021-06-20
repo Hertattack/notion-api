@@ -1,6 +1,7 @@
 ﻿namespace NotionApi.Rest
 {
-    public interface ISearchResults
+    public class SearchResults
     {
+        
     }
 }

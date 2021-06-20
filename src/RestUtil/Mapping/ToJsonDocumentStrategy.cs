@@ -19,7 +19,7 @@ namespace RestUtil.Mapping
                 NullValueHandling = NullValueHandling.Include
             };
 
-            return JsonConvert.SerializeObject(value, Formatting.Indented);
+            return JsonConvert.SerializeObject(value, settings);
         }
     }
 }

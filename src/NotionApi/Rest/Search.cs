@@ -41,11 +41,11 @@ namespace NotionApi.Rest
             set => Pagination.PageSize = value;
         }
 
-        public async Task<ISearchResults> Execute()
+        public async Task<SearchResults> Execute()
         {
             var request = _requestBuilder.BuildRequest(HttpMethod.Post, this);
-            
-            return null;
+            var result = await _client.Execute(request);
+            return result.As<SearchResults>();
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestUtil;
 using RestUtil.Request;
+using RestUtil.Response;
 
 namespace NotionApi
 {
@@ -12,19 +14,16 @@ namespace NotionApi
     {
         private readonly NotionClientOptions _notionClientOptions;
         private readonly ILogger<NotionClient> _logger;
-        private readonly ITokenProvider _tokenProvider;
         private readonly IRestClient _restClient;
         private readonly IRequestBuilder _requestBuilder;
 
         public NotionClient(
             IOptions<NotionClientOptions> options,
             ILogger<NotionClient> logger,
-            ITokenProvider tokenProvider,
             IRestClient restClient,
             IRequestBuilder requestBuilder)
         {
             _logger = logger;
-            _tokenProvider = tokenProvider;
             _restClient = restClient;
             _requestBuilder = requestBuilder;
 
@@ -32,11 +31,9 @@ namespace NotionApi
 
             _logger.LogInformation($"Using base uri: {_notionClientOptions.BaseUri}", _notionClientOptions.BaseUri);
 
-            _restClient.BaseUri = new Uri(new Uri(_notionClientOptions.BaseUri), "/v1");
+            _restClient.BaseUri = new Uri(_notionClientOptions.BaseUri);
             _restClient.Token = _notionClientOptions.Token;
-
             _restClient.AddDefaultHeader("Notion-Version", _notionClientOptions.ApiVersion);
-            _restClient.Get();
         }
 
         public TRequestType CreateRequest<TRequestType>() where TRequestType : IRequest
@@ -48,6 +45,11 @@ namespace NotionApi
                 throw new ArgumentException($"The request type: {requestType.FullName} does not have a supported constructor.");
 
             return (TRequestType) constructor.Invoke(new object[] {this, _requestBuilder});
+        }
+
+        public Task<IResponse> Execute(IRequest request)
+        {
+            return null;
         }
 
         private static bool IsSupportedConstructor(ConstructorInfo info)
