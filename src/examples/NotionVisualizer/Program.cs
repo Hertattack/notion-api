@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NotionApi;
-using NotionApi.Rest;
+using NotionApi.Rest.Search;
 using RestUtil;
 
 namespace NotionVisualizer
@@ -23,10 +23,9 @@ namespace NotionVisualizer
 
             var notionClient = container.GetService<INotionClient>() ?? throw new NullReferenceException("Notion client service not available.");
 
-            var searchRequest = notionClient.CreateRequest<Search>();
-            searchRequest.Query = "test";
+            var searchRequest = new SearchRequest();
 
-            var _ = await searchRequest.Execute();
+            var _ = await notionClient.Execute(searchRequest);
 
             return 0;
         }

@@ -10,9 +10,17 @@ namespace RestUtil.Request
 {
     public class Mapper : IMapper
     {
-        private Dictionary<Type, IMappingStrategy> Strategies = new Dictionary<Type, IMappingStrategy>();
+        private readonly Dictionary<Type, IMappingStrategy> _strategies = new();
 
-        public object Map(object objectToMap)
+        public object Map(RequestParameter parameter) =>
+            parameter.Strategy != null
+                ? Map(parameter.Value, GetCachedMappingStrategy(parameter.Strategy))
+                : Map(parameter.Value);
+
+        public object Map(object obj) =>
+            Map(obj, null);
+
+        object Map(object objectToMap, IMappingStrategy returnValueStrategy)
         {
             var type = objectToMap.GetType();
             var mappingAttributeType = typeof(MappingAttribute);
@@ -51,10 +59,10 @@ namespace RestUtil.Request
                     values[name] = value.GetValue();
             }
 
-            if (typeMapping is null)
+            if (typeMapping is null && returnValueStrategy == null)
                 return values;
 
-            var typeMappingStrategy = GetStrategy(typeMapping, useDefaultIfNonSpecified: false);
+            var typeMappingStrategy = returnValueStrategy ?? GetStrategy(typeMapping, useDefaultIfNonSpecified: false);
 
             if (typeMappingStrategy == null)
                 return values;
@@ -100,11 +108,18 @@ namespace RestUtil.Request
 
             var strategyType = attributeMapping.Strategy ?? typeof(DefaultMappingStrategy);
 
-            if (Strategies.TryGetValue(strategyType, out var strategy))
+            return GetCachedMappingStrategy(strategyType);
+        }
+
+        private IMappingStrategy GetCachedMappingStrategy(Type strategyType)
+        {
+            IMappingStrategy strategy;
+
+            if (_strategies.TryGetValue(strategyType, out strategy))
                 return strategy;
 
             strategy = (IMappingStrategy) Activator.CreateInstance(strategyType, this);
-            Strategies[strategyType] = strategy;
+            _strategies[strategyType] = strategy;
 
             return strategy;
         }

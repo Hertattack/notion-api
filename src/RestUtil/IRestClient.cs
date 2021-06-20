@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
+using RestUtil.Request;
+using RestUtil.Response;
 
 namespace RestUtil
 {
@@ -6,7 +9,7 @@ namespace RestUtil
     {
         Uri BaseUri { get; set; }
         string Token { set; }
-        void Get();
         void AddDefaultHeader(string name, string value);
+        Task<IResponse> Execute(IRequest request);
     }
 }

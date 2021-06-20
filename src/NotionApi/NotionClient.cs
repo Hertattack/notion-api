@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestUtil;
 using RestUtil.Request;
-using RestUtil.Response;
 
 namespace NotionApi
 {
@@ -36,28 +33,12 @@ namespace NotionApi
             _restClient.AddDefaultHeader("Notion-Version", _notionClientOptions.ApiVersion);
         }
 
-        public TRequestType CreateRequest<TRequestType>() where TRequestType : IRequest
+        public async Task<INotionResponse<TResult>> Execute<TResult>(INotionRequest<TResult> notionRequest)
         {
-            var requestType = typeof(TRequestType);
-            var constructor = requestType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(IsSupportedConstructor);
+            var request = _requestBuilder.BuildRequest(notionRequest);
 
-            if (constructor == null)
-                throw new ArgumentException($"The request type: {requestType.FullName} does not have a supported constructor.");
-
-            return (TRequestType) constructor.Invoke(new object[] {this, _requestBuilder});
-        }
-
-        public Task<IResponse> Execute(IRequest request)
-        {
+            var result = await _restClient.Execute(request);
             return null;
-        }
-
-        private static bool IsSupportedConstructor(ConstructorInfo info)
-        {
-            var parameters = info.GetParameters();
-            return parameters.Length == 2
-                   && parameters[0].ParameterType == typeof(INotionClient)
-                   && parameters[1].ParameterType == typeof(IRequestBuilder);
         }
     }
 }

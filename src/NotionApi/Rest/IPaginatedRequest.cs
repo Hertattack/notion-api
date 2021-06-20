@@ -1,7 +1,7 @@
 ﻿using RestUtil.Request.Attributes;
 using Util;
 
-namespace RestUtil.Request
+namespace NotionApi.Rest
 {
     public interface IPaginatedRequest
     {

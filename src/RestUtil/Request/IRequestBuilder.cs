@@ -1,9 +1,7 @@
-﻿using System.Net.Http;
-
-namespace RestUtil.Request
+﻿namespace RestUtil.Request
 {
     public interface IRequestBuilder
     {
-        IRequest BuildRequest(HttpMethod post, object search);
+        IRequest BuildRequest(object requestDefintion);
     }
 }
