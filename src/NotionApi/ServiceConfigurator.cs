@@ -13,6 +13,8 @@ namespace NotionApi
             serviceCollection.AddTransient<IRequestBuilder, RequestBuilder>();
 
             serviceCollection.AddTransient<JsonConverter, NotionPropertyConverter>();
+            serviceCollection.AddTransient<JsonConverter, OptionConverter>();
+            serviceCollection.AddTransient<OptionConverter>();
         }
     }
 }

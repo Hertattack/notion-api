@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NotionApi.Rest.Common.Properties;
@@ -7,29 +9,27 @@ namespace NotionApi.Util
 {
     public class NotionPropertyConverter : JsonConverter<NotionProperty>
     {
-        private JsonSerializerSettings settings = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore
-        };
+        private readonly ILogger<NotionPropertyConverter> _logger;
 
-        private JsonSerializer _serializer;
+        private JsonSerializer Serializer { get; }
 
-        private JsonSerializer Serializer
+        public NotionPropertyConverter(ILogger<NotionPropertyConverter> logger, OptionConverter optionConverter)
         {
-            get
+            _logger = logger;
+
+            var settings = new JsonSerializerSettings
             {
-                if (_serializer == null)
-                    _serializer = JsonSerializer.Create(settings);
+                NullValueHandling = NullValueHandling.Ignore,
+                Converters = new List<JsonConverter> {optionConverter}
+            };
 
-                return _serializer;
-            }
+            Serializer = JsonSerializer.Create(settings);
         }
 
         public override bool CanWrite => false;
 
         public override void WriteJson(JsonWriter writer, NotionProperty value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
         }
 
         public override NotionProperty ReadJson(
@@ -51,7 +51,7 @@ namespace NotionApi.Util
             {
                 "created_time" => typeof(CreateTimeProperty),
                 "last_edited_time" => typeof(LastEditedProperty),
-                "relation" => propertyObject["relation"]?.GetType().IsArray == true ? typeof(OneToManyRelationProperty) : typeof(ManyToOneRelationshipProperty),
+                "relation" => propertyObject["relation"]?.Type == JTokenType.Array ? typeof(OneToManyRelationProperty) : typeof(ManyToOneRelationshipProperty),
                 "rich_text" => typeof(RichTextProperty),
                 "title" => typeof(TitleProperty),
                 _ => typeof(NotionProperty)
@@ -67,8 +67,8 @@ namespace NotionApi.Util
             catch (Exception ex)
             {
                 var stringValue = propertyObject.ToString();
-                Console.WriteLine(stringValue);
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, $"Error deserializing json data.{Environment.NewLine}{stringValue}", stringValue);
+
                 return JsonConvert.DeserializeObject<NotionProperty>(stringValue);
             }
         }

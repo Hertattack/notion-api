@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
+using Util;
 
 namespace NotionApi.Rest.Common.Properties
 {
     public class LastEditedProperty : NotionProperty
     {
         [JsonProperty(PropertyName = "last_edited_time", NullValueHandling = NullValueHandling.Ignore)]
-        public string LastEditedTime { get; set; }
+        public Option<string> LastEditedTime { get; set; }
     }
 }
