@@ -6,6 +6,12 @@ using Util;
 
 namespace NotionApi.Util
 {
+    /// <summary>
+    /// Notion uses "{}" as a value in the Json data for "null" or empty in cases like the create time and list-values. In Json this is an object and breaks
+    /// the deserialization. This converter resolves that issue.
+    ///
+    /// If an Option<...> is used, the converter will translate the {} to null / the default.
+    /// </summary>
     public class OptionConverter : JsonConverter
     {
         public override bool CanWrite => false;
