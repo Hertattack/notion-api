@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using NotionApi.Rest.Common.Properties;
-using NotionApi.Util;
 
 namespace NotionApi.Rest.Common
 {

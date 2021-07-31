@@ -93,18 +93,19 @@ namespace RestUtil
             if (_options.StoreJsonResponse == null)
                 return;
 
-            var fileName = Path.Combine(_options.StoreJsonResponse, Path.GetFileName(Path.GetTempFileName()));
+            var fileName = Path.ChangeExtension(Path.GetFileName(Path.GetTempFileName()), ".json");
+            var filePath = (string) Path.Combine(_options.StoreJsonResponse, fileName);
             try
             {
                 if (!Directory.Exists(_options.StoreJsonResponse))
                     Directory.CreateDirectory(_options.StoreJsonResponse);
 
-                File.WriteAllText(fileName, jsonData);
-                _logger.LogDebug($"Wrote json data for request to: {fileName}");
+                File.WriteAllText(filePath, jsonData);
+                _logger.LogDebug($"Wrote json data for request to: {filePath}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Could not write json data to: {fileName}. Error: {ex.Message}");
+                _logger.LogError(ex, $"Could not write json data to: {filePath}. Error: {ex.Message}");
             }
         }
 

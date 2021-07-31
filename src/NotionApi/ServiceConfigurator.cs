@@ -14,6 +14,8 @@ namespace NotionApi
 
             serviceCollection.AddTransient<JsonConverter, NotionPropertyConverter>();
             serviceCollection.AddTransient<JsonConverter, OptionConverter>();
+            serviceCollection.AddTransient<JsonConverter, NotionObjectJsonConverter>();
+            serviceCollection.AddTransient<JsonConverter, NotionParentReferenceJsonConverter>();
             serviceCollection.AddTransient<OptionConverter>();
         }
     }
