@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Common
+namespace NotionApi.Rest.Common.Objects.Text.Mention
 {
-    public class ParentReference
+    public class Mention
     {
         [JsonProperty("type")] public string Type { get; set; }
     }

@@ -21,4 +21,8 @@
         <ProjectReference Include="..\Util\Util.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Rest\Common\Blocks" />
+    </ItemGroup>
+
 </Project>

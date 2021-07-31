@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NotionApi.Rest.Common;
+using NotionApi.Rest.Common.Objects;
 
 namespace NotionApi.Rest.Search
 {

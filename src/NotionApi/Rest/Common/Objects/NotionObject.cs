@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using NotionApi.Rest.Common.Objects.Text;
 using NotionApi.Rest.Common.Properties;
 
-namespace NotionApi.Rest.Common
+namespace NotionApi.Rest.Common.Objects
 {
     public class NotionObject
     {
@@ -23,6 +24,6 @@ namespace NotionApi.Rest.Common
         [JsonProperty(PropertyName = "properties")]
         public IDictionary<string, NotionProperty> Properties { get; set; } = new Dictionary<string, NotionProperty>();
 
-        [JsonProperty(PropertyName = "title")] public IList<NotionTitleElement> Title { get; set; } = new List<NotionTitleElement>();
+        [JsonProperty(PropertyName = "title")] public IList<RichTextObject> Title { get; set; } = new List<RichTextObject>();
     }
 }

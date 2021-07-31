@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NotionApi.Rest.Common;
+using NotionApi.Rest.Common.Objects;
 using RestUtil.Conversion;
 
 namespace NotionApi.Util
 {
-    public class NotionObjectJsonConverter : CustomTypeDeserializer<NotionObject>
+    public class NotionObjectConverter : CustomTypeDeserializer<NotionObject>
     {
-        public NotionObjectJsonConverter(ILogger<CustomTypeDeserializer<NotionObject>> logger) : base(logger)
+        public NotionObjectConverter(ILogger<CustomTypeDeserializer<NotionObject>> logger) : base(logger)
         {
         }
 

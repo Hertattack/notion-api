@@ -37,7 +37,16 @@ namespace RestUtil.Conversion
                 throw exception;
             }
 
-            serializer.Populate(jObject.CreateReader(), instance);
+            try
+            {
+                serializer.Populate(jObject.CreateReader(), instance);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deserializing json data as '{instance.GetType().FullName}'");
+                _logger.LogDebug(jObject.ToString());
+                throw;
+            }
 
             return instance;
         }

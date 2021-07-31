@@ -1,76 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NotionApi.Rest.Common.Properties;
+using RestUtil.Conversion;
 
 namespace NotionApi.Util
 {
-    public class NotionPropertyConverter : JsonConverter<NotionProperty>
+    public class NotionPropertyConverter : CustomTypeDeserializer<NotionProperty>
     {
-        private readonly ILogger<NotionPropertyConverter> _logger;
-
-        private JsonSerializer Serializer { get; }
-
-        public NotionPropertyConverter(ILogger<NotionPropertyConverter> logger, OptionConverter optionConverter)
-        {
-            _logger = logger;
-
-            var settings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                Converters = new List<JsonConverter> {optionConverter}
-            };
-
-            Serializer = JsonSerializer.Create(settings);
-        }
-
-        public override bool CanWrite => false;
-
-        public override void WriteJson(JsonWriter writer, NotionProperty value, JsonSerializer serializer)
+        public NotionPropertyConverter(ILogger<CustomTypeDeserializer<NotionProperty>> logger) : base(logger)
         {
         }
 
-        public override NotionProperty ReadJson(
-            JsonReader jsonReader,
-            Type objectType,
-            NotionProperty existingValue,
-            bool hasExistingValue,
-            JsonSerializer serializer)
+        protected override NotionProperty CreateInstance(JObject jObject)
         {
-            if (jsonReader.TokenType == JsonToken.Null || jsonReader.TokenType == JsonToken.EndObject)
-                return null;
-
-            if (hasExistingValue)
-                return null;
-
-            var propertyObject = JObject.Load(jsonReader);
-
-            var targetType = (string) propertyObject["type"] switch
+            return (string) jObject["type"] switch
             {
-                "created_time" => typeof(CreateTimeProperty),
-                "last_edited_time" => typeof(LastEditedProperty),
-                "relation" => propertyObject["relation"]?.Type == JTokenType.Array ? typeof(OneToManyRelationProperty) : typeof(ManyToOneRelationshipProperty),
-                "rich_text" => typeof(RichTextProperty),
-                "title" => typeof(TitleProperty),
-                _ => typeof(NotionProperty)
+                "created_time" => new CreateTimeProperty(),
+                "created_by" => new NotionProperty(),
+                "last_edited_time" => new LastEditedProperty(),
+                "last_edited_by" => new NotionProperty(),
+                "relation" => jObject["relation"]?.Type == JTokenType.Array
+                    ? (NotionProperty) new OneToManyRelationProperty()
+                    : new ManyToOneRelationshipProperty(),
+                "rich_text" => new RichTextProperty(),
+                "title" => new TitleProperty(),
+                "number" => new NotionProperty(),
+                "select" => new NotionProperty(),
+                "multi_select" => new NotionProperty(),
+                "date" => new NotionProperty(),
+                "formula" => new NotionProperty(),
+                "rollup" => new NotionProperty(),
+                "people" => new NotionProperty(),
+                "files" => new NotionProperty(),
+                "checkbox" => new NotionProperty(),
+                "url" => new NotionProperty(),
+                "email" => new NotionProperty(),
+                "phone_number" => new NotionProperty(),
+                _ => new NotionProperty()
             };
-
-            jsonReader.Skip();
-
-            using var propertyReader = propertyObject.CreateReader();
-            try
-            {
-                return (NotionProperty) Serializer.Deserialize(propertyReader, targetType);
-            }
-            catch (Exception ex)
-            {
-                var stringValue = propertyObject.ToString();
-                _logger.LogError(ex, $"Error deserializing json data.{Environment.NewLine}{stringValue}", stringValue);
-
-                return JsonConvert.DeserializeObject<NotionProperty>(stringValue);
-            }
         }
     }
 }
