@@ -1,9 +1,14 @@
 ﻿using System.Threading.Tasks;
+using NotionApi.Rest.Common;
+using Util;
 
 namespace NotionApi
 {
     public interface INotionClient
     {
-        Task<INotionResponse<TResult>> Execute<TResult>(INotionRequest<TResult> request);
+        Task<Option<TResult>> ExecuteRequest<TResult>(INotionRequest<TResult> request);
+
+        Task<Option<IPaginatedResponse<TResult>>> ExecuteRequest<TResult>(
+            IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest);
     }
 }

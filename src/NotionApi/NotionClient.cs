@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NotionApi.Rest;
+using NotionApi.Rest.Common;
 using RestUtil;
 using RestUtil.Request;
+using Util;
 
 namespace NotionApi
 {
@@ -14,6 +16,8 @@ namespace NotionApi
         private readonly ILogger<NotionClient> _logger;
         private readonly IRestClient _restClient;
         private readonly IRequestBuilder _requestBuilder;
+
+        private long _requestNumber;
 
         public NotionClient(
             IOptions<NotionClientOptions> options,
@@ -34,16 +38,58 @@ namespace NotionApi
             _restClient.AddDefaultHeader("Notion-Version", _notionClientOptions.ApiVersion);
         }
 
-        public async Task<INotionResponse<TResult>> Execute<TResult>(INotionRequest<TResult> notionRequest)
+        public async Task<Option<IPaginatedResponse<TResult>>> ExecuteRequest<TResult>(
+            IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest)
+        {
+            var myRequest = Interlocked.Add(ref _requestNumber, 1);
+            _logger.LogDebug("Performing paginated request {RequestNumber}", myRequest);
+
+            var pageNumber = 0;
+
+            IPaginatedResponse<TResult> result = null;
+            while (true)
+            {
+                pageNumber++;
+                if (_notionClientOptions.LimitPagesToRetrieve > 0 && _notionClientOptions.LimitPagesToRetrieve < pageNumber)
+                    break;
+
+                _logger.LogDebug("Requesting page {PageNumber} for request {RequestNumber}", pageNumber, myRequest);
+                var nextResult = await ExecuteRequest<PaginatedResponse<TResult>>(notionRequest);
+                _logger.LogDebug("Received response for page {PageNumber} for request {RequestNumber}", pageNumber, myRequest);
+
+                if (!nextResult.HasValue)
+                    break;
+
+                var nextResultValue = nextResult.Value;
+
+                if (result == null)
+                    result = nextResultValue;
+                else
+                {
+                    foreach (var additionalResult in nextResultValue.Results)
+                        result.Results.Add(additionalResult);
+                }
+
+                if (!nextResultValue.HasMore)
+                    break;
+
+                notionRequest.SetStartCursor(nextResultValue.NextCursor);
+            }
+
+            _logger.LogDebug("Finished paginated request {RequestNumber}", myRequest);
+            return Option<IPaginatedResponse<TResult>>.From(result);
+        }
+
+        public async Task<Option<TResult>> ExecuteRequest<TResult>(INotionRequest<TResult> notionRequest)
         {
             var request = _requestBuilder.BuildRequest(notionRequest);
 
             var result = await _restClient.ExecuteAsync<TResult>(request);
 
-            if (result.Value.HasValue)
-                return new NotionResponse<TResult>(result.Value.Value);
-            else
-                return new NotionResponse<TResult>(default);
+            if (!result.Value.HasValue)
+                return Option.None;
+
+            return result.Value.Value;
         }
     }
 }

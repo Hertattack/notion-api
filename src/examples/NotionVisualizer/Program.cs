@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NotionApi;
+using NotionApi.Rest.Common.Objects;
 using NotionApi.Rest.Search;
 using RestUtil;
 
@@ -26,9 +27,15 @@ namespace NotionVisualizer
 
             var searchRequest = new SearchRequest();
 
-            var response = await notionClient.Execute(searchRequest);
+            var response = await notionClient.ExecuteRequest(searchRequest);
 
-            var result = response.Result.Value;
+            if (!response.HasValue)
+            {
+                Console.WriteLine("No response received.");
+                return 0;
+            }
+
+            var result = response.Value;
 
             var distinctPropertyTypes = new HashSet<string>();
             foreach (var page in result.Results)

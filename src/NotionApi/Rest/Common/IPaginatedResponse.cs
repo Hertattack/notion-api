@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 
 namespace NotionApi.Rest.Common
 {
-    public interface IPaginatedResponse
+    public interface IPaginatedResponse<TResultType>
     {
-        [JsonProperty(PropertyName = "has_more")]
         bool HasMore { get; set; }
-
-        [JsonProperty(PropertyName = "next_cursor")]
         string NextCursor { get; set; }
+        string ObjectType { get; set; }
+        IList<TResultType> Results { get; set; }
     }
 }

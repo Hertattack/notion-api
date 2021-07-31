@@ -1,16 +1,18 @@
 ﻿using System;
+using RestUtil.Request.Attributes;
 using Util;
 
-namespace NotionApi.Rest.Parameter
+namespace NotionApi.Rest.Common
 {
-    public class PaginationOptions
+    public class PaginatedRequest
     {
         private const int _maxPageSize = 100;
 
-        public Option<string> StartCursor { get; set; }
+        [Mapping("start_cursor")] public Option<string> StartCursor { get; set; }
 
         private int _pageSize = _maxPageSize;
 
+        [Mapping("page_size")]
         public int PageSize
         {
             get => _pageSize;
