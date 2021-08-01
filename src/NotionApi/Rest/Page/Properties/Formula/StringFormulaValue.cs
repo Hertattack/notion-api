@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Util;
 
-namespace NotionApi.Rest.Properties
+namespace NotionApi.Rest.Page.Properties.Formula
 {
     public class StringFormulaValue : FormulaValue
     {

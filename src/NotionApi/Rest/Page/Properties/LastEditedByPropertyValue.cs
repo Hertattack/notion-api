@@ -2,7 +2,7 @@
 using NotionApi.Rest.Objects;
 using Util;
 
-namespace NotionApi.Rest.Properties
+namespace NotionApi.Rest.Page.Properties
 {
     public class LastEditedByPropertyValue : NotionPropertyValue
     {

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using NotionApi.Rest.Properties;
+using NotionApi.Rest.Page.Properties;
 
 namespace NotionApi.Rest.Text.Mention
 {

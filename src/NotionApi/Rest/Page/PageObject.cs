@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
+using NotionApi.Rest.Objects;
 using NotionApi.Rest.Reference;
 
-namespace NotionApi.Rest.Objects
+namespace NotionApi.Rest.Page
 {
     public class PageObject : NotionObject
     {

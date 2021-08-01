@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Properties.Rollup
+namespace NotionApi.Rest.Page.Properties.Rollup
 {
     public class RollupValue
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using NotionApi.Rest.Properties;
+using NotionApi.Rest.Page.Properties;
 using NotionApi.Rest.Text;
 
 namespace NotionApi.Rest.Objects

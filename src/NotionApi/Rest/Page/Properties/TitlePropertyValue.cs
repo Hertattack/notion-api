@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using NotionApi.Rest.Text;
 using Util;
 
-namespace NotionApi.Rest.Properties
+namespace NotionApi.Rest.Page.Properties
 {
     public class TitlePropertyValue : NotionPropertyValue
     {

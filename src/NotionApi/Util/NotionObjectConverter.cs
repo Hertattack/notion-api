@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NotionApi.Rest.Objects;
+using NotionApi.Rest.Page;
 using RestUtil.Conversion;
 
 namespace NotionApi.Util
