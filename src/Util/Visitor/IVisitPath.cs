@@ -1,6 +1,6 @@
 ﻿namespace Util.Visitor
 {
-    public class VisitorPath
+    public interface IVisitPath
     {
         
     }

@@ -39,8 +39,11 @@ namespace NotionVisualizer
 
             var result = response.Value;
 
-            var visitor = new ObjectVisitor();
-            visitor.RegisterAction<NotionObject>(HandleObject);
+            var visitorFactory = new ObjectVisitorFactory();
+            visitorFactory.RegisterAction<NotionObject>(HandleObject);
+
+            var visitor = visitorFactory.CreateFor(result);
+            visitor.VisitAll();
 
             var distinctPropertyTypes = new HashSet<string>();
             foreach (var obj in result.Results)
@@ -62,7 +65,7 @@ namespace NotionVisualizer
             return 0;
         }
 
-        private static void HandleObject(VisitorPath path, NotionObject visitedNode)
+        private static void HandleObject(IVisitPath path, NotionObject visitedNode)
         {
         }
 
