@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using NotionApi.Util;
 using RestUtil.Request;
+using Util.Visitor;
 
 namespace NotionApi
 {
@@ -11,6 +12,8 @@ namespace NotionApi
         {
             serviceCollection.AddTransient<IMapper, Mapper>();
             serviceCollection.AddTransient<IRequestBuilder, RequestBuilder>();
+
+            serviceCollection.AddTransient<IObjectVisitorFactory, ObjectVisitorFactory>();
 
             serviceCollection.AddTransient<JsonConverter, OptionConverter>();
             serviceCollection.AddTransient<JsonConverter, NotionPagePropertyConverter>();

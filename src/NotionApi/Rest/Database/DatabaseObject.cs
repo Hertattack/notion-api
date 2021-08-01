@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using NotionApi.Rest.Database.Properties;
 using NotionApi.Rest.Objects;
+using NotionApi.Rest.Page;
 using NotionApi.Rest.Reference;
 using NotionApi.Rest.Text;
 using Util;
@@ -12,9 +13,11 @@ namespace NotionApi.Rest.Database
     {
         [JsonProperty("title")] public Option<IList<RichTextObject>> Title { get; set; } = new List<RichTextObject>();
 
-        [JsonProperty("parent")] public Option<ParentReference> Parent { get; set; }
+        [JsonProperty("parent")] public ParentReference Parent { get; set; }
 
         [JsonProperty("properties")]
         public IDictionary<string, NotionPropertyConfiguration> Properties { get; set; } = new Dictionary<string, NotionPropertyConfiguration>();
+
+        [JsonIgnore] public Option<PageObject> Container { get; set; }
     }
 }

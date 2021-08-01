@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using NotionApi.Rest.Objects;
 using NotionApi.Rest.Page.Properties;
 using NotionApi.Rest.Reference;
+using Util;
 
 namespace NotionApi.Rest.Page
 {
@@ -17,5 +18,7 @@ namespace NotionApi.Rest.Page
 
         [JsonProperty(PropertyName = "properties")]
         public IDictionary<string, NotionPropertyValue> Properties { get; set; } = new Dictionary<string, NotionPropertyValue>();
+
+        [JsonIgnore] public Option<NotionObject> Container { get; set; }
     }
 }

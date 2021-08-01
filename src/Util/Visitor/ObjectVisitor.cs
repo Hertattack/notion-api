@@ -3,24 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Util.Visitor
 {
     internal class ObjectVisitor : IObjectVisitor
     {
-        private readonly IReadOnlyList<Action<VisitPath, object>> _actions;
+        private readonly ILogger _logger;
+        private readonly IReadOnlyList<IVisitor> _actions;
         private readonly object _root;
 
-        public ObjectVisitor(object root, IReadOnlyList<Action<VisitPath, object>> actions)
+        public ObjectVisitor(
+            ILogger logger,
+            object root,
+            IReadOnlyList<IVisitor> actions)
         {
+            _logger = logger;
             _actions = actions;
             _root = root;
         }
 
         public void VisitAll()
         {
-            var path = new VisitPath(_root);
-            Visit(new VisitPath(_root), _root);
+            if (_root is IEnumerable enumerable)
+            {
+                foreach (var obj in enumerable)
+                    Visit(new VisitPath(obj), obj);
+            }
+            else
+                Visit(new VisitPath(_root), _root);
         }
 
         private void Visit(VisitPath path, object obj)
@@ -30,33 +41,68 @@ namespace Util.Visitor
             if (type.IsPrimitive)
                 return;
 
-            foreach (var action in _actions)
-                action(path, obj);
+            ExecuteActions(path, obj);
 
-            foreach (var property in type.GetProperties().Where(ShouldVisitProperty))
+            var properties = type.GetProperties().Where(ShouldVisitProperty);
+            VisitPropertyValues(properties, path, obj);
+        }
+
+        private void VisitPropertyValues(IEnumerable<PropertyInfo> properties, VisitPath path, object obj)
+        {
+            foreach (var property in properties)
             {
-                var value = property.GetValue(_root);
+                var rawValue = property.GetMethod.Invoke(obj, new object[0]);
+                var propertyName = property.Name;
 
-                if (value is IEnumerable enumerable)
-                {
-                    var index = 0;
-                    foreach (var element in enumerable)
-                    {
-                        var nextPath = path.CreateChild(property.Name, index, element);
-                        Visit(nextPath, element);
-
-                        index++;
-                    }
-                }
+                object value;
+                if (rawValue is IOption option)
+                    value = option.HasValue ? option.GetValue() : null;
                 else
+                    value = rawValue;
+
+                switch (value)
                 {
-                    var nextPath = path.CreateChild(property.Name, value);
-                    Visit(nextPath, value);
+                    case null:
+                        continue;
+                    case IEnumerable enumerable:
+                        VisitEnumerableItems(path, enumerable, propertyName);
+                        break;
+                    default:
+                        var nextPath = path.CreateChild(propertyName, value);
+                        Visit(nextPath, value);
+                        break;
                 }
             }
         }
 
-        private bool ShouldVisitProperty(PropertyInfo propertyInfo)
+        private void ExecuteActions(VisitPath path, object obj)
+        {
+            foreach (var action in _actions)
+            {
+                try
+                {
+                    action.Visit(path, obj);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error performing action {Action} on node: {Path}", action.GetType().FullName, path.ToString());
+                }
+            }
+        }
+
+        private void VisitEnumerableItems(VisitPath path, IEnumerable enumerable, string propertyName)
+        {
+            var index = 0;
+            foreach (var element in enumerable)
+            {
+                var nextPath = path.CreateChild(propertyName, index, element);
+                Visit(nextPath, element);
+
+                index++;
+            }
+        }
+
+        private static bool ShouldVisitProperty(PropertyInfo propertyInfo)
         {
             return !propertyInfo.PropertyType.IsPrimitive && propertyInfo.CanRead && propertyInfo.GetMethod != null;
         }

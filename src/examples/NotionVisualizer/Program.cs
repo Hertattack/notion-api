@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NotionApi;
-using NotionApi.Rest.Objects;
 using NotionApi.Rest.Page;
 using NotionApi.Rest.Search;
 using RestUtil;
-using Util.Visitor;
 
 namespace NotionVisualizer
 {
@@ -21,7 +18,7 @@ namespace NotionVisualizer
         private static bool IsDebug => false;
 #endif
 
-        private static async Task<int> Main(string[] args)
+        private static int Main(string[] args)
         {
             var container = CreateServiceProvider(args);
 
@@ -29,7 +26,7 @@ namespace NotionVisualizer
 
             var searchRequest = new SearchRequest();
 
-            var response = await notionClient.ExecuteRequest(searchRequest);
+            var response = notionClient.ExecuteRequest(searchRequest).Result;
 
             if (!response.HasValue)
             {
@@ -38,12 +35,9 @@ namespace NotionVisualizer
             }
 
             var result = response.Value;
-
-            var visitorFactory = new ObjectVisitorFactory();
-            visitorFactory.RegisterAction<NotionObject>(HandleObject);
-
-            var visitor = visitorFactory.CreateFor(result);
-            visitor.VisitAll();
+            var cache = notionClient.CreateCache();
+            cache.Refresh(result.Results);
+            cache.UpdateNotionObjects(result.Results);
 
             var distinctPropertyTypes = new HashSet<string>();
             foreach (var obj in result.Results)
@@ -63,10 +57,6 @@ namespace NotionVisualizer
             }
 
             return 0;
-        }
-
-        private static void HandleObject(IVisitPath path, NotionObject visitedNode)
-        {
         }
 
         private static IServiceProvider CreateServiceProvider(string[] args)
@@ -101,6 +91,7 @@ namespace NotionVisualizer
             });
 
             serviceCollection.AddTransient<IRestClient, RestClient>();
+
             ServiceConfigurator.Configure(serviceCollection);
 
             serviceCollection.AddTransient<INotionClient, NotionClient>();

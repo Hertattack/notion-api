@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Util
+namespace Util.Extensions
 {
     public static class ObjectExtensions
     {
+        [return: NotNull]
         public static TInputType ThrowIfNull<TInputType>(this TInputType inputObject, [CallerMemberName] string memberName = "")
             where TInputType : class
         {

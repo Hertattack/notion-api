@@ -3,10 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NotionApi.Cache;
 using NotionApi.Rest;
 using RestUtil;
 using RestUtil.Request;
 using Util;
+using Util.Visitor;
 
 namespace NotionApi
 {
@@ -16,6 +18,7 @@ namespace NotionApi
         private readonly ILogger<NotionClient> _logger;
         private readonly IRestClient _restClient;
         private readonly IRequestBuilder _requestBuilder;
+        private readonly IServiceProvider _serviceProvider;
 
         private long _requestNumber;
 
@@ -23,11 +26,13 @@ namespace NotionApi
             IOptions<NotionClientOptions> options,
             ILogger<NotionClient> logger,
             IRestClient restClient,
-            IRequestBuilder requestBuilder)
+            IRequestBuilder requestBuilder,
+            IServiceProvider serviceProvider)
         {
             _logger = logger;
             _restClient = restClient;
             _requestBuilder = requestBuilder;
+            _serviceProvider = serviceProvider;
 
             _notionClientOptions = options.Value;
 
@@ -78,6 +83,13 @@ namespace NotionApi
 
             _logger.LogDebug("Finished paginated request {RequestNumber}", myRequest);
             return Option<IPaginatedResponse<TResult>>.From(result);
+        }
+
+        public INotionCache CreateCache()
+        {
+            var objectVisitorFactory = (IObjectVisitorFactory) _serviceProvider.GetService(typeof(IObjectVisitorFactory));
+            var loggerFactory = (ILoggerFactory) _serviceProvider.GetService(typeof(ILoggerFactory));
+            return new NotionCache(objectVisitorFactory, loggerFactory);
         }
 
         public async Task<Option<TResult>> ExecuteRequest<TResult>(INotionRequest<TResult> notionRequest)

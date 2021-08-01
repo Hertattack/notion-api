@@ -1,32 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Util.Visitor
 {
-    public class ObjectVisitorFactory
+    public class ObjectVisitorFactory : IObjectVisitorFactory
     {
-        private readonly IList<Action<IVisitPath, object>> _actions = new List<Action<IVisitPath, object>>();
+        private readonly ILoggerFactory _loggerFactory;
 
-        public void RegisterAction<TVisitedType>(Action<IVisitPath, TVisitedType> action)
+        public ObjectVisitorFactory(ILoggerFactory loggerFactory)
         {
-            _actions.Add(CreateVisitAction(action));
+            _loggerFactory = loggerFactory;
         }
 
-        private static Action<IVisitPath, object> CreateVisitAction<TVisitedType>(Action<IVisitPath, TVisitedType> action)
+        public IObjectVisitor CreateFor(object obj, params IVisitor[] visitors)
         {
-            return (path, obj) =>
-            {
-                if (obj is not TVisitedType objToVisit)
-                    return;
-
-                action(path, objToVisit);
-            };
-        }
-
-        public IObjectVisitor CreateFor(object obj)
-        {
-            var visitor = new ObjectVisitor(obj, _actions.ToList());
+            var logger = _loggerFactory.CreateLogger(typeof(ObjectVisitor));
+            var visitor = new ObjectVisitor(logger, obj, visitors);
 
             return visitor;
         }

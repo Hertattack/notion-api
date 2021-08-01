@@ -14,5 +14,10 @@ namespace NotionApi.Rest.Objects
         public string ObjectType { get; set; }
 
         [JsonProperty(PropertyName = "id")] public string Id { get; set; }
+
+        public override string ToString()
+        {
+            return $"{this.GetType().Name} ({this.Id})";
+        }
     }
 }
