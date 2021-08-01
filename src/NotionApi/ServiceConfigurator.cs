@@ -21,6 +21,7 @@ namespace NotionApi
             serviceCollection.AddTransient<JsonConverter, NotionMentionConverter>();
             serviceCollection.AddTransient<JsonConverter, NotionFormulaValueConverter>();
             serviceCollection.AddTransient<JsonConverter, NotionRollupValueConverter>();
+            serviceCollection.AddTransient<JsonConverter, NotionDatabasePropertyConverter>();
             serviceCollection.AddTransient<OptionConverter>();
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NotionApi;
 using NotionApi.Rest.Objects;
+using NotionApi.Rest.Page;
 using NotionApi.Rest.Search;
 using RestUtil;
 using Util.Visitor;
@@ -40,13 +41,16 @@ namespace NotionVisualizer
 
             var visitor = new ObjectVisitor();
             visitor.RegisterAction<NotionObject>(HandleObject);
-            
+
             var distinctPropertyTypes = new HashSet<string>();
-            foreach (var page in result.Results)
+            foreach (var obj in result.Results)
             {
-                foreach (var property in page.Properties.Values)
+                if (obj is PageObject page)
                 {
-                    distinctPropertyTypes.Add(property.Type);
+                    foreach (var property in page.Properties.Values)
+                    {
+                        distinctPropertyTypes.Add(property.Type);
+                    }
                 }
             }
 
@@ -60,7 +64,6 @@ namespace NotionVisualizer
 
         private static void HandleObject(VisitorPath path, NotionObject visitedNode)
         {
-            
         }
 
         private static IServiceProvider CreateServiceProvider(string[] args)

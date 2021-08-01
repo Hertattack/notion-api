@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using NotionApi.Rest.Database;
 using NotionApi.Rest.Objects;
 using NotionApi.Rest.Page;
 using RestUtil.Conversion;
@@ -27,6 +28,8 @@ namespace NotionApi.Util
             {
                 case "page":
                     return new PageObject();
+                case "database":
+                    return new DatabaseObject();
                 default:
                     _logger.LogWarning($"Specific type: '{typeName}' not registered, falling back to {nameof(NotionObject)}.");
                     return new NotionObject();

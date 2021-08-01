@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-using NotionApi.Rest.Page.Properties;
-using NotionApi.Rest.Text;
+﻿using Newtonsoft.Json;
 
 namespace NotionApi.Rest.Objects
 {
@@ -17,13 +14,5 @@ namespace NotionApi.Rest.Objects
         public string ObjectType { get; set; }
 
         [JsonProperty(PropertyName = "id")] public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "archived")]
-        public bool Archived { get; set; }
-
-        [JsonProperty(PropertyName = "properties")]
-        public IDictionary<string, NotionPropertyValue> Properties { get; set; } = new Dictionary<string, NotionPropertyValue>();
-
-        [JsonProperty(PropertyName = "title")] public IList<RichTextObject> Title { get; set; } = new List<RichTextObject>();
     }
 }
