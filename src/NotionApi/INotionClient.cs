@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using NotionApi.Rest.Common;
+using NotionApi.Rest;
 using Util;
 
 namespace NotionApi

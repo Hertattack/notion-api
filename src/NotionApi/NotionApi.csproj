@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Rest\Common\Blocks" />
+      <Folder Include="Rest\Blocks" />
     </ItemGroup>
 
 </Project>

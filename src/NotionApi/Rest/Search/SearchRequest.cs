@@ -1,5 +1,4 @@
-﻿using NotionApi.Rest.Common;
-using NotionApi.Rest.Common.Objects;
+﻿using NotionApi.Rest.Objects;
 using RestUtil.Mapping;
 using RestUtil.Request;
 using RestUtil.Request.Attributes;

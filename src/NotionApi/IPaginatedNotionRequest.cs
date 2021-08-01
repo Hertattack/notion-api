@@ -1,4 +1,4 @@
-﻿using NotionApi.Rest.Common;
+﻿using NotionApi.Rest;
 
 namespace NotionApi
 {

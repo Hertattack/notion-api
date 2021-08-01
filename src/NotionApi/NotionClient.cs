@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NotionApi.Rest.Common;
+using NotionApi.Rest;
 using RestUtil;
 using RestUtil.Request;
 using Util;
