@@ -16,6 +16,7 @@ namespace NotionApi.Cache
         {
             _logger = logger;
             _notionCache = notionCache;
+            Order = 20;
         }
 
         protected override void Visit(VisitPath path, NotionPropertyConfiguration obj)

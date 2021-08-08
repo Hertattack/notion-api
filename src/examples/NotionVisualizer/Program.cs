@@ -44,8 +44,7 @@ namespace NotionVisualizer
 
             var result = response.Value;
             var cache = notionClient.CreateCache();
-            cache.Refresh(result.Results);
-            cache.UpdateNotionObjects(result.Results);
+            cache.UpdateObjects(result.Results);
 
             var distinctPropertyTypes = new HashSet<string>();
             foreach (var obj in result.Results)

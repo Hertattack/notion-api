@@ -44,20 +44,17 @@ namespace NotionApi.Cache
             _updatePropertyValueVisitor = new UpdatePropertyValueConfigurationVisitor(logger, this);
         }
 
-        public void Refresh(IList<NotionObject> notionObjects)
+        public void UpdateObjects(IList<NotionObject> notionObjects)
         {
             Clear();
-            var visitor = _objectVisitorFactory.CreateFor(notionObjects, _objectVisitor, _propertyConfigurationVisitor);
+
+            var visitor = _objectVisitorFactory.CreateFor(notionObjects,
+                _objectVisitor,
+                _propertyConfigurationVisitor,
+                _updateObjectVisitor,
+                _updatePropertyValueVisitor);
+
             visitor.VisitAll();
-        }
-
-        public void UpdateNotionObjects(IList<NotionObject> notionObjects)
-        {
-            var objectUpdateVisitor = _objectVisitorFactory.CreateFor(notionObjects, _updateObjectVisitor);
-            objectUpdateVisitor.VisitAll();
-
-            var propertyUpdateVisitor = _objectVisitorFactory.CreateFor(notionObjects, _updatePropertyValueVisitor);
-            propertyUpdateVisitor.VisitAll();
         }
 
         private void Clear()

@@ -10,21 +10,26 @@ namespace Util.Visitor
     internal class ObjectVisitor : IObjectVisitor
     {
         private readonly ILogger _logger;
-        private readonly IReadOnlyList<IVisitor> _actions;
         private readonly object _root;
+        private List<(VisitPath, object)> _objectsToVisit = null;
+        private readonly IDictionary<int, IReadOnlyList<IVisitor>> _actions = new Dictionary<int, IReadOnlyList<IVisitor>>();
 
         public ObjectVisitor(
             ILogger logger,
             object root,
-            IReadOnlyList<IVisitor> actions)
+            IEnumerable<IVisitor> actions)
         {
             _logger = logger;
-            _actions = actions;
             _root = root;
+
+            foreach (var grouping in actions.GroupBy(a => a.Order))
+                _actions[grouping.Key] = grouping.ToList();
         }
 
         public void VisitAll()
         {
+            _objectsToVisit = new List<(VisitPath, object)>();
+
             var visited = new List<object>();
             if (_root is IEnumerable enumerable)
             {
@@ -33,6 +38,29 @@ namespace Util.Visitor
             }
             else
                 Visit(new VisitPath(_root), _root, visited);
+
+            foreach (var actionOrder in _actions.Keys.OrderBy(v => v))
+                PerformActions(actionOrder);
+
+            _objectsToVisit = null;
+        }
+
+        private void PerformActions(int actionOrder)
+        {
+            foreach (var action in _actions[actionOrder])
+            {
+                foreach (var (path, obj) in _objectsToVisit)
+                {
+                    try
+                    {
+                        action.Visit(path, obj);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error performing action {Action} on node: {Path}", action.GetType().FullName, path.ToString());
+                    }
+                }
+            }
         }
 
         private void Visit(VisitPath path, object obj, List<object> visited)
@@ -47,7 +75,7 @@ namespace Util.Visitor
             if (type.IsPrimitive)
                 return;
 
-            ExecuteActions(path, obj);
+            _objectsToVisit.Add((path, obj));
 
             var properties = type.GetProperties().Where(ShouldVisitProperty);
             VisitPropertyValues(properties, path, obj, visited);
@@ -97,21 +125,6 @@ namespace Util.Visitor
                 var element = dictionary[key];
                 var childPath = path.CreateChild(key.ToString(), key, element);
                 Visit(childPath, element, visited);
-            }
-        }
-
-        private void ExecuteActions(VisitPath path, object obj)
-        {
-            foreach (var action in _actions)
-            {
-                try
-                {
-                    action.Visit(path, obj);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error performing action {Action} on node: {Path}", action.GetType().FullName, path.ToString());
-                }
             }
         }
 
