@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using NotionApi.Rest.Database;
 using NotionApi.Rest.Database.Properties;
@@ -20,6 +21,10 @@ namespace NotionApi.Cache
             new Dictionary<string, Dictionary<string, NotionPropertyConfiguration>>();
 
         private readonly Dictionary<string, ObjectType> _ids = new Dictionary<string, ObjectType>();
+
+        private readonly List<ICacheMiss> _cacheCacheMisses = new List<ICacheMiss>();
+
+        public IEnumerable<ICacheMiss> CacheMisses => _cacheCacheMisses;
 
         private readonly IVisitor _objectVisitor;
         private readonly IVisitor _updateObjectVisitor;
@@ -59,6 +64,7 @@ namespace NotionApi.Cache
 
         private void Clear()
         {
+            _cacheCacheMisses.Clear();
             _databases.Clear();
             _pages.Clear();
             _ids.Clear();
@@ -101,6 +107,9 @@ namespace NotionApi.Cache
             if (_pages.ContainsKey(pageId))
                 return _pages[pageId];
 
+            if (!_cacheCacheMisses.Any(m => m is ObjectReferenceCacheMiss { Type: "page" } objRef && objRef.Id == pageId))
+                _cacheCacheMisses.Add(new ObjectReferenceCacheMiss("page", pageId));
+
             return Option.None;
         }
 
@@ -109,17 +118,38 @@ namespace NotionApi.Cache
             if (_databases.ContainsKey(databaseId))
                 return _databases[databaseId];
 
+            if (!_cacheCacheMisses.Any(m => m is ObjectReferenceCacheMiss { Type: "database" } objRef && objRef.Id == databaseId))
+                _cacheCacheMisses.Add(new ObjectReferenceCacheMiss("database", databaseId));
+
             return Option.None;
         }
 
         public Option<NotionPropertyConfiguration> GetPropertyConfiguration(string databaseId, string propertyId)
         {
             if (!_propertyConfigurations.ContainsKey(databaseId))
+            {
+                var db = GetDatabase(databaseId);
+                if (!_cacheCacheMisses.Any(m =>
+                    m is PropertyConfigurationCacheMiss propConfigRef
+                    && propConfigRef.DatabaseId == databaseId
+                    && propConfigRef.PropertyId == propertyId))
+                    _cacheCacheMisses.Add(new PropertyConfigurationCacheMiss(databaseId, propertyId, dbInCache: db.HasValue));
+
                 return Option.None;
+            }
 
             var databaseProperties = _propertyConfigurations[databaseId];
             if (!databaseProperties.ContainsKey(propertyId))
+            {
+                if (!_cacheCacheMisses.Any(m =>
+                    m is PropertyConfigurationCacheMiss propConfigRef
+                    && propConfigRef.DatabaseId == databaseId
+                    && propConfigRef.PropertyId == propertyId))
+                    _cacheCacheMisses.Add(new PropertyConfigurationCacheMiss(databaseId, propertyId, true));
+
                 return Option.None;
+            }
+
 
             return databaseProperties[propertyId];
         }

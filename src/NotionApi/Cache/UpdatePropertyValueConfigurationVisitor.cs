@@ -53,7 +53,7 @@ namespace NotionApi.Cache
             var propertyConfiguration = _notionCache.GetPropertyConfiguration(parentDatabase.Id, propertyConfigurationId);
             if (!propertyConfiguration.HasValue)
             {
-                _logger.LogWarning(
+                _logger.LogTrace(
                     "Could not find property configuration for id: {PropertyConfigurationId}, in database: {DatabaseId} for page: {PageId}",
                     propertyConfigurationId, parentDatabase.Id, pageObject.Id);
                 return;

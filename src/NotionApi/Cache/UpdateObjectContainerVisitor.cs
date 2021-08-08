@@ -44,7 +44,7 @@ namespace NotionApi.Cache
             var parentPage = _notionCache.GetPage(pageReference.PageId);
             if (!parentPage.HasValue)
             {
-                _logger.LogWarning("Could not find page with id: {PageId} for database: {Path}", pageReference.PageId, path.ToString());
+                _logger.LogTrace("Could not find page with id: {PageId} for database: {Path}", pageReference.PageId, path.ToString());
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace NotionApi.Cache
             var parentDatabase = _notionCache.GetDatabase(databaseReference.DatabaseId);
             if (!parentDatabase.HasValue)
             {
-                _logger.LogWarning("Could not find database with id: {PageId} for page: {Path}", databaseReference.DatabaseId, path.ToString());
+                _logger.LogTrace("Could not find database with id: {PageId} for page: {Path}", databaseReference.DatabaseId, path.ToString());
                 return;
             }
 
@@ -85,7 +85,7 @@ namespace NotionApi.Cache
             var parentPage = _notionCache.GetPage(pageReference.PageId);
             if (!parentPage.HasValue)
             {
-                _logger.LogWarning("Could not find page with id: {PageId} for page: {Path}", pageReference.PageId, path.ToString());
+                _logger.LogTrace("Could not find page with id: {PageId} for page: {Path}", pageReference.PageId, path.ToString());
                 return;
             }
 

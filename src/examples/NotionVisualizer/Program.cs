@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -45,6 +46,13 @@ namespace NotionVisualizer
             var result = response.Value;
             var cache = notionClient.CreateCache();
             cache.UpdateObjects(result.Results);
+
+            if (cache.CacheMisses.Any())
+            {
+                Console.WriteLine("Cache misses:");
+                foreach (var cacheMiss in cache.CacheMisses)
+                    Console.WriteLine(cacheMiss.Description);
+            }
 
             var distinctPropertyTypes = new HashSet<string>();
             foreach (var obj in result.Results)
