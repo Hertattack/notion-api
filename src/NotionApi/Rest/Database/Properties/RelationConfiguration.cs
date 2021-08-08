@@ -5,6 +5,8 @@ namespace NotionApi.Rest.Database.Properties
 {
     public class RelationConfiguration
     {
+        [JsonIgnore] public Option<DatabaseObject> SyncedDatabase { get; set; }
+
         [JsonProperty("database_id")] public string DatabaseId { get; set; }
 
         [JsonProperty("synced_property_name")] public Option<string> SyncedPropertyName { get; set; }

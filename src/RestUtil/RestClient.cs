@@ -78,14 +78,19 @@ namespace RestUtil
 
             StoreJsonData(jsonData);
 
+            var result = DeserializeJson<TResult>(jsonData);
+            return new Response<TResult>(response.StatusCode, result);
+        }
+
+        public TResult DeserializeJson<TResult>(string jsonData)
+        {
             var settings = new JsonSerializerSettings
             {
                 Converters = _serviceProvider.GetServices<JsonConverter>().ToList(),
                 NullValueHandling = NullValueHandling.Ignore
             };
 
-            var result = JsonConvert.DeserializeObject<TResult>(jsonData, settings);
-            return new Response<TResult>(response.StatusCode, result);
+            return JsonConvert.DeserializeObject<TResult>(jsonData, settings);
         }
 
         private void StoreJsonData(string jsonData)
@@ -94,7 +99,7 @@ namespace RestUtil
                 return;
 
             var fileName = Path.ChangeExtension(Path.GetFileName(Path.GetTempFileName()), ".json");
-            var filePath = (string) Path.Combine(_options.StoreJsonResponse, fileName);
+            var filePath = (string)Path.Combine(_options.StoreJsonResponse, fileName);
             try
             {
                 if (!Directory.Exists(_options.StoreJsonResponse))

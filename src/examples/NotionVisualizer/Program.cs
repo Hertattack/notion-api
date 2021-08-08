@@ -4,9 +4,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NotionApi;
+using NotionApi.Rest;
+using NotionApi.Rest.Objects;
 using NotionApi.Rest.Page;
 using NotionApi.Rest.Search;
 using RestUtil;
+using Util;
 
 namespace NotionVisualizer
 {
@@ -26,7 +29,12 @@ namespace NotionVisualizer
 
             var searchRequest = new SearchRequest();
 
-            var response = notionClient.ExecuteRequest(searchRequest).Result;
+            Option<IPaginatedResponse<NotionObject>> response;
+
+            if (args.Length == 1)
+                response = notionClient.ReadFromDisk(searchRequest, args[0]).Result;
+            else
+                response = notionClient.ExecuteRequest(searchRequest).Result;
 
             if (!response.HasValue)
             {

@@ -23,16 +23,24 @@ namespace NotionApi.Cache
             if (!path.Previous.HasValue)
                 return;
 
-            var target = path.Previous.Value.Target;
+            var optionalDatabaseObject = path.FindPrevious<DatabaseObject>();
 
-            if (!(target is DatabaseObject database))
+            if (!optionalDatabaseObject.HasValue)
             {
                 _logger.LogWarning("Unexpected path for property configuration. Did not find database that contains the property following path: {Path}",
                     path.ToString());
                 return;
             }
 
-            _notionCache.RegisterPropertyConfiguration(database.Id, obj);
+            if (obj is RelationPropertyConfiguration relationPropertyConfiguration)
+            {
+                _notionCache.RegisterPropertyConfiguration(
+                    relationPropertyConfiguration.Configuration.DatabaseId,
+                    obj,
+                    relationPropertyConfiguration.Configuration.SyncedPropertyId);
+            }
+
+            _notionCache.RegisterPropertyConfiguration(optionalDatabaseObject.Value.Id, obj);
         }
     }
 }

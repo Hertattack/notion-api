@@ -11,5 +11,6 @@ namespace RestUtil
         string Token { set; }
         void AddDefaultHeader(string name, string value);
         Task<IResponse<TResult>> ExecuteAsync<TResult>(IRequest request);
+        TResult DeserializeJson<TResult>(string jsonData);
     }
 }

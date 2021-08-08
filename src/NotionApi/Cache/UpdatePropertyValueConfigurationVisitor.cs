@@ -24,14 +24,15 @@ namespace NotionApi.Cache
             if (!path.Previous.HasValue || !propertyValue.Id.HasValue)
                 return;
 
-            var parent = path.Previous.Value.Target;
-            if (!(parent is PageObject pageObject))
+            var optionalPageObject = path.FindPrevious<PageObject>();
+            if (!optionalPageObject.HasValue)
             {
                 _logger.LogWarning("Parent for property value with id: {PropertyId} is not a page, this is not expected. Path: {Path}",
-                    propertyValue.Id, path.ToString());
+                    propertyValue.Id.Value, path.ToString());
                 return;
             }
 
+            var pageObject = optionalPageObject.Value;
             propertyValue.Container = pageObject;
 
             if (!pageObject.Container.HasValue)

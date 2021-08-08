@@ -25,17 +25,23 @@ namespace Util.Visitor
 
         public void VisitAll()
         {
+            var visited = new List<object>();
             if (_root is IEnumerable enumerable)
             {
                 foreach (var obj in enumerable)
-                    Visit(new VisitPath(obj), obj);
+                    Visit(new VisitPath(obj), obj, visited);
             }
             else
-                Visit(new VisitPath(_root), _root);
+                Visit(new VisitPath(_root), _root, visited);
         }
 
-        private void Visit(VisitPath path, object obj)
+        private void Visit(VisitPath path, object obj, List<object> visited)
         {
+            if (visited.Contains(obj))
+                return;
+
+            visited.Add(obj);
+
             var type = obj.GetType();
 
             if (type.IsPrimitive)
@@ -44,10 +50,10 @@ namespace Util.Visitor
             ExecuteActions(path, obj);
 
             var properties = type.GetProperties().Where(ShouldVisitProperty);
-            VisitPropertyValues(properties, path, obj);
+            VisitPropertyValues(properties, path, obj, visited);
         }
 
-        private void VisitPropertyValues(IEnumerable<PropertyInfo> properties, VisitPath path, object obj)
+        private void VisitPropertyValues(IEnumerable<PropertyInfo> properties, VisitPath path, object obj, List<object> visited)
         {
             foreach (var property in properties)
             {
@@ -60,18 +66,37 @@ namespace Util.Visitor
                 else
                     value = rawValue;
 
+                if (visited.Contains(value))
+                    return;
+
+                visited.Add(value);
+
                 switch (value)
                 {
                     case null:
                         continue;
+                    case IDictionary dictionary:
+                        var dictionaryPath = path.CreateChild(propertyName, dictionary);
+                        VisitDictionary(dictionaryPath, dictionary, visited);
+                        break;
                     case IEnumerable enumerable:
-                        VisitEnumerableItems(path, enumerable, propertyName);
+                        VisitEnumerableItems(path, enumerable, propertyName, visited);
                         break;
                     default:
                         var nextPath = path.CreateChild(propertyName, value);
-                        Visit(nextPath, value);
+                        Visit(nextPath, value, visited);
                         break;
                 }
+            }
+        }
+
+        private void VisitDictionary(VisitPath path, IDictionary dictionary, List<object> visited)
+        {
+            foreach (var key in dictionary.Keys)
+            {
+                var element = dictionary[key];
+                var childPath = path.CreateChild(key.ToString(), key, element);
+                Visit(childPath, element, visited);
             }
         }
 
@@ -90,13 +115,13 @@ namespace Util.Visitor
             }
         }
 
-        private void VisitEnumerableItems(VisitPath path, IEnumerable enumerable, string propertyName)
+        private void VisitEnumerableItems(VisitPath path, IEnumerable enumerable, string propertyName, List<object> visited)
         {
             var index = 0;
             foreach (var element in enumerable)
             {
                 var nextPath = path.CreateChild(propertyName, index, element);
-                Visit(nextPath, element);
+                Visit(nextPath, element, visited);
 
                 index++;
             }

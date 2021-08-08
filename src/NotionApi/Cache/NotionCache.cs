@@ -21,9 +21,9 @@ namespace NotionApi.Cache
 
         private readonly Dictionary<string, ObjectType> _ids = new Dictionary<string, ObjectType>();
 
-        private readonly IVisitor[] _cacheVisitors;
-
+        private readonly IVisitor _objectVisitor;
         private readonly IVisitor _updateObjectVisitor;
+        private readonly IVisitor _propertyConfigurationVisitor;
         private readonly IVisitor _updatePropertyValueVisitor;
 
         public NotionCache(
@@ -32,16 +32,13 @@ namespace NotionApi.Cache
         {
             _objectVisitorFactory = objectVisitorFactory;
 
-            var logger = loggerFactory.CreateLogger(typeof(NotionCachePropertyConfigurationVisitor));
+            _objectVisitor = new NotionCacheObjectVisitor(this);
 
-            _cacheVisitors = new IVisitor[]
-            {
-                new NotionCacheObjectVisitor(this),
-                new NotionCachePropertyConfigurationVisitor(logger, this)
-            };
-
-            logger = loggerFactory.CreateLogger(typeof(UpdateObjectContainerVisitor));
+            var logger = loggerFactory.CreateLogger(typeof(UpdateObjectContainerVisitor));
             _updateObjectVisitor = new UpdateObjectContainerVisitor(logger, this);
+
+            logger = loggerFactory.CreateLogger(typeof(NotionCachePropertyConfigurationVisitor));
+            _propertyConfigurationVisitor = new NotionCachePropertyConfigurationVisitor(logger, this);
 
             logger = loggerFactory.CreateLogger(typeof(UpdatePropertyValueConfigurationVisitor));
             _updatePropertyValueVisitor = new UpdatePropertyValueConfigurationVisitor(logger, this);
@@ -50,7 +47,7 @@ namespace NotionApi.Cache
         public void Refresh(IList<NotionObject> notionObjects)
         {
             Clear();
-            var visitor = _objectVisitorFactory.CreateFor(notionObjects, _cacheVisitors);
+            var visitor = _objectVisitorFactory.CreateFor(notionObjects, _objectVisitor, _propertyConfigurationVisitor);
             visitor.VisitAll();
         }
 
@@ -87,15 +84,19 @@ namespace NotionApi.Cache
             _databases[database.Id] = database;
         }
 
-        public void RegisterPropertyConfiguration(string databaseId, NotionPropertyConfiguration propertyConfiguration)
+        public void RegisterPropertyConfiguration(string databaseId, NotionPropertyConfiguration propertyConfiguration) =>
+            RegisterPropertyConfiguration(databaseId, propertyConfiguration, Option.None);
+
+        public void RegisterPropertyConfiguration(string databaseId, NotionPropertyConfiguration propertyConfiguration, Option<string> propertyId)
         {
-            if (!propertyConfiguration.Id.HasValue)
+            if (!propertyConfiguration.Id.HasValue && !propertyId.HasValue)
                 return;
 
             if (!_propertyConfigurations.ContainsKey(databaseId))
                 _propertyConfigurations.Add(databaseId, new Dictionary<string, NotionPropertyConfiguration>());
 
-            _propertyConfigurations[databaseId][propertyConfiguration.Id.Value] = propertyConfiguration;
+            var id = propertyId.HasValue ? propertyId.Value : propertyConfiguration.Id.Value;
+            _propertyConfigurations[databaseId][id] = propertyConfiguration;
         }
 
         public Option<PageObject> GetPage(string pageId)
