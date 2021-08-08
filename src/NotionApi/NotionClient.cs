@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using NotionApi.Cache;
 using NotionApi.Rest;
 using RestUtil;
@@ -49,7 +48,7 @@ namespace NotionApi
             IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest, string directory)
         {
             var myRequest = Interlocked.Add(ref _requestNumber, 1);
-            _logger.LogDebug("Performing paginated request {RequestNumber}, reading from disk: {directory}", myRequest, directory);
+            _logger.LogInformation("Performing paginated request {RequestNumber}, reading from disk: {directory}", myRequest, directory);
             IPaginatedResponse<TResult> result = null;
 
             foreach (var file in Directory.GetFiles(directory))
@@ -67,7 +66,7 @@ namespace NotionApi
                 _logger.LogDebug("Finished reading file: {filename}", file);
             }
 
-            _logger.LogDebug("Finished paginated request {RequestNumber}", myRequest);
+            _logger.LogInformation("Finished paginated request {RequestNumber}", myRequest);
             return Option<IPaginatedResponse<TResult>>.From(result);
         }
 
@@ -75,7 +74,7 @@ namespace NotionApi
             IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest)
         {
             var myRequest = Interlocked.Add(ref _requestNumber, 1);
-            _logger.LogDebug("Performing paginated request {RequestNumber}", myRequest);
+            _logger.LogInformation("Performing paginated request {RequestNumber}", myRequest);
 
             var pageNumber = 0;
 
@@ -109,7 +108,7 @@ namespace NotionApi
                 notionRequest.SetStartCursor(nextResultValue.NextCursor);
             }
 
-            _logger.LogDebug("Finished paginated request {RequestNumber}", myRequest);
+            _logger.LogInformation("Finished paginated request {RequestNumber}", myRequest);
             return Option<IPaginatedResponse<TResult>>.From(result);
         }
 
