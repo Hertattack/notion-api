@@ -65,7 +65,7 @@ namespace NotionVisualizer.Util
 
                     if (!context.HasValue)
                     {
-                        values.Add(new CommandLineOptionValue(context, null));
+                        values.Add(new CommandLineOptionValue(context));
                         context = null;
                     }
                 }

@@ -28,10 +28,13 @@
       <None Update="Resources\sigma.js-1.2.1.zip">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Resources\sigma.js-1.2.1-build.zip">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources" />
+      <Folder Include="Excel" />
     </ItemGroup>
 
     <PropertyGroup>

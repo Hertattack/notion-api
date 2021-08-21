@@ -7,7 +7,7 @@ namespace NotionVisualizer.Util
         public string Name { get; set; }
         public bool Required { get; set; }
         public string Description { get; set; }
-        public bool HasValue { get; set; }
+        public bool HasValue { get; set; } = true;
 
         public Option<string> Default { get; set; }
     }
