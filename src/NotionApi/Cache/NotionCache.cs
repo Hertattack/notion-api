@@ -49,7 +49,7 @@ namespace NotionApi.Cache
             _updatePropertyValueVisitor = new UpdatePropertyValueConfigurationVisitor(logger, this);
         }
 
-        public void UpdateObjects(IList<NotionObject> notionObjects)
+        public void Update(IList<NotionObject> notionObjects)
         {
             Clear();
 

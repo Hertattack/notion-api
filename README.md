@@ -6,6 +6,7 @@ This is my tinkering with the [Notion API](https://developers.notion.com/) in C#
 
 My initial goal is to visualize the connections I have made between my notes in a graph. See the [Notion Visualizer](src/examples/NotionVisualizer/README.md) example's readme for more information on this.
 
-Since I like programming I went a bit overboard and did not take the shortest path to the solution but created some libraries and a [Notion API Client](src/NotionApi/README.md) that I can expand as the API gets more functionality. 
+Since I like programming I went a bit overboard and did not take the shortest path to the solution but created some libraries and a [Notion API Client](src/NotionApi/README.md) that I can expand as the API gets more functionality.
+
 
 

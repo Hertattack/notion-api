@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NotionApi.Rest.Page.Properties;
+using NotionApi.Rest.Page.Properties.Relation;
 using RestUtil.Conversion;
 
 namespace NotionApi.Util
@@ -13,15 +14,13 @@ namespace NotionApi.Util
 
         protected override NotionPropertyValue CreateInstance(JObject jObject)
         {
-            return (string) jObject["type"] switch
+            return (string)jObject["type"] switch
             {
                 "created_time" => new CreateTimePropertyValue(),
                 "created_by" => new CreatedByPropertyValue(),
                 "last_edited_time" => new LastEditedPropertyValue(),
                 "last_edited_by" => new LastEditedByPropertyValue(),
-                "relation" => jObject["relation"]?.Type == JTokenType.Array
-                    ? (NotionPropertyValue) new OneToManyRelationPropertyValue()
-                    : new ManyToOneRelationshipPropertyValue(),
+                "relation" => new OneToManyRelationPropertyValue(),
                 "rich_text" => new RichTextPropertyValue(),
                 "title" => new TitlePropertyValue(),
                 "number" => new NumberPropertyValue(),

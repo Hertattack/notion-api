@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Page.Properties
+namespace NotionApi.Rest.Page.Properties.Relation
 {
     public class OneToManyRelationPropertyValue : NotionPropertyValue
     {

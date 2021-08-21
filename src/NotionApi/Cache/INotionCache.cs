@@ -5,7 +5,7 @@ namespace NotionApi.Cache
 {
     public interface INotionCache
     {
-        void UpdateObjects(IList<NotionObject> notionObjects);
+        void Update(IList<NotionObject> notionObjects);
         IEnumerable<ICacheMiss> CacheMisses { get; }
     }
 }
