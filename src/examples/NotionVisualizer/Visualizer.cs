@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using NotionApi;
 using NotionApi.Rest.Search;
+using NotionApi.Util;
 using NotionVisualizer.Generator;
 using NotionVisualizer.Generator.Cytoscape;
 using Util;
@@ -44,7 +45,8 @@ namespace NotionVisualizer
 
             var result = response.Value;
             var cache = _notionClient.CreateCache();
-            cache.Update(result.Results);
+            var results = result.Results.Deduplicate().ToList();
+            cache.Update(results);
 
             if (cache.CacheMisses.Any())
             {
@@ -66,7 +68,7 @@ namespace NotionVisualizer
 
             try
             {
-                _generator.Generate(outputFolder, cache, result.Results);
+                _generator.Generate(outputFolder, cache, results);
             }
             catch (Exception ex)
             {

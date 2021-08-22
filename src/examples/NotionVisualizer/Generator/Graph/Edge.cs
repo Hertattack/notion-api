@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionVisualizer.Generator.Cytoscape.Graph
+namespace NotionVisualizer.Generator.Graph
 {
     public class Edge
     {
