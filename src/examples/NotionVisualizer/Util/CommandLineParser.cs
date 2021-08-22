@@ -89,9 +89,15 @@ namespace NotionVisualizer.Util
         public string GetDescription()
         {
             var stringBuilder = new StringBuilder();
-            foreach (var option in _options)
+            foreach (var option in _options.OrderBy(o => !o.Required).ThenBy(o => o.Name))
             {
-                stringBuilder.Append($"{option.Name} : {option.Description}{Environment.NewLine}");
+                string optionName = null;
+                if (option.Required)
+                    optionName = option.Name;
+                else
+                    optionName = $"[{option.Name}]";
+
+                stringBuilder.Append($"{optionName} : {option.Description}{Environment.NewLine}");
                 if (option.HasValue)
                 {
                     stringBuilder.Append($"\t--{option.Name} <value>{Environment.NewLine}");
