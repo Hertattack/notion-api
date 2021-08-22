@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using NotionApi.Rest.Objects;
 using NotionApi.Rest.Page.Properties;
@@ -20,5 +21,19 @@ namespace NotionApi.Rest.Page
         public IDictionary<string, NotionPropertyValue> Properties { get; set; } = new Dictionary<string, NotionPropertyValue>();
 
         [JsonIgnore] public Option<NotionObject> Container { get; set; }
+
+        [JsonIgnore]
+        public string Title
+        {
+            get
+            {
+                var titleProperty = Properties.Values.OfType<TitlePropertyValue>().FirstOrDefault();
+
+                if (titleProperty?.Title.HasValue == true)
+                    return string.Join(" ", titleProperty.Title.Value.Select(t => t.PlainText));
+
+                return Id;
+            }
+        }
     }
 }

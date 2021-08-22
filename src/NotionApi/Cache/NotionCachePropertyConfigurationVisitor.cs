@@ -33,6 +33,9 @@ namespace NotionApi.Cache
                 return;
             }
 
+            if (!obj.Container.HasValue)
+                obj.Container = optionalDatabaseObject.Value;
+
             if (obj is RelationPropertyConfiguration relationPropertyConfiguration)
             {
                 _notionCache.RegisterPropertyConfiguration(

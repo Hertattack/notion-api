@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NotionApi;
 using NotionApi.Rest.Search;
 using NotionVisualizer.Generator;
+using NotionVisualizer.Generator.Cytoscape;
 using Util;
 
 namespace NotionVisualizer
@@ -37,7 +38,7 @@ namespace NotionVisualizer
 
             if (!response.HasValue)
             {
-                Console.WriteLine("No response received.");
+                _logger.LogInformation("No response received.");
                 return 0;
             }
 
@@ -47,9 +48,9 @@ namespace NotionVisualizer
 
             if (cache.CacheMisses.Any())
             {
-                Console.WriteLine("Cache misses:");
+                _logger.LogDebug("Cache misses");
                 foreach (var cacheMiss in cache.CacheMisses)
-                    Console.WriteLine(cacheMiss.Description);
+                    _logger.LogDebug(cacheMiss.Description);
             }
 
             if (clean)
@@ -60,10 +61,17 @@ namespace NotionVisualizer
                     Directory.Delete(directory, true);
 
                 foreach (var file in Directory.GetFiles(outputFolder))
-                    Directory.Delete(file);
+                    File.Delete(file);
             }
 
-            _generator.Generate(outputFolder, cache, result.Results);
+            try
+            {
+                _generator.Generate(outputFolder, cache, result.Results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating output.");
+            }
 
             _logger.LogInformation("Visualization generation finished to output path: {outputFolder}", outputFolder);
             return 0;
