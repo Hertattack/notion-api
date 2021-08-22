@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NotionApi.Cache;
 using NotionApi.Rest.Database;
+using NotionApi.Rest.Database.Properties;
 using NotionApi.Rest.Objects;
 using NotionApi.Rest.Page;
 using NotionApi.Rest.Page.Properties.Relation;
@@ -40,7 +42,7 @@ namespace NotionVisualizer.Generator.Cytoscape
             File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), Path.Join(outputPath, _cytoscapeJsFileName));
             File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), Path.Join(outputPath, _indexHtmlFileName));
 
-            var data = BuildData(notionObjects);
+            var data = BuildData(cache, notionObjects);
             WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", data);
 
             var configuration = new Configuration
@@ -62,14 +64,23 @@ namespace NotionVisualizer.Generator.Cytoscape
             File.WriteAllText(filePath, stringBuilder.ToString());
         }
 
-        private IEnumerable<object> BuildData(IList<NotionObject> notionObjects)
+        private IEnumerable<object> BuildData(INotionCache notionCache, IList<NotionObject> notionObjects)
         {
             var index = notionObjects.ToDictionary(n => n.Id);
 
             var nodes = new List<Node>();
             var edges = new List<Edge>();
 
-            foreach (var notionPage in notionObjects.OfType<DatabaseObject>())
+            Func<PageObject, bool> nodeFilter = _ => true;
+
+            if (!string.IsNullOrEmpty(_options.NodeSource))
+                nodeFilter = FilterOnSource;
+
+            Func<DatabaseObject, bool> databaseFilter = _ => true;
+            if (!string.IsNullOrEmpty(_options.TagDatabase))
+                databaseFilter = FilterTagDatabase;
+
+            foreach (var notionPage in notionObjects.OfType<DatabaseObject>().Where(databaseFilter))
             {
                 var node = new Node
                 {
@@ -80,7 +91,7 @@ namespace NotionVisualizer.Generator.Cytoscape
                 nodes.Add(node);
             }
 
-            foreach (var notionPage in notionObjects.OfType<PageObject>())
+            foreach (var notionPage in notionObjects.OfType<PageObject>().Where(nodeFilter))
             {
                 var node = new Node
                 {
@@ -105,7 +116,15 @@ namespace NotionVisualizer.Generator.Cytoscape
                     if (property is not OneToManyRelationPropertyValue relationPropertyValue)
                         continue;
 
-                    if (!property.Configuration.HasValue || !property.Configuration.Value.Container.HasValue)
+                    if (!property.Configuration.HasValue || property.Configuration.Value is not RelationPropertyConfiguration relationPropertyConfiguration)
+                        continue;
+
+                    var optionalDatabase = notionCache.GetDatabase(relationPropertyConfiguration.Configuration.DatabaseId);
+
+                    if (!optionalDatabase.HasValue || !databaseFilter(optionalDatabase.Value))
+                        continue;
+
+                    if (!databaseFilter(property.Configuration.Value.Container.Value))
                         continue;
 
                     foreach (var relation in relationPropertyValue.Relations)
@@ -125,6 +144,32 @@ namespace NotionVisualizer.Generator.Cytoscape
             }
 
             return nodes.Cast<object>().Concat(edges);
+        }
+
+        private bool FilterTagDatabase(DatabaseObject databaseObject)
+        {
+            var databaseId = databaseObject.Id.Replace("-", "").ToLowerInvariant();
+
+            if (!string.IsNullOrEmpty(_options.NodeSource) && databaseId.Equals(_options.NodeSource.ToLowerInvariant()))
+                return true;
+
+            return databaseId.Equals(_options.TagDatabase.ToLowerInvariant());
+        }
+
+        private bool FilterOnSource(PageObject pageObject)
+        {
+            if (!pageObject.Container.HasValue)
+                return false;
+
+            var containerId = pageObject.Container.Value.Id.Replace("-", "").ToLowerInvariant();
+
+            if (containerId.Equals(_options.NodeSource.ToLowerInvariant()))
+                return true;
+
+            if (!string.IsNullOrEmpty(_options.TagDatabase))
+                return containerId.Equals(_options.TagDatabase.ToLowerInvariant());
+
+            return false;
         }
     }
 }
