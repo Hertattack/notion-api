@@ -7,7 +7,10 @@ using Microsoft.Extensions.Options;
 using NotionApi;
 using NotionApi.Cache;
 using NotionApi.Rest.Request.Database;
+using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Objects;
+using NotionApi.Rest.Response.Page;
+using NotionApi.Rest.Response.Page.Properties.Relation;
 using NotionVisualizer.Generator;
 using NotionVisualizer.Visualization;
 
@@ -21,6 +24,7 @@ namespace NotionVisualizer
         private readonly NotionVisualizerOptions _options;
 
         private readonly GraphBuilder _graphBuilder;
+        private readonly Dictionary<string, string[]> _edgeDirections;
 
         public Visualizer(
             IOptions<NotionVisualizerOptions> visualizerOptions,
@@ -33,7 +37,33 @@ namespace NotionVisualizer
             _generators = generators.ToList();
             _options = visualizerOptions.Value;
 
-            _graphBuilder = new GraphBuilder(_options.SetParent);
+            _graphBuilder = new GraphBuilder();
+            if (_options.EdgeDirections.Any())
+                _graphBuilder.EdgeFilter = EdgeFilter;
+
+            _edgeDirections = _options.EdgeDirections
+                .GroupBy(e => e.SourceContainer)
+                .ToDictionary(
+                    e => e.Key,
+                    v => v.Select(e => e.TargetContainer).ToArray());
+        }
+
+        private bool EdgeFilter(PageObject page, OneToManyRelationPropertyValue relationPropertyValue)
+        {
+            if (!page.Container.HasValue)
+                return false;
+
+            if (page.Container.Value is not DatabaseObject databaseContainer)
+                return false;
+
+            if (!_edgeDirections.TryGetValue(databaseContainer.Id, out var acceptedTargets))
+                return false;
+
+            if (!relationPropertyValue.Configuration.HasValue || !relationPropertyValue.Configuration.Value.Container.HasValue)
+                return false;
+
+            var container = relationPropertyValue.Configuration.Value.Container.Value;
+            return container.Id != null && acceptedTargets.Any(t => t == container.Id);
         }
 
         public int Execute(string outputFolder, bool clean)

@@ -1,10 +1,13 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NotionVisualizer.Visualization;
+using Edge = NotionVisualizer.Generator.Cytoscape.Model.Edge;
+using Node = NotionVisualizer.Generator.Cytoscape.Model.Node;
 
 namespace NotionVisualizer.Generator.Cytoscape
 {
@@ -34,7 +37,7 @@ namespace NotionVisualizer.Generator.Cytoscape
             File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), Path.Join(outputPath, _cytoscapeJsFileName));
             File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), Path.Join(outputPath, _indexHtmlFileName));
 
-            WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", graph.Nodes.Cast<object>().Concat(graph.Edges));
+            WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", MapGraphToOutputModel(graph));
 
             var configuration = new Configuration
             {
@@ -43,6 +46,17 @@ namespace NotionVisualizer.Generator.Cytoscape
             WriteJavaScriptFile(Path.Join(outputPath, _configurationFileName), "configuration", configuration);
 
             _logger.LogInformation("Generation finished.");
+        }
+
+        private IEnumerable<object> MapGraphToOutputModel(Graph graph)
+        {
+            var nodes = graph.Nodes
+                .Select(n => new Node(n.Id, _options.SetParent ? n.ParentId : null, n.Name) { Classes = { n.Type } });
+
+            var edges = graph.Edges
+                .Select(e => new Edge(e.Id, e.SourceId, e.TargetId));
+
+            return nodes.Cast<object>().Concat(edges);
         }
 
         private void WriteJavaScriptFile(string filePath, string variableName, object data)

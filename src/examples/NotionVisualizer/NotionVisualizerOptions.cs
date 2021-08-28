@@ -8,6 +8,9 @@ namespace NotionVisualizer
 
         public IList<string> UseGenerators { get; set; } = new List<string> { "Cytoscape" };
 
+
+        public IList<EdgeDirection> EdgeDirections { get; set; } = new List<EdgeDirection>();
+
         public bool SetParent { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NotionApi.Cache;
 using NotionApi.Rest.Response.Database;
@@ -11,12 +12,7 @@ namespace NotionVisualizer.Visualization
 {
     public class GraphBuilder
     {
-        private readonly bool _setParent;
-
-        public GraphBuilder(bool setParent)
-        {
-            _setParent = setParent;
-        }
+        public Func<PageObject, OneToManyRelationPropertyValue, bool> EdgeFilter { get; set; } = (_, __) => true;
 
         public Graph Build(INotionCache notionCache, IList<NotionObject> notionObjects)
         {
@@ -31,7 +27,7 @@ namespace NotionVisualizer.Visualization
                 var node = new Node
                 {
                     Id = notionPage.Id,
-                    Classes = { "database" }
+                    Type = "database"
                 };
 
                 nodes.Add(node);
@@ -42,11 +38,11 @@ namespace NotionVisualizer.Visualization
                 var node = new Node
                 {
                     Id = notionPage.Id,
-                    Classes = { "page" },
+                    Type = "page",
                     Name = notionPage.Title
                 };
 
-                if (notionPage.Container.HasValue && _setParent)
+                if (notionPage.Container.HasValue)
                 {
                     var container = notionPage.Container.Value;
                     if (container is DatabaseObject databaseContainer && index.ContainsKey(databaseContainer.Id))
@@ -68,6 +64,9 @@ namespace NotionVisualizer.Visualization
                     var optionalDatabase = notionCache.GetDatabase(relationPropertyConfiguration.Configuration.DatabaseId);
 
                     if (!optionalDatabase.HasValue)
+                        continue;
+
+                    if (!EdgeFilter(notionPage, relationPropertyValue))
                         continue;
 
                     foreach (var relation in relationPropertyValue.Relations)

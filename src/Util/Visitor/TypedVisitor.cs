@@ -1,7 +1,12 @@
-﻿namespace Util.Visitor
+﻿using System;
+
+namespace Util.Visitor
 {
     public abstract class TypedVisitor<TVisitType> : IVisitor
     {
+        public bool WantsToVisit(Type type) =>
+            typeof(TVisitType).IsAssignableFrom(type);
+
         public int Order { get; protected set; } = 0;
 
         public void Visit(VisitPath path, object objToVisit)

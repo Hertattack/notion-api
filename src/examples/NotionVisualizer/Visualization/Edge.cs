@@ -1,20 +1,9 @@
-﻿using Newtonsoft.Json;
-
-namespace NotionVisualizer.Visualization
+﻿namespace NotionVisualizer.Visualization
 {
     public class Edge
     {
-        [JsonIgnore] public string Id { get; set; }
-        [JsonIgnore] public string SourceId { get; set; }
-        [JsonIgnore] public string TargetId { get; set; }
-
-
-        [JsonProperty("data")]
-        public object Data => new
-        {
-            id = Id,
-            source = SourceId,
-            target = TargetId
-        };
+        public string Id { get; set; }
+        public string SourceId { get; set; }
+        public string TargetId { get; set; }
     }
 }

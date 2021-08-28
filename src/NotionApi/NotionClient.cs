@@ -99,7 +99,7 @@ namespace NotionApi
 
             _logger.LogInformation("Performing request {RequestNumber}", myRequest);
             var result = await _restClient.ExecuteAsync<TResult>(request);
-            _logger.LogInformation("Finished paginated request {RequestNumber}", myRequest);
+            _logger.LogInformation("Finished request {RequestNumber}", myRequest);
 
             if (!result.Value.HasValue)
                 return Option.None;
