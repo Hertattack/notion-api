@@ -7,7 +7,7 @@ namespace NotionApi.Cache
 {
     public interface INotionCache
     {
-        void Update(IList<NotionObject> notionObjects);
+        void Update(IEnumerable<NotionObject> notionObjects);
         IEnumerable<ICacheMiss> CacheMisses { get; }
 
         Option<DatabaseObject> GetDatabase(string databaseId);

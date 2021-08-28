@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NotionApi;
 using NotionVisualizer.Generator;
 using NotionVisualizer.Generator.Cytoscape;
+using NotionVisualizer.Generator.Excel;
 using RestUtil;
 
 namespace NotionVisualizer.Util
@@ -37,7 +39,9 @@ namespace NotionVisualizer.Util
         {
             var serviceCollection = new ServiceCollection();
 
+            serviceCollection.Configure<NotionVisualizerOptions>(o => configuration.GetSection(nameof(NotionVisualizer)).Bind(o));
             serviceCollection.Configure<CytoscapeGeneratorOptions>(o => configuration.GetSection(nameof(CytoscapeGenerator)).Bind(o));
+            serviceCollection.Configure<ExcelGeneratorOptions>(o => configuration.GetSection(nameof(ExcelGenerator)).Bind(o));
             serviceCollection.Configure<NotionClientOptions>(o => configuration.GetSection(nameof(NotionClient)).Bind(o));
             serviceCollection.Configure<RestClientOptions>(o => configuration.GetSection(nameof(RestClient)).Bind(o));
 
@@ -54,7 +58,9 @@ namespace NotionVisualizer.Util
 
             serviceCollection.AddTransient<INotionClient, NotionClient>();
 
-            serviceCollection.AddTransient<CytoscapeGenerator>();
+            serviceCollection.AddTransient<IGenerator, CytoscapeGenerator>();
+            serviceCollection.AddTransient<IGenerator, ExcelGenerator>();
+
             serviceCollection.AddTransient<Visualizer>();
 
             return serviceCollection.BuildServiceProvider();

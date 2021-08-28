@@ -11,7 +11,7 @@ namespace RestUtil.Request
     public class Mapper : IMapper
     {
         private readonly Dictionary<Type, IMappingStrategy> _strategies = new();
-
+        
         public object Map(RequestParameter parameter) =>
             parameter.Strategy != null
                 ? Map(parameter.Value, GetCachedMappingStrategy(parameter.Strategy))

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionVisualizer.Generator.Graph
+namespace NotionVisualizer.Visualization
 {
     public class Edge
     {

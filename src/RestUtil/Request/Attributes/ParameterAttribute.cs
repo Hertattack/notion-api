@@ -6,5 +6,13 @@ namespace RestUtil.Request.Attributes
     public class ParameterAttribute : MappingAttribute
     {
         public ParameterType Type = ParameterType.Query;
+
+        public ParameterAttribute()
+        {
+        }
+
+        public ParameterAttribute(string name) : base(name)
+        {
+        }
     }
 }

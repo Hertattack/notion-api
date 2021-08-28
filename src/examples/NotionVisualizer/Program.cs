@@ -21,7 +21,7 @@ namespace NotionVisualizer
 
             var visualizer = serviceProvider.GetService<Visualizer>();
 
-            return visualizer?.Execute(commandLine.OutputPath, commandLine.RequestSourcePath, commandLine.Clean) ?? 2;
+            return visualizer?.Execute(commandLine.OutputPath, commandLine.Clean) ?? 2;
         }
     }
 }

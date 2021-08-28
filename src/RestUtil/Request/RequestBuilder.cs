@@ -41,10 +41,21 @@ namespace RestUtil.Request
             foreach (var parameter in parameters)
             {
                 var mappedValue = _mapper.Map(parameter);
-                if (parameter.Type == ParameterType.Body)
-                    request.Body = mappedValue;
-                else
-                    request.QueryString = mappedValue.ToString();
+                switch (parameter.Type)
+                {
+                    case ParameterType.Body:
+                        request.Body = mappedValue;
+                        break;
+                    case ParameterType.Path:
+                        request.Path = request.Path.Replace($"{{{parameter.Name}}}", parameter.Value.ToString());
+                        break;
+                    case ParameterType.Query:
+                        request.QueryString = mappedValue.ToString();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(parameter.Name,
+                            $"Parameter with name: {parameter.Name} has an unsupported type: {parameter.Type}");
+                }
             }
 
             return request;
@@ -53,7 +64,7 @@ namespace RestUtil.Request
         private static Option<RequestAttribute> GetRequestAttribute(object requestDefinition)
         {
             var type = requestDefinition.GetType();
-            return (RequestAttribute) type.GetCustomAttribute(typeof(RequestAttribute));
+            return (RequestAttribute)type.GetCustomAttribute(typeof(RequestAttribute));
         }
 
         private static IReadOnlyList<RequestParameter> GetParameters(object requestDefinition)
@@ -64,13 +75,14 @@ namespace RestUtil.Request
 
             foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetMethod != null))
             {
-                var parameterAttribute = (ParameterAttribute) property.GetCustomAttribute(typeof(ParameterAttribute));
+                var parameterAttribute = (ParameterAttribute)property.GetCustomAttribute(typeof(ParameterAttribute));
                 if (parameterAttribute is null)
                     continue;
 
                 // ReSharper disable once PossibleNullReferenceException
+                var parameterName = parameterAttribute.Name.HasValue ? parameterAttribute.Name.Value : property.Name;
                 var propertyValue = property.GetMethod.Invoke(requestDefinition, Array.Empty<object>());
-                parameters.Add(new RequestParameter(parameterAttribute.Type, propertyValue) {Strategy = parameterAttribute.Strategy});
+                parameters.Add(new RequestParameter(parameterName, parameterAttribute.Type, propertyValue) { Strategy = parameterAttribute.Strategy });
             }
 
             return parameters;

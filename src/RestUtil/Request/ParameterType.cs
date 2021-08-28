@@ -3,6 +3,7 @@
     public enum ParameterType
     {
         Query,
-        Body
+        Body,
+        Path
     }
 }

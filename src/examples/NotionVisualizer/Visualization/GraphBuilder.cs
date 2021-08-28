@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NotionApi.Cache;
 using NotionApi.Rest.Response.Database;
@@ -8,38 +7,26 @@ using NotionApi.Rest.Response.Objects;
 using NotionApi.Rest.Response.Page;
 using NotionApi.Rest.Response.Page.Properties.Relation;
 
-namespace NotionVisualizer.Generator.Graph
+namespace NotionVisualizer.Visualization
 {
-    public class GraphGenerator
+    public class GraphBuilder
     {
-        private readonly string _nodeSource;
-        private readonly string _tagDatabase;
         private readonly bool _setParent;
 
-        public GraphGenerator(string nodeSource, string tagDatabase, bool setParent)
+        public GraphBuilder(bool setParent)
         {
-            _nodeSource = nodeSource;
-            _tagDatabase = tagDatabase;
             _setParent = setParent;
         }
 
-        public IEnumerable<object> GetGraphData(INotionCache notionCache, IList<NotionObject> notionObjects)
+        public Graph Build(INotionCache notionCache, IList<NotionObject> notionObjects)
         {
+            var graph = new Graph();
             var index = notionObjects.ToDictionary(n => n.Id);
 
-            var nodes = new List<Node>();
-            var edges = new List<Edge>();
+            var nodes = graph.Nodes;
+            var edges = graph.Edges;
 
-            Func<PageObject, bool> nodeFilter = _ => true;
-
-            if (!string.IsNullOrEmpty(_nodeSource))
-                nodeFilter = FilterOnSource;
-
-            Func<DatabaseObject, bool> databaseFilter = _ => true;
-            if (!string.IsNullOrEmpty(_tagDatabase))
-                databaseFilter = FilterTagDatabase;
-
-            foreach (var notionPage in notionObjects.OfType<DatabaseObject>().Where(databaseFilter))
+            foreach (var notionPage in notionObjects.OfType<DatabaseObject>())
             {
                 var node = new Node
                 {
@@ -50,7 +37,7 @@ namespace NotionVisualizer.Generator.Graph
                 nodes.Add(node);
             }
 
-            foreach (var notionPage in notionObjects.OfType<PageObject>().Where(nodeFilter))
+            foreach (var notionPage in notionObjects.OfType<PageObject>())
             {
                 var node = new Node
                 {
@@ -80,10 +67,7 @@ namespace NotionVisualizer.Generator.Graph
 
                     var optionalDatabase = notionCache.GetDatabase(relationPropertyConfiguration.Configuration.DatabaseId);
 
-                    if (!optionalDatabase.HasValue || !databaseFilter(optionalDatabase.Value))
-                        continue;
-
-                    if (!databaseFilter(property.Configuration.Value.Container.Value))
+                    if (!optionalDatabase.HasValue)
                         continue;
 
                     foreach (var relation in relationPropertyValue.Relations)
@@ -102,33 +86,7 @@ namespace NotionVisualizer.Generator.Graph
                 }
             }
 
-            return nodes.Cast<object>().Concat(edges);
-        }
-
-        private bool FilterTagDatabase(DatabaseObject databaseObject)
-        {
-            var databaseId = databaseObject.Id.Replace("-", "").ToLowerInvariant();
-
-            if (!string.IsNullOrEmpty(_nodeSource) && databaseId.Equals(_nodeSource.ToLowerInvariant()))
-                return true;
-
-            return databaseId.Equals(_tagDatabase.ToLowerInvariant());
-        }
-
-        private bool FilterOnSource(PageObject pageObject)
-        {
-            if (!pageObject.Container.HasValue)
-                return false;
-
-            var containerId = pageObject.Container.Value.Id.Replace("-", "").ToLowerInvariant();
-
-            if (containerId.Equals(_nodeSource.ToLowerInvariant()))
-                return true;
-
-            if (!string.IsNullOrEmpty(_tagDatabase))
-                return containerId.Equals(_tagDatabase.ToLowerInvariant());
-
-            return false;
+            return graph;
         }
     }
 }

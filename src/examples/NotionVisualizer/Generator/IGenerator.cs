@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using NotionApi.Cache;
-using NotionApi.Rest.Response.Objects;
-
-namespace NotionVisualizer.Generator
+﻿namespace NotionVisualizer.Generator
 {
     public interface IGenerator
     {
-        void Generate(string outputPath, INotionCache cache, IList<NotionObject> notionObjects);
+        string Name { get; }
+        void Generate(string outputPath, NotionVisualizer.Visualization.Graph graph);
     }
 }

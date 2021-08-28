@@ -10,9 +10,9 @@ namespace NotionApi
     {
         Task<Option<IPaginatedResponse<TResult>>> ExecuteRequest<TResult>(
             IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest);
-
-        Task<Option<IPaginatedResponse<TResult>>> ReadFromDisk<TResult>(
-            IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest, string directory);
+        
+        Task<Option<TResult>> ExecuteRequest<TResult>(
+            INotionRequest<TResult> notionRequest);
 
         INotionCache CreateCache();
     }

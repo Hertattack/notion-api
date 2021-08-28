@@ -7,14 +7,6 @@ namespace NotionVisualizer
 {
     public class CommandLine
     {
-        private static readonly CommandLineOption _sourceOption = new()
-        {
-            Name = "source",
-            Required = false,
-            Description = "The source json files to use instead of sending requests to Notion.",
-            HasValue = true
-        };
-
         private static readonly CommandLineOption _outputOption = new()
         {
             Name = "output",
@@ -31,7 +23,7 @@ namespace NotionVisualizer
             HasValue = false
         };
 
-        private static readonly CommandLineParser _parser = new(_sourceOption, _outputOption, _cleanOption);
+        private static readonly CommandLineParser _parser = new(_outputOption, _cleanOption);
 
         public static string GetDescription() =>
             _parser.GetDescription();
@@ -39,8 +31,6 @@ namespace NotionVisualizer
         public bool IsValid { get; }
 
         public bool Clean { get; }
-
-        public Option<string> RequestSourcePath { get; }
 
         public string OutputPath { get; }
 
@@ -60,8 +50,6 @@ namespace NotionVisualizer
                     Clean = true;
                 else if (optionName == _outputOption.Name)
                     OutputPath = value.Value;
-                else if (optionName == _sourceOption.Name)
-                    RequestSourcePath = value.Value;
             }
         }
 

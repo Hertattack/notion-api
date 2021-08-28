@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NotionApi.Cache;
-using NotionApi.Rest;
 using NotionApi.Rest.Response;
 using RestUtil;
 using RestUtil.Request;
@@ -43,32 +41,6 @@ namespace NotionApi
             _restClient.BaseUri = new Uri(_notionClientOptions.BaseUri);
             _restClient.Token = _notionClientOptions.Token;
             _restClient.AddDefaultHeader("Notion-Version", _notionClientOptions.ApiVersion);
-        }
-
-        public async Task<Option<IPaginatedResponse<TResult>>> ReadFromDisk<TResult>(
-            IPaginatedNotionRequest<PaginatedResponse<TResult>> notionRequest, string directory)
-        {
-            var myRequest = Interlocked.Add(ref _requestNumber, 1);
-            _logger.LogInformation("Performing paginated request {RequestNumber}, reading from disk: {directory}", myRequest, directory);
-            IPaginatedResponse<TResult> result = null;
-
-            foreach (var file in Directory.GetFiles(directory))
-            {
-                _logger.LogDebug("Reading file: {filename}", file);
-                var nextResult = _restClient.DeserializeJson<PaginatedResponse<TResult>>(await File.ReadAllTextAsync(file));
-                if (result is null)
-                    result = nextResult;
-                else if (nextResult != null)
-                {
-                    foreach (var additionalResult in nextResult.Results)
-                        result.Results.Add(additionalResult);
-                }
-
-                _logger.LogDebug("Finished reading file: {filename}", file);
-            }
-
-            _logger.LogInformation("Finished paginated request {RequestNumber}", myRequest);
-            return Option<IPaginatedResponse<TResult>>.From(result);
         }
 
         public async Task<Option<IPaginatedResponse<TResult>>> ExecuteRequest<TResult>(
@@ -120,11 +92,14 @@ namespace NotionApi
             return new NotionCache(objectVisitorFactory, loggerFactory);
         }
 
-        private async Task<Option<TResult>> ExecuteRequest<TResult>(INotionRequest<TResult> notionRequest)
+        public async Task<Option<TResult>> ExecuteRequest<TResult>(INotionRequest<TResult> notionRequest)
         {
+            var myRequest = Interlocked.Add(ref _requestNumber, 1);
             var request = _requestBuilder.BuildRequest(notionRequest);
 
+            _logger.LogInformation("Performing request {RequestNumber}", myRequest);
             var result = await _restClient.ExecuteAsync<TResult>(request);
+            _logger.LogInformation("Finished paginated request {RequestNumber}", myRequest);
 
             if (!result.Value.HasValue)
                 return Option.None;

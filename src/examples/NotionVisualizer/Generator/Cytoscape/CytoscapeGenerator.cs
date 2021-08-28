@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using NotionApi.Cache;
-using NotionApi.Rest.Response.Objects;
-using NotionVisualizer.Generator.Graph;
+using NotionVisualizer.Visualization;
 
 namespace NotionVisualizer.Generator.Cytoscape
 {
-    public class CytoscapeGenerator : IGenerator
+    public class CytoscapeGenerator : BaseGenerator
     {
         private const string _cytoscapeJsFileName = "cytoscape.min.js";
         private const string _indexHtmlFileName = "index.html";
@@ -20,7 +18,6 @@ namespace NotionVisualizer.Generator.Cytoscape
 
         private readonly ILogger<CytoscapeGenerator> _logger;
         private readonly CytoscapeGeneratorOptions _options;
-        private readonly GraphGenerator _graphGenerator;
 
         public CytoscapeGenerator(
             ILogger<CytoscapeGenerator> logger,
@@ -28,18 +25,16 @@ namespace NotionVisualizer.Generator.Cytoscape
         {
             _logger = logger;
             _options = options.Value;
-            _graphGenerator = new GraphGenerator(_options.NodeSource, _options.TagDatabase, _options.SetParent);
         }
 
-        public void Generate(string outputPath, INotionCache cache, IList<NotionObject> notionObjects)
+        public override void Generate(string outputPath, Graph graph)
         {
             _logger.LogInformation("Generation Cytoscape output to path: {outputPath}", outputPath);
 
             File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), Path.Join(outputPath, _cytoscapeJsFileName));
             File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), Path.Join(outputPath, _indexHtmlFileName));
 
-            var data = _graphGenerator.GetGraphData(cache, notionObjects);
-            WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", data);
+            WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", graph.Nodes.Cast<object>().Concat(graph.Edges));
 
             var configuration = new Configuration
             {
