@@ -24,7 +24,7 @@ namespace NotionVisualizer
         private readonly NotionVisualizerOptions _options;
 
         private readonly GraphBuilder _graphBuilder;
-        private readonly Dictionary<string, string[]> _edgeDirections;
+        private readonly Dictionary<string, EdgeDirection[]> _edgeDirections;
 
         public Visualizer(
             IOptions<NotionVisualizerOptions> visualizerOptions,
@@ -37,7 +37,8 @@ namespace NotionVisualizer
             _generators = generators.ToList();
             _options = visualizerOptions.Value;
 
-            _graphBuilder = new GraphBuilder();
+            _graphBuilder = new GraphBuilder { NodeFilter = NodeFilter };
+
             if (_options.EdgeDirections.Any())
                 _graphBuilder.EdgeFilter = EdgeFilter;
 
@@ -45,11 +46,17 @@ namespace NotionVisualizer
                 .GroupBy(e => e.SourceContainer)
                 .ToDictionary(
                     e => e.Key,
-                    v => v.Select(e => e.TargetContainer).ToArray());
+                    v => v.Select(ed => ed).ToArray());
         }
 
-        private bool EdgeFilter(PageObject page, OneToManyRelationPropertyValue relationPropertyValue)
+        private static bool NodeFilter(NotionObject node) =>
+            node is PageObject;
+
+        private bool EdgeFilter(NotionObject source, string propertyName, OneToManyRelationPropertyValue relationPropertyValue)
         {
+            if (source is not PageObject page)
+                return false;
+
             if (!page.Container.HasValue)
                 return false;
 
@@ -63,7 +70,10 @@ namespace NotionVisualizer
                 return false;
 
             var container = relationPropertyValue.Configuration.Value.Container.Value;
-            return container.Id != null && acceptedTargets.Any(t => t == container.Id);
+            return container.Id != null
+                   && acceptedTargets.Any(ed =>
+                       ed.TargetContainer == container.Id
+                       && (ed.PropertyName is null || ed.PropertyName == propertyName));
         }
 
         public int Execute(string outputFolder, bool clean)

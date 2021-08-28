@@ -12,7 +12,8 @@ namespace NotionVisualizer.Visualization
 {
     public class GraphBuilder
     {
-        public Func<PageObject, OneToManyRelationPropertyValue, bool> EdgeFilter { get; set; } = (_, __) => true;
+        public Func<PageObject, string, OneToManyRelationPropertyValue, bool> EdgeFilter { get; set; } = (_, __, ___) => true;
+        public Func<NotionObject, bool> NodeFilter { get; set; } = _ => true;
 
         public Graph Build(INotionCache notionCache, IList<NotionObject> notionObjects)
         {
@@ -22,12 +23,18 @@ namespace NotionVisualizer.Visualization
             var nodes = graph.Nodes;
             var edges = graph.Edges;
 
-            foreach (var notionPage in notionObjects.OfType<DatabaseObject>())
+            foreach (var notionDatabase in notionObjects.OfType<DatabaseObject>())
             {
+                if (!NodeFilter(notionDatabase))
+                    continue;
+
                 var node = new Node
                 {
-                    Id = notionPage.Id,
-                    Type = "database"
+                    Id = notionDatabase.Id,
+                    Type = "database",
+                    Name = notionDatabase.Title.HasValue
+                        ? string.Join(" ", notionDatabase.Title.Value.Select(t => t.PlainText))
+                        : notionDatabase.Id
                 };
 
                 nodes.Add(node);
@@ -35,6 +42,9 @@ namespace NotionVisualizer.Visualization
 
             foreach (var notionPage in notionObjects.OfType<PageObject>())
             {
+                if (!NodeFilter(notionPage))
+                    continue;
+
                 var node = new Node
                 {
                     Id = notionPage.Id,
@@ -66,7 +76,7 @@ namespace NotionVisualizer.Visualization
                     if (!optionalDatabase.HasValue)
                         continue;
 
-                    if (!EdgeFilter(notionPage, relationPropertyValue))
+                    if (!EdgeFilter(notionPage, propertyName, relationPropertyValue))
                         continue;
 
                     foreach (var relation in relationPropertyValue.Relations)

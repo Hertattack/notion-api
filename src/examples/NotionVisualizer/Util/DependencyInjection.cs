@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,10 +22,10 @@ namespace NotionVisualizer.Util
         {
             var configurationBuilder = new ConfigurationBuilder();
 
-            configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
             if (IsDebug)
                 configurationBuilder.AddJsonFile("appsettings.Debug.json", optional: true, reloadOnChange: true);
+            else
+                configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             IConfiguration configuration = configurationBuilder
                 .AddEnvironmentVariables()
