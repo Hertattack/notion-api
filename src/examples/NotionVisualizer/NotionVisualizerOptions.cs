@@ -11,6 +11,6 @@ namespace NotionVisualizer
 
         public IList<EdgeDirection> EdgeDirections { get; set; } = new List<EdgeDirection>();
 
-        public bool SetParent { get; set; }
+        public bool FilterNodesWithNoEdges { get; set; }
     }
 }

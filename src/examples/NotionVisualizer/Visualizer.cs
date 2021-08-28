@@ -8,6 +8,7 @@ using NotionApi;
 using NotionApi.Cache;
 using NotionApi.Rest.Request.Database;
 using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Objects;
 using NotionApi.Rest.Response.Page;
 using NotionApi.Rest.Response.Page.Properties.Relation;
@@ -66,13 +67,16 @@ namespace NotionVisualizer
             if (!_edgeDirections.TryGetValue(databaseContainer.Id, out var acceptedTargets))
                 return false;
 
-            if (!relationPropertyValue.Configuration.HasValue || !relationPropertyValue.Configuration.Value.Container.HasValue)
+            if (!relationPropertyValue.Configuration.HasValue)
                 return false;
 
-            var container = relationPropertyValue.Configuration.Value.Container.Value;
-            return container.Id != null
+            if (relationPropertyValue.Configuration.Value is not RelationPropertyConfiguration relationPropertyConfiguration)
+                return false;
+
+            var containerId = relationPropertyConfiguration.Configuration.DatabaseId;
+            return containerId != null
                    && acceptedTargets.Any(ed =>
-                       ed.TargetContainer == container.Id
+                       ed.TargetContainer == containerId
                        && (ed.PropertyName is null || ed.PropertyName == propertyName));
         }
 
@@ -88,6 +92,13 @@ namespace NotionVisualizer
             _logger.LogInformation("Building graph for {nrOfObject} objects.", notionObjectsToVisualize.Count);
             var graph = _graphBuilder.Build(cache, notionObjectsToVisualize);
             _logger.LogInformation("Done building graph");
+
+            if (_options.FilterNodesWithNoEdges)
+            {
+                var referencedIds = graph.Edges.SelectMany(e => new[] { e.SourceId, e.TargetId }).ToHashSet();
+                foreach (var nodeWithoutEdges in graph.Nodes.Where(n => !referencedIds.Contains(n.Id)).ToList())
+                    graph.Nodes.Remove(nodeWithoutEdges);
+            }
 
             GenerateOutput(outputFolder, graph);
 
