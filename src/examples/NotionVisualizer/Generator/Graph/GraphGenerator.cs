@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using NotionApi.Cache;
-using NotionApi.Rest.Database;
-using NotionApi.Rest.Database.Properties;
-using NotionApi.Rest.Objects;
-using NotionApi.Rest.Page;
-using NotionApi.Rest.Page.Properties.Relation;
+using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Database.Properties;
+using NotionApi.Rest.Response.Objects;
+using NotionApi.Rest.Response.Page;
+using NotionApi.Rest.Response.Page.Properties.Relation;
 
 namespace NotionVisualizer.Generator.Graph
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NotionApi.Rest.Page.Properties.Rollup;
+using NotionApi.Rest.Response.Page.Properties.Rollup;
 using RestUtil.Conversion;
 
 namespace NotionApi.Util

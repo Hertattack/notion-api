@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using NotionApi.Rest.Database;
-using NotionApi.Rest.Database.Properties;
-using NotionApi.Rest.Objects;
-using NotionApi.Rest.Page;
+using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Database.Properties;
+using NotionApi.Rest.Response.Objects;
+using NotionApi.Rest.Response.Page;
 using Util;
 using Util.Visitor;
 

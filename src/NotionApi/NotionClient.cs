@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NotionApi.Cache;
 using NotionApi.Rest;
+using NotionApi.Rest.Response;
 using RestUtil;
 using RestUtil.Request;
 using Util;

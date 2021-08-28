@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using NotionApi.Cache;
-using NotionApi.Rest.Objects;
+using NotionApi.Rest.Response.Objects;
 
 namespace NotionVisualizer.Generator
 {

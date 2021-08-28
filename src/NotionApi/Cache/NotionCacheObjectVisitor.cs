@@ -1,6 +1,6 @@
-﻿using NotionApi.Rest.Database;
-using NotionApi.Rest.Objects;
-using NotionApi.Rest.Page;
+﻿using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Objects;
+using NotionApi.Rest.Response.Page;
 using Util.Visitor;
 
 namespace NotionApi.Cache

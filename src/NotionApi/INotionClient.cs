@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using NotionApi.Cache;
 using NotionApi.Rest;
+using NotionApi.Rest.Response;
 using Util;
 
 namespace NotionApi

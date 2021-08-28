@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using NotionApi.Rest.Database;
-using NotionApi.Rest.Database.Properties;
+using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Database.Properties;
 using Util.Visitor;
 
 namespace NotionApi.Cache

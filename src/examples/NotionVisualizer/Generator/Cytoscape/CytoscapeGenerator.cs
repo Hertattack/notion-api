@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NotionApi.Cache;
-using NotionApi.Rest.Objects;
+using NotionApi.Rest.Response.Objects;
 using NotionVisualizer.Generator.Graph;
 
 namespace NotionVisualizer.Generator.Cytoscape

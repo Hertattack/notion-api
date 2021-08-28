@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using NotionApi.Rest.Database;
-using NotionApi.Rest.Objects;
+using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Objects;
 using Util;
 
 namespace NotionApi.Cache

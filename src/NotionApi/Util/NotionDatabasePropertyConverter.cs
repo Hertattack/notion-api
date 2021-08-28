@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NotionApi.Rest.Database.Properties;
+using NotionApi.Rest.Response.Database.Properties;
 using RestUtil.Conversion;
 
 namespace NotionApi.Util

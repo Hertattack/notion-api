@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using NotionApi;
-using NotionApi.Rest.Search;
+using NotionApi.Rest.Request.Search;
 using NotionApi.Util;
 using NotionVisualizer.Generator;
 using NotionVisualizer.Generator.Cytoscape;

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NotionApi.Rest.Reference;
+using NotionApi.Rest.Response.Reference;
 using RestUtil.Conversion;
 
 namespace NotionApi.Util

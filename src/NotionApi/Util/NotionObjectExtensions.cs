@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NotionApi.Rest.Objects;
+using NotionApi.Rest.Response.Objects;
 
 namespace NotionApi.Util
 {

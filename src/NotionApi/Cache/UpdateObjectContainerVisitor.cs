@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using NotionApi.Rest.Database;
-using NotionApi.Rest.Objects;
-using NotionApi.Rest.Page;
-using NotionApi.Rest.Reference;
+using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Objects;
+using NotionApi.Rest.Response.Page;
+using NotionApi.Rest.Response.Reference;
 using Util;
 using Util.Visitor;
 

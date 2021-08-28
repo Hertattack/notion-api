@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using NotionApi.Rest.Database;
-using NotionApi.Rest.Page;
-using NotionApi.Rest.Page.Properties;
+using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Page;
+using NotionApi.Rest.Response.Page.Properties;
 using Util;
 using Util.Visitor;
 
