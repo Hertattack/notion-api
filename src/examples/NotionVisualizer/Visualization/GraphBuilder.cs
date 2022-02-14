@@ -54,7 +54,8 @@ namespace NotionVisualizer.Visualization
                 {
                     Id = notionPage.Id,
                     Type = type,
-                    Name = notionPage.Title
+                    Name = notionPage.Title,
+                    NotionUrl = notionPage.Url
                 };
 
                 if (notionPage.Container.HasValue)
@@ -92,7 +93,8 @@ namespace NotionVisualizer.Visualization
                         var edge = new Edge
                         {
                             SourceId = notionPage.Id,
-                            TargetId = relation.Id
+                            TargetId = relation.Id,
+                            PropertyName = propertyName
                         };
 
                         edges.Add(edge);

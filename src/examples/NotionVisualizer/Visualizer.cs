@@ -38,7 +38,7 @@ namespace NotionVisualizer
             _generators = generators.ToList();
             _options = visualizerOptions.Value;
 
-            _graphBuilder = new GraphBuilder { NodeFilter = NodeFilter };
+            _graphBuilder = new GraphBuilder();
 
             if (_options.EdgeDirections.Any())
                 _graphBuilder.EdgeFilter = EdgeFilter;
