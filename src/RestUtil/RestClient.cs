@@ -95,7 +95,7 @@ namespace RestUtil
 
         private void StoreJsonData(string jsonData)
         {
-            if (_options.StoreJsonResponse == null)
+            if (_options.StoreJsonResponse == null || string.IsNullOrEmpty(_options.StoreJsonResponse))
                 return;
 
             var fileName = Path.ChangeExtension(Path.GetFileName(Path.GetTempFileName()), ".json");

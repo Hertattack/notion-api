@@ -32,10 +32,15 @@ namespace NotionVisualizer.Generator.Cytoscape
 
         public override void Generate(string outputPath, Graph graph)
         {
-            _logger.LogInformation("Generation Cytoscape output to path: {outputPath}", outputPath);
+            _logger.LogInformation("Generating Cytoscape output to path: {outputPath}", outputPath);
 
-            File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), Path.Join(outputPath, _cytoscapeJsFileName));
-            File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), Path.Join(outputPath, _indexHtmlFileName));
+            var jsFileName = Path.Join(outputPath, _cytoscapeJsFileName);
+            if(!File.Exists(jsFileName))
+                File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), jsFileName);
+
+            var indexHtmlFileName = Path.Join(outputPath, _indexHtmlFileName);
+            if(!File.Exists(indexHtmlFileName))
+                File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), indexHtmlFileName);
 
             WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", MapGraphToOutputModel(graph));
 

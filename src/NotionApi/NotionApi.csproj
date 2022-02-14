@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <RootNamespace>NotionApi</RootNamespace>
-        <TargetFrameworks>net5.0</TargetFrameworks>
-        <LangVersion>8</LangVersion>
+        <LangVersion>10</LangVersion>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

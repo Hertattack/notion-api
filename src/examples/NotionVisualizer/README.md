@@ -1,3 +1,3 @@
 # Notion Graph Visualization
 
-This example uses [Cytoscaope](https://js.cytoscape.org/).
+This example uses [Cytoscape](https://js.cytoscape.org/).
