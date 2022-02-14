@@ -45,10 +45,15 @@ namespace NotionVisualizer.Visualization
                 if (!NodeFilter(notionPage))
                     continue;
 
+                var type = "page";
+                if (notionPage.Container.HasValue 
+                    && notionPage.Container.Value is DatabaseObject {Title.HasValue: true} database)
+                    type = string.Join(" ", database.Title.Value.Select(t => t.PlainText));
+                
                 var node = new Node
                 {
                     Id = notionPage.Id,
-                    Type = "page",
+                    Type = type,
                     Name = notionPage.Title
                 };
 
