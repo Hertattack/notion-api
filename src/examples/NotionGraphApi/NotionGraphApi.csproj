@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="sly" Version="2.8.0.5" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+        <PackageReference Include="sly" Version="2.8.0.5"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NotionGraphDatabase\NotionGraphDatabase.csproj" />
+        <ProjectReference Include="..\NotionGraphDatabase\NotionGraphDatabase.csproj"/>
     </ItemGroup>
 
 </Project>

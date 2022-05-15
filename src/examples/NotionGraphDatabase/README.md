@@ -4,8 +4,8 @@
 
 ```
 // Give me all books with tag with title Leadership and their tags.
-
-(tags{Title:"Leadership"})-[book]->(b:books)-[tag]->(tb:tags)
+tags-[book]->books
+(tags{Title:"Leadership"})-[book]>(b:books)-[tag]>(tb:tags)
 RETURN b.*, tb.*
 ```
 

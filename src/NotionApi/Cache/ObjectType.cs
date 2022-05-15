@@ -1,8 +1,7 @@
-﻿namespace NotionApi.Cache
+﻿namespace NotionApi.Cache;
+
+public enum ObjectType
 {
-    public enum ObjectType
-    {
-        Page=1,
-        Database=2
-    }
+    Page = 1,
+    Database = 2
 }

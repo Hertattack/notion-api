@@ -1,7 +1,6 @@
-﻿namespace NotionApi.Cache
+﻿namespace NotionApi.Cache;
+
+public interface ICacheMiss
 {
-    public interface ICacheMiss
-    {
-        string Description { get; }
-    }
+    string Description { get; }
 }

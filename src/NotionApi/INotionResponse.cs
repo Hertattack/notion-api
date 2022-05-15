@@ -1,9 +1,8 @@
 ﻿using Util;
 
-namespace NotionApi
+namespace NotionApi;
+
+public interface INotionResponse<TResult>
 {
-    public interface INotionResponse<TResult>
-    {
-        Option<TResult> Result { get; }
-    }
+    Option<TResult> Result { get; }
 }

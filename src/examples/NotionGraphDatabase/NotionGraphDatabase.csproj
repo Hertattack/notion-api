@@ -7,15 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Storage" />
+        <Folder Include="Storage" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\NotionApi\NotionApi.csproj" />
+        <ProjectReference Include="..\..\NotionApi\NotionApi.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="sly" Version="2.8.0.5" />
+        <PackageReference Include="sly" Version="2.8.0.5" />
     </ItemGroup>
 
 </Project>

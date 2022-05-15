@@ -3,30 +3,29 @@ using NotionApi.Rest.Response.Objects;
 using NotionApi.Rest.Response.Page;
 using Util.Visitor;
 
-namespace NotionApi.Cache
+namespace NotionApi.Cache;
+
+internal class NotionCacheObjectVisitor : TypedVisitor<NotionObject>
 {
-    internal class NotionCacheObjectVisitor : TypedVisitor<NotionObject>
+    private readonly NotionCache _notionCache;
+
+    public NotionCacheObjectVisitor(NotionCache notionCache)
     {
-        private readonly NotionCache _notionCache;
+        _notionCache = notionCache;
+    }
 
-        public NotionCacheObjectVisitor(NotionCache notionCache)
+    protected override void Visit(VisitPath path, NotionObject obj)
+    {
+        switch (obj)
         {
-            _notionCache = notionCache;
-        }
-
-        protected override void Visit(VisitPath path, NotionObject obj)
-        {
-            switch (obj)
-            {
-                case PageObject page:
-                    _notionCache.RegisterPage(page);
-                    break;
-                case DatabaseObject database:
-                    _notionCache.RegisterDatabase(database);
-                    break;
-                default:
-                    break;
-            }
+            case PageObject page:
+                _notionCache.RegisterPage(page);
+                break;
+            case DatabaseObject database:
+                _notionCache.RegisterDatabase(database);
+                break;
+            default:
+                break;
         }
     }
 }

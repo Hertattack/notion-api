@@ -1,6 +1,5 @@
 ﻿namespace NotionGraphDatabase.QueryEngine.Model;
 
-public interface QueryAST
+public interface IQueryAst
 {
-    
 }

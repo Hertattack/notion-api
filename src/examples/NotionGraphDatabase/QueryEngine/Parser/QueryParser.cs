@@ -4,22 +4,56 @@ using sly.parser.generator;
 
 namespace NotionGraphDatabase.QueryEngine.Parser;
 
-public class QueryParser
+internal class QueryParser
 {
-    [Production("nodeClassReference: LPAREN IDENTIFIER COLON IDENTIFIER RPAREN")]
-    public QueryAST NodeClassReferenceExpression(
+    [Production("query: selectExpression returnSpecification")]
+    public IQueryAst QueryExpression(SelectExpression selectExpression, ReturnSpecification returnSpecification)
+    {
+        return new Model.QueryAbstractSyntaxTree(selectExpression, returnSpecification);
+    }
+
+    [Production("returnSpecification: RETURN propertySelector")]
+    public IQueryAst ReturnSpecification(Token<QueryToken> returnStatement, PropertySelector selector)
+    {
+        return new ReturnSpecification(selector);
+    }
+
+    [Production("propertySelector: identifier OBJECT_ACCESS ALL_PROPERTIES")]
+    public IQueryAst PropertySelector(Identifier identifier, Token<QueryToken> objectAccessToken,
+        Token<QueryToken> allPropertiesToken)
+    {
+        return new SelectAllProperties(identifier);
+    }
+
+    [Production("selectExpression: nodeClassReference")]
+    public IQueryAst SelectExpression(SelectExpression selectExpression)
+    {
+        return selectExpression;
+    }
+
+    [Production("nodeClassReference: LPAREN identifier RPAREN")]
+    public IQueryAst NodeClassReferenceExpression(
         Token<QueryToken> discardLparen,
-        Token<QueryToken> alias,
-        Token<QueryToken> discardColon,
-        Token<QueryToken> tableIdentifier,
+        Identifier tableIdentifier,
         Token<QueryToken> discardRparen)
     {
-        return new NodeClassReference();
+        return new NodeClassReference(tableIdentifier);
     }
-    
-    [Production("primary: IDENTIFIER")]
-    public QueryAST PrimaryIdentifier(Token<QueryToken> identifierToken)
+
+    [Production("nodeClassReference: LPAREN identifier COLON identifier RPAREN")]
+    public IQueryAst NodeClassReferenceExpression(
+        Token<QueryToken> discardLparen,
+        Identifier alias,
+        Token<QueryToken> discardColon,
+        Identifier tableIdentifier,
+        Token<QueryToken> discardRparen)
     {
-        return new Identifier();
+        return new NodeClassReference(tableIdentifier, alias);
+    }
+
+    [Production("identifier: IDENTIFIER")]
+    public IQueryAst Identifier(Token<QueryToken> identifierToken)
+    {
+        return new Identifier(identifierToken.Value);
     }
 }

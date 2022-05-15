@@ -1,6 +1,5 @@
-﻿namespace NotionApi
+﻿namespace NotionApi;
+
+public interface INotionRequest<TResult>
 {
-    public interface INotionRequest<TResult>
-    {
-    }
 }
