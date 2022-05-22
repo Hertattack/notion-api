@@ -8,4 +8,8 @@ internal class ReturnSpecification : IQueryAst
     {
         Selector = selector;
     }
+
+    protected ReturnSpecification()
+    {
+    }
 }

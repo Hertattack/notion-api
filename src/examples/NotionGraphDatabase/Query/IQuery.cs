@@ -2,5 +2,5 @@
 
 public interface IQuery
 {
-    
+    IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections { get; }
 }

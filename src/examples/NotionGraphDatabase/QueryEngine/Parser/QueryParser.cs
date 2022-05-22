@@ -6,10 +6,17 @@ namespace NotionGraphDatabase.QueryEngine.Parser;
 
 internal class QueryParser
 {
+    [Production("query: selectExpression")]
+    public IQueryAst QueryExpression(SelectExpression selectExpression)
+    {
+        var returnSpecification = new ReturnAllSpecification();
+        return new QueryAbstractSyntaxTree(selectExpression, returnSpecification);
+    }
+
     [Production("query: selectExpression returnSpecification")]
     public IQueryAst QueryExpression(SelectExpression selectExpression, ReturnSpecification returnSpecification)
     {
-        return new Model.QueryAbstractSyntaxTree(selectExpression, returnSpecification);
+        return new QueryAbstractSyntaxTree(selectExpression, returnSpecification);
     }
 
     [Production("returnSpecification: RETURN propertySelector")]

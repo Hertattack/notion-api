@@ -6,6 +6,9 @@ internal class QueryImplementation : IQuery
 {
     private Dictionary<NodeReference, List<NodePropertySelection>> _selectedProperties = new();
 
+    public IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections =>
+        _selectedProperties.Select(kvp => new NodeReturnPropertySelection(kvp.Key, kvp.Value.AsReadOnly()));
+
     public QueryImplementation(QueryPath queryPath)
     {
         SelectionPath = queryPath;
