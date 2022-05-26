@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Util;
 
-namespace NotionApi.Rest.Response.Page.Properties
+namespace NotionApi.Rest.Response.Page.Properties;
+
+public class SelectPropertyValue : NotionPropertyValue
 {
-    public class SelectPropertyValue : NotionPropertyValue
-    {
-        [JsonProperty(PropertyName = "options")]
-        public Option<SelectOptionValue> SelectedOption { get; set; }
-    }
+    [JsonProperty(PropertyName = "options")]
+    public Option<SelectOptionValue> SelectedOption { get; set; }
 }

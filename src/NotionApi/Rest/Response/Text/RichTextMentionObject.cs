@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Text
+namespace NotionApi.Rest.Response.Text;
+
+public class RichTextMentionObject : RichTextObject
 {
-    public class RichTextMentionObject : RichTextObject
-    {
-        [JsonProperty("mention")] public Mention.Mention Mention { get; set; }
-    }
+    [JsonProperty("mention")] public Mention.Mention Mention { get; set; }
 }

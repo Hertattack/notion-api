@@ -2,23 +2,22 @@
 using System.Linq;
 using NotionApi.Rest.Response.Objects;
 
-namespace NotionApi.Util
+namespace NotionApi.Util;
+
+public static class NotionObjectExtensions
 {
-    public static class NotionObjectExtensions
+    public static IEnumerable<NotionObject> Deduplicate(this IEnumerable<NotionObject> notionObjects)
     {
-        public static IEnumerable<NotionObject> Deduplicate(this IEnumerable<NotionObject> notionObjects)
+        var identifiers = new HashSet<string>();
+
+        return notionObjects.Where(n =>
         {
-            var identifiers = new HashSet<string>();
+            if (identifiers.Contains(n.Id))
+                return false;
 
-            return notionObjects.Where(n =>
-            {
-                if (identifiers.Contains(n.Id))
-                    return false;
+            identifiers.Add(n.Id);
 
-                identifiers.Add(n.Id);
-
-                return true;
-            });
-        }
+            return true;
+        });
     }
 }

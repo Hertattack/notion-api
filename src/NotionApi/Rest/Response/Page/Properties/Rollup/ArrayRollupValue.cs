@@ -2,10 +2,9 @@
 using Newtonsoft.Json;
 using Util;
 
-namespace NotionApi.Rest.Response.Page.Properties.Rollup
+namespace NotionApi.Rest.Response.Page.Properties.Rollup;
+
+public class ArrayRollupValue : RollupValue
 {
-    public class ArrayRollupValue : RollupValue
-    {
-        [JsonProperty("array")] public Option<IList<NotionPropertyValue>> Value { get; set; }
-    }
+    [JsonProperty("array")] public Option<IList<NotionPropertyValue>> Value { get; set; }
 }

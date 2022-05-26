@@ -1,8 +1,7 @@
-﻿namespace Util
+﻿namespace Util;
+
+public interface IOption
 {
-    public interface IOption
-    {
-        bool HasValue { get; }
-        object GetValue();
-    }
+    bool HasValue { get; }
+    object GetValue();
 }

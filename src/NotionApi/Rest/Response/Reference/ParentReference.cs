@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Reference
+namespace NotionApi.Rest.Response.Reference;
+
+public class ParentReference
 {
-    public class ParentReference
-    {
-        [JsonProperty("type")] public string Type { get; set; }
-    }
+    [JsonProperty("type")] public string Type { get; set; }
 }

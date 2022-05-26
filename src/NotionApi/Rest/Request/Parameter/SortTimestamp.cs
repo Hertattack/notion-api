@@ -1,11 +1,10 @@
 ﻿using RestUtil.Request.Attributes;
 
-namespace NotionApi.Rest.Request.Parameter
-{
-    public enum SortTimestamp
-    {
-        None,
+namespace NotionApi.Rest.Request.Parameter;
 
-        [Mapping("last_edit_time")] LastEditedTime
-    }
+public enum SortTimestamp
+{
+    None,
+
+    [Mapping("last_edit_time")] LastEditedTime
 }

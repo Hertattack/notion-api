@@ -1,7 +1,6 @@
-﻿namespace RestUtil.Request
+﻿namespace RestUtil.Request;
+
+public interface IRequestBuilder
 {
-    public interface IRequestBuilder
-    {
-        IRequest BuildRequest(object requestDefintion);
-    }
+    IRequest BuildRequest(object requestDefintion);
 }

@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionVisualizer.Generator.Cytoscape
+namespace NotionVisualizer.Generator.Cytoscape;
+
+public class Configuration
 {
-    public class Configuration
-    {
-        [JsonProperty("layoutName")] public string LayoutAlgorithm { get; set; }
-    }
+    [JsonProperty("layoutName")] public string LayoutAlgorithm { get; set; }
 }

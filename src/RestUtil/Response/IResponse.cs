@@ -1,9 +1,8 @@
 ﻿using Util;
 
-namespace RestUtil.Response
+namespace RestUtil.Response;
+
+public interface IResponse<TResult>
 {
-    public interface IResponse<TResult>
-    {
-        Option<TResult> Value { get; }
-    }
+    Option<TResult> Value { get; }
 }

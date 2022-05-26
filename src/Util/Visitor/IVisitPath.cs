@@ -1,7 +1,5 @@
-﻿namespace Util.Visitor
+﻿namespace Util.Visitor;
+
+public interface IVisitPath
 {
-    public interface IVisitPath
-    {
-        
-    }
 }

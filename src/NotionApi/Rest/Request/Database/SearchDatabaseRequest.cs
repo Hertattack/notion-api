@@ -4,19 +4,18 @@ using RestUtil.Mapping;
 using RestUtil.Request;
 using RestUtil.Request.Attributes;
 
-namespace NotionApi.Rest.Request.Database
+namespace NotionApi.Rest.Request.Database;
+
+[Request(Path = "/databases/{DatabaseId}/query", Method = HttpMethod.Post)]
+public class SearchDatabaseRequest : IPaginatedNotionRequest<PaginatedResponse<NotionObject>>
 {
-    [Request(Path = "/databases/{DatabaseId}/query", Method = HttpMethod.Post)]
-    public class SearchDatabaseRequest : IPaginatedNotionRequest<PaginatedResponse<NotionObject>>
+    [Parameter(Type = ParameterType.Path)] public string DatabaseId { get; set; }
+
+    [Parameter(Type = ParameterType.Body, Strategy = typeof(ToJsonDocumentStrategy))]
+    public SearchDatabaseParameters Parameters { get; } = new();
+
+    public void SetStartCursor(string value)
     {
-        [Parameter(Type = ParameterType.Path)] public string DatabaseId { get; set; }
-
-        [Parameter(Type = ParameterType.Body, Strategy = typeof(ToJsonDocumentStrategy))]
-        public SearchDatabaseParameters Parameters { get; } = new SearchDatabaseParameters();
-
-        public void SetStartCursor(string value)
-        {
-            Parameters.StartCursor = value;
-        }
+        Parameters.StartCursor = value;
     }
 }

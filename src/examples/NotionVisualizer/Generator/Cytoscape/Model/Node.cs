@@ -1,26 +1,25 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace NotionVisualizer.Generator.Cytoscape.Model
+namespace NotionVisualizer.Generator.Cytoscape.Model;
+
+public class Node
 {
-    public class Node
+    [JsonProperty("group")] public string Group => "nodes";
+
+    [JsonProperty("selectable")] public bool Selectable { get; set; } = true;
+
+    [JsonProperty("classes")] public readonly IList<string> Classes = new List<string>();
+
+    [JsonProperty("data")] public object Data { get; }
+
+    public Node(string id, string parent, string label)
     {
-        [JsonProperty("group")] public string Group => "nodes";
-
-        [JsonProperty("selectable")] public bool Selectable { get; set; } = true;
-
-        [JsonProperty("classes")] public readonly IList<string> Classes = new List<string>();
-
-        [JsonProperty("data")] public object Data { get; }
-
-        public Node(string id, string parent, string label)
+        Data = new
         {
-            Data = new
-            {
-                id,
-                parent,
-                label
-            };
-        }
+            id,
+            parent,
+            label
+        };
     }
 }

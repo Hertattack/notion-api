@@ -1,14 +1,13 @@
 ﻿using Util;
 
-namespace NotionApi.Rest.Response
-{
-    public class NotionResponse<TResponseType> : INotionResponse<TResponseType>
-    {
-        public Option<TResponseType> Result { get; }
+namespace NotionApi.Rest.Response;
 
-        public NotionResponse(TResponseType value)
-        {
-            Result = value;
-        }
+public class NotionResponse<TResponseType> : INotionResponse<TResponseType>
+{
+    public Option<TResponseType> Result { get; }
+
+    public NotionResponse(TResponseType value)
+    {
+        Result = value;
     }
 }

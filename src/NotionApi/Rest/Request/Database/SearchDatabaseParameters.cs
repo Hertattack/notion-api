@@ -1,6 +1,5 @@
-﻿namespace NotionApi.Rest.Request.Database
+﻿namespace NotionApi.Rest.Request.Database;
+
+public class SearchDatabaseParameters : PaginatedRequest
 {
-    public class SearchDatabaseParameters : PaginatedRequest
-    {
-    }
 }

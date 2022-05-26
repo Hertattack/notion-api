@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Reference
+namespace NotionApi.Rest.Response.Reference;
+
+public class ParentPageReference : ParentReference
 {
-    public class ParentPageReference : ParentReference
-    {
-        [JsonProperty("page_id")] public string PageId { get; set; }
-    }
+    [JsonProperty("page_id")] public string PageId { get; set; }
 }

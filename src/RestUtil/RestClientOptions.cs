@@ -1,7 +1,6 @@
-﻿namespace RestUtil
+﻿namespace RestUtil;
+
+public class RestClientOptions
 {
-    public class RestClientOptions
-    {
-        public string StoreJsonResponse { get; set; }
-    }
+    public string StoreJsonResponse { get; set; }
 }

@@ -1,8 +1,7 @@
-﻿namespace NotionVisualizer.Generator
+﻿namespace NotionVisualizer.Generator;
+
+public interface IGenerator
 {
-    public interface IGenerator
-    {
-        string Name { get; }
-        void Generate(string outputPath, NotionVisualizer.Visualization.Graph graph);
-    }
+    string Name { get; }
+    void Generate(string outputPath, Visualization.Graph graph);
 }

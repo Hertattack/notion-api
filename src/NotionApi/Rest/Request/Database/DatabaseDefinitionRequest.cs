@@ -2,11 +2,10 @@
 using RestUtil.Request;
 using RestUtil.Request.Attributes;
 
-namespace NotionApi.Rest.Request.Database
+namespace NotionApi.Rest.Request.Database;
+
+[Request(Path = "/databases/{DatabaseId}", Method = HttpMethod.Get)]
+public class DatabaseDefinitionRequest : INotionRequest<DatabaseObject>
 {
-    [Request(Path = "/databases/{DatabaseId}", Method = HttpMethod.Get)]
-    public class DatabaseDefinitionRequest : INotionRequest<DatabaseObject>
-    {
-        [Parameter(Type = ParameterType.Path)] public string DatabaseId { get; set; }
-    }
+    [Parameter(Type = ParameterType.Path)] public string DatabaseId { get; set; }
 }

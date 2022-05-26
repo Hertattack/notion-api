@@ -1,19 +1,18 @@
 ﻿using System;
 
-namespace NotionVisualizer.Generator
+namespace NotionVisualizer.Generator;
+
+public abstract class BaseGenerator : IGenerator
 {
-    public abstract class BaseGenerator : IGenerator
+    public string Name { get; }
+
+    protected BaseGenerator()
     {
-        public string Name { get; }
+        var name = GetType().Name;
+        var generatorIndex = name.IndexOf("Generator", StringComparison.Ordinal);
 
-        protected BaseGenerator()
-        {
-            var name = GetType().Name;
-            var generatorIndex = name.IndexOf("Generator", StringComparison.Ordinal);
-
-            Name = generatorIndex > -1 ? name[..generatorIndex] : name;
-        }
-
-        public abstract void Generate(string outputPath, NotionVisualizer.Visualization.Graph graph);
+        Name = generatorIndex > -1 ? name[..generatorIndex] : name;
     }
+
+    public abstract void Generate(string outputPath, Visualization.Graph graph);
 }

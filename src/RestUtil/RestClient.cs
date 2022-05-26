@@ -13,113 +13,111 @@ using RestUtil.Request;
 using RestUtil.Response;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace RestUtil
+namespace RestUtil;
+
+public class RestClient : IRestClient
 {
-    public class RestClient : IRestClient
+    private readonly RestClientOptions _options;
+    private readonly ILogger<RestClient> _logger;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly RestSharp.IRestClient _implementation = new RestSharp.RestClient();
+
+    private readonly IDictionary<string, string> _defaultHeaders = new Dictionary<string, string>();
+
+    public RestClient(
+        IOptions<RestClientOptions> options,
+        ILogger<RestClient> logger,
+        IServiceProvider serviceProvider)
     {
-        private readonly RestClientOptions _options;
-        private readonly ILogger<RestClient> _logger;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly RestSharp.IRestClient _implementation = new RestSharp.RestClient();
+        _options = options.Value;
+        _logger = logger;
+        _serviceProvider = serviceProvider;
+    }
 
-        private readonly IDictionary<string, string> _defaultHeaders = new Dictionary<string, string>();
+    public Uri BaseUri
+    {
+        get => _implementation.BaseUrl;
+        set => _implementation.BaseUrl = value;
+    }
 
-        public RestClient(
-            IOptions<RestClientOptions> options,
-            ILogger<RestClient> logger,
-            IServiceProvider serviceProvider)
+    public string Token
+    {
+        set => _implementation.Authenticator = new JwtAuthenticator(value);
+    }
+
+    public void AddDefaultHeader(string name, string value)
+    {
+        _defaultHeaders[name] = value;
+    }
+
+    public async Task<IResponse<TResult>> ExecuteAsync<TResult>(IRequest request)
+    {
+        var restRequest = new RestRequest(request.Path);
+
+        foreach (var (headerName, value) in _defaultHeaders) restRequest.AddHeader(headerName, value);
+
+        restRequest.Method = ToRestSharpMethod(request.Method);
+
+        if (request.Body != null)
+            restRequest.AddJsonBody(request.Body);
+
+        _logger.LogDebug($"Execute {restRequest.Method} request on {_implementation.BuildUri(restRequest)}",
+            restRequest);
+        var response = await _implementation.ExecuteAsync(restRequest);
+
+        if (!response.IsSuccessful)
         {
-            _options = options.Value;
-            _logger = logger;
-            _serviceProvider = serviceProvider;
+            _logger.LogError(
+                $"Request not successful. Status code: {response.StatusCode}. Response: {response.Content}");
+            return new Response<TResult>(response.StatusCode);
         }
 
-        public Uri BaseUri
+        _logger.LogDebug("Request successful.");
+        var jsonData = response.Content;
+
+        StoreJsonData(jsonData);
+
+        var result = DeserializeJson<TResult>(jsonData);
+        return new Response<TResult>(response.StatusCode, result);
+    }
+
+    public TResult DeserializeJson<TResult>(string jsonData)
+    {
+        var settings = new JsonSerializerSettings
         {
-            get => _implementation.BaseUrl;
-            set => _implementation.BaseUrl = value;
-        }
+            Converters = _serviceProvider.GetServices<JsonConverter>().ToList(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
-        public string Token
+        return JsonConvert.DeserializeObject<TResult>(jsonData, settings);
+    }
+
+    private void StoreJsonData(string jsonData)
+    {
+        if (_options.StoreJsonResponse == null || string.IsNullOrEmpty(_options.StoreJsonResponse))
+            return;
+
+        var fileName = Path.ChangeExtension(Path.GetFileName(Path.GetTempFileName()), ".json");
+        var filePath = (string) Path.Combine(_options.StoreJsonResponse, fileName);
+        try
         {
-            set => _implementation.Authenticator = new JwtAuthenticator(value);
-        }
+            if (!Directory.Exists(_options.StoreJsonResponse))
+                Directory.CreateDirectory(_options.StoreJsonResponse);
 
-        public void AddDefaultHeader(string name, string value)
+            File.WriteAllText(filePath, jsonData);
+            _logger.LogDebug($"Wrote json data for request to: {filePath}");
+        }
+        catch (Exception ex)
         {
-            _defaultHeaders[name] = value;
+            _logger.LogError(ex, $"Could not write json data to: {filePath}. Error: {ex.Message}");
         }
+    }
 
-        public async Task<IResponse<TResult>> ExecuteAsync<TResult>(IRequest request)
-        {
-            var restRequest = new RestRequest(request.Path);
+    private static Method ToRestSharpMethod(HttpMethod requestMethod)
+    {
+        if (requestMethod == HttpMethod.Post)
+            return Method.POST;
 
-            foreach (var (headerName, value) in _defaultHeaders)
-            {
-                restRequest.AddHeader(headerName, value);
-            }
-
-            restRequest.Method = ToRestSharpMethod(request.Method);
-
-            if (request.Body != null)
-                restRequest.AddJsonBody(request.Body);
-
-            _logger.LogDebug($"Execute {restRequest.Method} request on {_implementation.BuildUri(restRequest)}", restRequest);
-            var response = await _implementation.ExecuteAsync(restRequest);
-
-            if (!response.IsSuccessful)
-            {
-                _logger.LogError($"Request not successful. Status code: {response.StatusCode}. Response: {response.Content}");
-                return new Response<TResult>(response.StatusCode);
-            }
-
-            _logger.LogDebug("Request successful.");
-            var jsonData = response.Content;
-
-            StoreJsonData(jsonData);
-
-            var result = DeserializeJson<TResult>(jsonData);
-            return new Response<TResult>(response.StatusCode, result);
-        }
-
-        public TResult DeserializeJson<TResult>(string jsonData)
-        {
-            var settings = new JsonSerializerSettings
-            {
-                Converters = _serviceProvider.GetServices<JsonConverter>().ToList(),
-                NullValueHandling = NullValueHandling.Ignore
-            };
-
-            return JsonConvert.DeserializeObject<TResult>(jsonData, settings);
-        }
-
-        private void StoreJsonData(string jsonData)
-        {
-            if (_options.StoreJsonResponse == null || string.IsNullOrEmpty(_options.StoreJsonResponse))
-                return;
-
-            var fileName = Path.ChangeExtension(Path.GetFileName(Path.GetTempFileName()), ".json");
-            var filePath = (string)Path.Combine(_options.StoreJsonResponse, fileName);
-            try
-            {
-                if (!Directory.Exists(_options.StoreJsonResponse))
-                    Directory.CreateDirectory(_options.StoreJsonResponse);
-
-                File.WriteAllText(filePath, jsonData);
-                _logger.LogDebug($"Wrote json data for request to: {filePath}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Could not write json data to: {filePath}. Error: {ex.Message}");
-            }
-        }
-
-        private static Method ToRestSharpMethod(HttpMethod requestMethod)
-        {
-            if (requestMethod == HttpMethod.Post)
-                return Method.POST;
-
-            return Method.GET;
-        }
+        return Method.GET;
     }
 }

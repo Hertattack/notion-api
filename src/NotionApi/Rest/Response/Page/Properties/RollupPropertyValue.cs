@@ -2,10 +2,9 @@
 using NotionApi.Rest.Response.Page.Properties.Rollup;
 using Util;
 
-namespace NotionApi.Rest.Response.Page.Properties
+namespace NotionApi.Rest.Response.Page.Properties;
+
+public class RollupPropertyValue : NotionPropertyValue
 {
-    public class RollupPropertyValue : NotionPropertyValue
-    {
-        [JsonProperty("rollup")] public Option<RollupValue> Rollup { get; set; }
-    }
+    [JsonProperty("rollup")] public Option<RollupValue> Rollup { get; set; }
 }

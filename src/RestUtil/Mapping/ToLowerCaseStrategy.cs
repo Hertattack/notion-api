@@ -2,20 +2,19 @@
 using RestUtil.Request;
 using Util;
 
-namespace RestUtil.Mapping
+namespace RestUtil.Mapping;
+
+public class ToLowerCaseStrategy : BaseMappingStrategy
 {
-    public class ToLowerCaseStrategy : BaseMappingStrategy
+    public ToLowerCaseStrategy(IMapper mapper) : base(mapper)
     {
-        public ToLowerCaseStrategy(IMapper mapper) : base(mapper)
-        {
-        }
+    }
 
-        public override Option<object> GetValue(Type genericTypeArgument, object value)
-        {
-            if (value == null)
-                return "";
+    public override Option<object> GetValue(Type genericTypeArgument, object value)
+    {
+        if (value == null)
+            return "";
 
-            return value.ToString()?.ToLower() ?? "";
-        }
+        return value.ToString()?.ToLower() ?? "";
     }
 }

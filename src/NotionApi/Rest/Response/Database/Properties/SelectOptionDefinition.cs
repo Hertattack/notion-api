@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Database.Properties
+namespace NotionApi.Rest.Response.Database.Properties;
+
+public class SelectOptionDefinition
 {
-    public class SelectOptionDefinition
-    {
-        [JsonProperty("select")] public SelectConfiguration Configuration { get; set; }
-    }
+    [JsonProperty("select")] public SelectConfiguration Configuration { get; set; }
 }

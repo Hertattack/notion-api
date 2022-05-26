@@ -1,9 +1,8 @@
-﻿namespace RestUtil.Request
+﻿namespace RestUtil.Request;
+
+public enum ParameterType
 {
-    public enum ParameterType
-    {
-        Query,
-        Body,
-        Path
-    }
+    Query,
+    Body,
+    Path
 }

@@ -3,56 +3,59 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RestUtil.Conversion
+namespace RestUtil.Conversion;
+
+public abstract class CustomTypeDeserializer<T> : JsonConverter
 {
-    public abstract class CustomTypeDeserializer<T> : JsonConverter
+    private static Type BaseType = typeof(T);
+
+    protected readonly ILogger<CustomTypeDeserializer<T>> _logger;
+
+    protected CustomTypeDeserializer(ILogger<CustomTypeDeserializer<T>> logger)
     {
-        private static Type BaseType = typeof(T);
+        _logger = logger;
+    }
 
-        protected readonly ILogger<CustomTypeDeserializer<T>> _logger;
+    protected abstract T CreateInstance(JObject jObject);
 
-        protected CustomTypeDeserializer(ILogger<CustomTypeDeserializer<T>> logger)
+    public override bool CanWrite => false;
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        var jObject = JObject.Load(reader);
+
+        var instance = CreateInstance(jObject);
+        if (instance == null)
         {
-            _logger = logger;
+            var exception =
+                new Exception(
+                    $"Cannot deserialize '{BaseType.FullName}' the specific type resulted in a null reference.");
+            _logger.LogError(exception, "Error deserializing json data.", jObject.ToString());
+            throw exception;
         }
 
-        protected abstract T CreateInstance(JObject jObject);
-
-        public override bool CanWrite => false;
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        try
         {
-            throw new NotImplementedException();
+            serializer.Populate(jObject.CreateReader(), instance);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error deserializing json data as '{instance.GetType().FullName}'");
+            _logger.LogDebug(jObject.ToString());
+            throw;
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var jObject = JObject.Load(reader);
-
-            var instance = CreateInstance(jObject);
-            if (instance == null)
-            {
-                var exception = new Exception($"Cannot deserialize '{BaseType.FullName}' the specific type resulted in a null reference.");
-                _logger.LogError(exception, "Error deserializing json data.", jObject.ToString());
-                throw exception;
-            }
-
-            try
-            {
-                serializer.Populate(jObject.CreateReader(), instance);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error deserializing json data as '{instance.GetType().FullName}'");
-                _logger.LogDebug(jObject.ToString());
-                throw;
-            }
-
-            return instance;
-        }
+        return instance;
+    }
 
 
-        public override bool CanConvert(Type objectType) =>
-            objectType == BaseType;
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == BaseType;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Util.Visitor
+﻿namespace Util.Visitor;
+
+public interface IObjectVisitorFactory
 {
-    public interface IObjectVisitorFactory
-    {
-        IObjectVisitor CreateFor(object obj, params IVisitor[] visitors);
-    }
+    IObjectVisitor CreateFor(object obj, params IVisitor[] visitors);
 }

@@ -1,18 +1,17 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Database.Properties
+namespace NotionApi.Rest.Response.Database.Properties;
+
+public class RollupConfiguration
 {
-    public class RollupConfiguration
-    {
-        [JsonProperty("relation_property_name")]
-        public string RelationPropertyName { get; set; }
+    [JsonProperty("relation_property_name")]
+    public string RelationPropertyName { get; set; }
 
-        [JsonProperty("relation_property_id")] public string RelationPropertyId { get; set; }
+    [JsonProperty("relation_property_id")] public string RelationPropertyId { get; set; }
 
-        [JsonProperty("rollup_property_name")] public string RollupPropertyName { get; set; }
+    [JsonProperty("rollup_property_name")] public string RollupPropertyName { get; set; }
 
-        [JsonProperty("rollup_property_id")] public string RollupPropertyId { get; set; }
+    [JsonProperty("rollup_property_id")] public string RollupPropertyId { get; set; }
 
-        [JsonProperty("function")] public string Function { get; set; }
-    }
+    [JsonProperty("function")] public string Function { get; set; }
 }

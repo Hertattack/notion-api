@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Util;
 
-namespace NotionApi.Rest.Response.Page.Properties.Formula
+namespace NotionApi.Rest.Response.Page.Properties.Formula;
+
+public class StringFormulaValue : FormulaValue
 {
-    public class StringFormulaValue : FormulaValue
-    {
-        [JsonProperty("string")] public Option<string> Value { get; set; }
-    }
+    [JsonProperty("string")] public Option<string> Value { get; set; }
 }

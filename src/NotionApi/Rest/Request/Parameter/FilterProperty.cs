@@ -1,14 +1,10 @@
-﻿
-using RestUtil.Request.Attributes;
+﻿using RestUtil.Request.Attributes;
 
-namespace NotionApi.Rest.Request.Parameter
+namespace NotionApi.Rest.Request.Parameter;
+
+public enum FilterProperty
 {
-    public enum FilterProperty
-    {
-        [Mapping("page")]
-        Page,
-        
-        [Mapping("page")]
-        Database
-    }
+    [Mapping("page")] Page,
+
+    [Mapping("page")] Database
 }

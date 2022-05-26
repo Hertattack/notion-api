@@ -9,69 +9,69 @@ using NotionVisualizer.Visualization;
 using Edge = NotionVisualizer.Generator.Cytoscape.Model.Edge;
 using Node = NotionVisualizer.Generator.Cytoscape.Model.Node;
 
-namespace NotionVisualizer.Generator.Cytoscape
+namespace NotionVisualizer.Generator.Cytoscape;
+
+public class CytoscapeGenerator : BaseGenerator
 {
-    public class CytoscapeGenerator : BaseGenerator
+    private const string _cytoscapeJsFileName = "cytoscape.min.js";
+    private const string _indexHtmlFileName = "index.html";
+    private const string _dataFileName = "data.js";
+    private const string _configurationFileName = "configuration.js";
+    private static readonly string _cytoscapeResourcePath = Path.Join("Resources", "cytoscape");
+
+    private readonly ILogger<CytoscapeGenerator> _logger;
+    private readonly CytoscapeGeneratorOptions _options;
+
+    public CytoscapeGenerator(
+        ILogger<CytoscapeGenerator> logger,
+        IOptions<CytoscapeGeneratorOptions> options)
     {
-        private const string _cytoscapeJsFileName = "cytoscape.min.js";
-        private const string _indexHtmlFileName = "index.html";
-        private const string _dataFileName = "data.js";
-        private const string _configurationFileName = "configuration.js";
-        private static readonly string _cytoscapeResourcePath = Path.Join("Resources", "cytoscape");
+        _logger = logger;
+        _options = options.Value;
+    }
 
-        private readonly ILogger<CytoscapeGenerator> _logger;
-        private readonly CytoscapeGeneratorOptions _options;
+    public override void Generate(string outputPath, Graph graph)
+    {
+        _logger.LogInformation("Generating Cytoscape output to path: {outputPath}", outputPath);
 
-        public CytoscapeGenerator(
-            ILogger<CytoscapeGenerator> logger,
-            IOptions<CytoscapeGeneratorOptions> options)
+        var jsFileName = Path.Join(outputPath, _cytoscapeJsFileName);
+        if (!File.Exists(jsFileName))
+            File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), jsFileName);
+
+        var indexHtmlFileName = Path.Join(outputPath, _indexHtmlFileName);
+        if (!File.Exists(indexHtmlFileName))
+            File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), indexHtmlFileName);
+
+        WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", MapGraphToOutputModel(graph));
+
+        var configuration = new Configuration
         {
-            _logger = logger;
-            _options = options.Value;
-        }
+            LayoutAlgorithm = _options.LayoutAlgorithm
+        };
+        WriteJavaScriptFile(Path.Join(outputPath, _configurationFileName), "configuration", configuration);
 
-        public override void Generate(string outputPath, Graph graph)
-        {
-            _logger.LogInformation("Generating Cytoscape output to path: {outputPath}", outputPath);
+        _logger.LogInformation("Generation finished.");
+    }
 
-            var jsFileName = Path.Join(outputPath, _cytoscapeJsFileName);
-            if(!File.Exists(jsFileName))
-                File.Copy(Path.Join(_cytoscapeResourcePath, _cytoscapeJsFileName), jsFileName);
+    private IEnumerable<object> MapGraphToOutputModel(Graph graph)
+    {
+        var nodes = graph.Nodes
+            .Select(n => new Node(n.Id, _options.SetParent ? n.ParentId : null, n.Name) {Classes = {n.Type}});
 
-            var indexHtmlFileName = Path.Join(outputPath, _indexHtmlFileName);
-            if(!File.Exists(indexHtmlFileName))
-                File.Copy(Path.Join(_cytoscapeResourcePath, _indexHtmlFileName), indexHtmlFileName);
+        var edges = graph.Edges
+            .Select(e => new Edge(e.Id, e.SourceId, e.TargetId));
 
-            WriteJavaScriptFile(Path.Join(outputPath, _dataFileName), "data", MapGraphToOutputModel(graph));
+        return nodes.Cast<object>().Concat(edges);
+    }
 
-            var configuration = new Configuration
-            {
-                LayoutAlgorithm = _options.LayoutAlgorithm
-            };
-            WriteJavaScriptFile(Path.Join(outputPath, _configurationFileName), "configuration", configuration);
+    private void WriteJavaScriptFile(string filePath, string variableName, object data)
+    {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.Append($"var {variableName} = ");
+        stringBuilder.Append(
+            JsonConvert.SerializeObject(data, Formatting.Indented,
+                new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore}));
 
-            _logger.LogInformation("Generation finished.");
-        }
-
-        private IEnumerable<object> MapGraphToOutputModel(Graph graph)
-        {
-            var nodes = graph.Nodes
-                .Select(n => new Node(n.Id, _options.SetParent ? n.ParentId : null, n.Name) { Classes = { n.Type } });
-
-            var edges = graph.Edges
-                .Select(e => new Edge(e.Id, e.SourceId, e.TargetId));
-
-            return nodes.Cast<object>().Concat(edges);
-        }
-
-        private void WriteJavaScriptFile(string filePath, string variableName, object data)
-        {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.Append($"var {variableName} = ");
-            stringBuilder.Append(
-                JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
-
-            File.WriteAllText(filePath, stringBuilder.ToString());
-        }
+        File.WriteAllText(filePath, stringBuilder.ToString());
     }
 }

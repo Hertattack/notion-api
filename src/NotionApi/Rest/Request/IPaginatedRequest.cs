@@ -1,7 +1,6 @@
-﻿namespace NotionApi.Rest.Request
+﻿namespace NotionApi.Rest.Request;
+
+public interface IPaginatedRequest
 {
-    public interface IPaginatedRequest
-    {
-        void SetStartCursor(string value);
-    }
+    void SetStartCursor(string value);
 }

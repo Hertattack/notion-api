@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace RestUtil.Request.Attributes
+namespace RestUtil.Request.Attributes;
+
+[AttributeUsage(AttributeTargets.Class)]
+public class RequestAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class RequestAttribute : Attribute
-    {
-        public string Path { get; set; }
+    public string Path { get; set; }
 
-        public HttpMethod Method { get; set; }
+    public HttpMethod Method { get; set; }
 
-        public System.Net.Http.HttpMethod HttpMethod =>
-            Method == RestUtil.Request.HttpMethod.Post ? System.Net.Http.HttpMethod.Post : System.Net.Http.HttpMethod.Get;
-    }
+    public System.Net.Http.HttpMethod HttpMethod =>
+        Method == RestUtil.Request.HttpMethod.Post ? System.Net.Http.HttpMethod.Post : System.Net.Http.HttpMethod.Get;
 }

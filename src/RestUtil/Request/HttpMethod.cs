@@ -1,8 +1,7 @@
-﻿namespace RestUtil.Request
+﻿namespace RestUtil.Request;
+
+public enum HttpMethod
 {
-    public enum HttpMethod
-    {
-        Get,
-        Post
-    }
+    Get,
+    Post
 }

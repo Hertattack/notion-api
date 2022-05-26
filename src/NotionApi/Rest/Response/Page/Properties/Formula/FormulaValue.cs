@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Page.Properties.Formula
+namespace NotionApi.Rest.Response.Page.Properties.Formula;
+
+public class FormulaValue
 {
-    public class FormulaValue
-    {
-        [JsonProperty("type")] public string Type { get; set; }
-    }
+    [JsonProperty("type")] public string Type { get; set; }
 }

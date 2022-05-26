@@ -1,8 +1,7 @@
-﻿namespace NotionVisualizer.Generator.Cytoscape
+﻿namespace NotionVisualizer.Generator.Cytoscape;
+
+public class CytoscapeGeneratorOptions
 {
-    public class CytoscapeGeneratorOptions
-    {
-        public string LayoutAlgorithm { get; set; } = "cose";
-        public bool SetParent { get; set; } = false;
-    }
+    public string LayoutAlgorithm { get; set; } = "cose";
+    public bool SetParent { get; set; } = false;
 }

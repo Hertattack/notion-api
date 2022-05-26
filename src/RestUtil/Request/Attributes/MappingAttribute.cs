@@ -2,31 +2,31 @@
 using RestUtil.Mapping;
 using Util;
 
-namespace RestUtil.Request.Attributes
+namespace RestUtil.Request.Attributes;
+
+[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
+public class MappingAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
-    public class MappingAttribute : Attribute
+    public MappingAttribute()
     {
-        public MappingAttribute()
-        {
-            Name = Option.None;
-        }
+        Name = Option.None;
+    }
 
-        public MappingAttribute(string name)
-        {
-            Name = name;
-        }
+    public MappingAttribute(string name)
+    {
+        Name = name;
+    }
 
-        public Option<string> Name { get; }
+    public Option<string> Name { get; }
 
-        private Type _strategy;
+    private Type _strategy;
 
-        public Type Strategy
-        {
-            get => _strategy;
-            set => _strategy = typeof(IMappingStrategy).IsAssignableFrom(value)
-                ? _strategy = value
-                : throw new ArgumentException($"Cannot use type: {value?.FullName}, it does not implement the '{nameof(IMappingStrategy)}' interface");
-        }
+    public Type Strategy
+    {
+        get => _strategy;
+        set => _strategy = typeof(IMappingStrategy).IsAssignableFrom(value)
+            ? _strategy = value
+            : throw new ArgumentException(
+                $"Cannot use type: {value?.FullName}, it does not implement the '{nameof(IMappingStrategy)}' interface");
     }
 }

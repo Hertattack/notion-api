@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Objects
+namespace NotionApi.Rest.Response.Objects;
+
+public class BotObject : UserObject
 {
-    public class BotObject : UserObject
-    {
-        [JsonProperty("bot")] public object Bot { get; set; }
-    }
+    [JsonProperty("bot")] public object Bot { get; set; }
 }

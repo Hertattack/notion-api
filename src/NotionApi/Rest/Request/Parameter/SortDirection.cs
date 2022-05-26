@@ -1,11 +1,10 @@
 ﻿using RestUtil.Request.Attributes;
 
-namespace NotionApi.Rest.Request.Parameter
-{
-    public enum SortDirection
-    {
-        [Mapping("ascending")] Ascending,
+namespace NotionApi.Rest.Request.Parameter;
 
-        [Mapping("descending")] Descending
-    }
+public enum SortDirection
+{
+    [Mapping("ascending")] Ascending,
+
+    [Mapping("descending")] Descending
 }

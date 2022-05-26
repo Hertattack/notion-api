@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Page.Properties.Relation
+namespace NotionApi.Rest.Response.Page.Properties.Relation;
+
+public class RelationReferenceProperty
 {
-    public class RelationReferenceProperty
-    {
-        [JsonProperty(PropertyName = "id")] public string Id { get; set; }
-    }
+    [JsonProperty(PropertyName = "id")] public string Id { get; set; }
 }

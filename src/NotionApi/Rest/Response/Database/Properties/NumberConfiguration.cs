@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NotionApi.Rest.Response.Database.Properties
+namespace NotionApi.Rest.Response.Database.Properties;
+
+public class NumberConfiguration
 {
-    public class NumberConfiguration
-    {
-        [JsonProperty("format")] public string Format { get; set; }
-    }
+    [JsonProperty("format")] public string Format { get; set; }
 }

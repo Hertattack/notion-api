@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Util.Visitor
+namespace Util.Visitor;
+
+public interface IVisitor
 {
-    public interface IVisitor
-    {
-        bool WantsToVisit(Type type);
-        int Order { get; }
-        void Visit(VisitPath path, object objToVisit);
-    }
+    bool WantsToVisit(Type type);
+    int Order { get; }
+    void Visit(VisitPath path, object objToVisit);
 }

@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 
-namespace NotionVisualizer
+namespace NotionVisualizer;
+
+public class NotionVisualizerOptions
 {
-    public class NotionVisualizerOptions
-    {
-        public IList<string> Databases { get; set; } = new List<string>();
+    public IList<string> Databases { get; set; } = new List<string>();
 
-        public IList<string> UseGenerators { get; set; } = new List<string> { "Cytoscape" };
+    public IList<string> UseGenerators { get; set; } = new List<string> {"Cytoscape"};
 
 
-        public IList<EdgeDirection> EdgeDirections { get; set; } = new List<EdgeDirection>();
+    public IList<EdgeDirection> EdgeDirections { get; set; } = new List<EdgeDirection>();
 
-        public bool FilterNodesWithNoEdges { get; set; }
-    }
+    public bool FilterNodesWithNoEdges { get; set; }
 }

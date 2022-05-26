@@ -1,7 +1,6 @@
-﻿namespace Util.Visitor
+﻿namespace Util.Visitor;
+
+public interface IObjectVisitor
 {
-    public interface IObjectVisitor
-    {
-        void VisitAll();
-    }
+    void VisitAll();
 }

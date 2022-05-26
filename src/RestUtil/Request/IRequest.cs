@@ -1,10 +1,9 @@
-﻿namespace RestUtil.Request
+﻿namespace RestUtil.Request;
+
+public interface IRequest
 {
-    public interface IRequest
-    {
-        object Body { get; }
-        string QueryString { get; }
-        System.Net.Http.HttpMethod Method { get; }
-        string Path { get; }
-    }
+    object Body { get; }
+    string QueryString { get; }
+    System.Net.Http.HttpMethod Method { get; }
+    string Path { get; }
 }

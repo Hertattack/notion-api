@@ -1,10 +1,9 @@
 ﻿using System;
 using Util;
 
-namespace RestUtil.Mapping
+namespace RestUtil.Mapping;
+
+public interface IMappingStrategy
 {
-    public interface IMappingStrategy
-    {
-        Option<object> GetValue(Type type, object value);
-    }
+    Option<object> GetValue(Type type, object value);
 }
