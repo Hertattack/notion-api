@@ -42,4 +42,21 @@ internal class BasicQueryInterpretationIsSupported : QueryInterpretationTestBase
         // Assert
         query.NodeReferences.Should().Equal(new NodeReference("test", "t"));
     }
+
+    [Test]
+    public void Selecting_a_node_without_return_returns_all_properties()
+    {
+        // Arrange
+        var queryAst = _queryParser.Parse("(t:test)").As<QueryExpression>();
+
+        // Act
+        var query = _queryBuilder.FromAst(queryAst);
+
+        // Assert
+        query.ReturnPropertySelections.Should().HaveCount(1);
+        var returnSelection = query.ReturnPropertySelections.First().As<NodeReturnPropertySelection>();
+        returnSelection.NodeReference.NodeName.Should().Be("test");
+        returnSelection.SelectedProperties.Should().HaveCount(1)
+            .And.Subject.First().Should().BeAssignableTo<NodeAllPropertiesSelected>();
+    }
 }

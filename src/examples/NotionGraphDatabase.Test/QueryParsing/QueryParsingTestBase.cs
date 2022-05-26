@@ -3,7 +3,6 @@ using NUnit.Framework;
 
 namespace NotionGraphDatabase.Test.QueryParsing;
 
-[TestFixture]
 internal class QueryParsingTestBase
 {
     public IQueryParser _queryParser { get; set; }
