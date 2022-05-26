@@ -38,6 +38,19 @@ internal class QueryParser
         return selectExpression;
     }
 
+    [Production("selectExpression: nodeClassReference MINUS LSQBRACKET identifier RSQBRACKET GREATER selectExpression")]
+    public QueryPredicate SelectExpression(
+        NodeClassReference fromExpression,
+        Token<QueryToken> discardMinus,
+        Token<QueryToken> discardLsqBracket,
+        Identifier roleIdentifier,
+        Token<QueryToken> discardRsqBracket,
+        Token<QueryToken> discardGreater,
+        SelectExpression toExpression)
+    {
+        return new SelectPathExpression(fromExpression, roleIdentifier, toExpression);
+    }
+
     [Production("nodeClassReference: LPAREN identifier RPAREN")]
     public QueryPredicate NodeClassReferenceExpression(
         Token<QueryToken> discardLparen,
