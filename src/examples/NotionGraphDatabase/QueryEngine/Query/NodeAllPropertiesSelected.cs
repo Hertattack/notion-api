@@ -1,4 +1,4 @@
-﻿namespace NotionGraphDatabase.Query;
+﻿namespace NotionGraphDatabase.QueryEngine.Query;
 
 internal class NodeAllPropertiesSelected : NodePropertySelection
 {
@@ -9,6 +9,7 @@ internal class NodeAllPropertiesSelected : NodePropertySelection
 
     public override bool MatchesOrExtends(NodePropertySelection otherSelection)
     {
-        return otherSelection.ReferencedNode == ReferencedNode;
+        return otherSelection.ReferencedNode.Alias == ReferencedNode.Alias
+               && otherSelection.ReferencedNode.NodeName == ReferencedNode.NodeName;
     }
 }

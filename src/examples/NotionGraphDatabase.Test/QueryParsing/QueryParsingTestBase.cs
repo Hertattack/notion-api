@@ -6,11 +6,11 @@ namespace NotionGraphDatabase.Test.QueryParsing;
 [TestFixture]
 internal class QueryParsingTestBase
 {
-    public IQueryEngine queryEngine { get; set; }
+    public IQueryParser _queryParser { get; set; }
 
     [OneTimeSetUp]
     public void OneTimeSetup()
     {
-        queryEngine = new QueryEngineImplementation();
+        _queryParser = new NotionQueryParser();
     }
 }

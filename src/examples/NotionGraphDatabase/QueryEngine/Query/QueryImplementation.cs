@@ -1,6 +1,6 @@
-﻿using NotionGraphDatabase.Query.Path;
+﻿using NotionGraphDatabase.QueryEngine.Query.Path;
 
-namespace NotionGraphDatabase.Query;
+namespace NotionGraphDatabase.QueryEngine.Query;
 
 internal class QueryImplementation : IQuery
 {
@@ -8,6 +8,9 @@ internal class QueryImplementation : IQuery
 
     public IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections =>
         _selectedProperties.Select(kvp => new NodeReturnPropertySelection(kvp.Key, kvp.Value.AsReadOnly()));
+
+    public IEnumerable<NodeReference> NodeReferences =>
+        SelectionPath.Aliases.Values.Select(s => s.AssociatedNode).Distinct();
 
     public QueryImplementation(QueryPath queryPath)
     {

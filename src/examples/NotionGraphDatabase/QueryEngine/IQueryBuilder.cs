@@ -3,7 +3,7 @@ using NotionGraphDatabase.QueryEngine.Query;
 
 namespace NotionGraphDatabase.QueryEngine;
 
-public interface IQueryEngine
+internal interface IQueryBuilder
 {
-    IQuery Parse(string queryText);
+    IQuery FromAst(QueryExpression ast);
 }

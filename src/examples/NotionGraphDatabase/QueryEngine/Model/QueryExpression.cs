@@ -1,11 +1,11 @@
 ﻿namespace NotionGraphDatabase.QueryEngine.Model;
 
-internal class QueryAbstractSyntaxTree : IQueryAst
+internal class QueryExpression : QueryPredicate
 {
     public SelectExpression SelectExpression { get; }
     public ReturnSpecification ReturnSpecification { get; }
 
-    public QueryAbstractSyntaxTree(SelectExpression selectExpression, ReturnSpecification returnSpecification)
+    public QueryExpression(SelectExpression selectExpression, ReturnSpecification returnSpecification)
     {
         SelectExpression = selectExpression;
         ReturnSpecification = returnSpecification;

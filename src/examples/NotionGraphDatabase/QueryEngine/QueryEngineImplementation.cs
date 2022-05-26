@@ -1,33 +1,37 @@
-﻿using NotionGraphDatabase.QueryEngine.Model;
-using NotionGraphDatabase.QueryEngine.Parser;
-using sly.parser;
-using sly.parser.generator;
+﻿using Microsoft.Extensions.Logging;
+using NotionGraphDatabase.QueryEngine.Model;
+using NotionGraphDatabase.QueryEngine.Query;
 
 namespace NotionGraphDatabase.QueryEngine;
 
 internal class QueryEngineImplementation : IQueryEngine
 {
-    private readonly Parser<QueryToken, IQueryAst> _queryParser;
+    private readonly IQueryParser _queryParser;
+    private readonly IQueryBuilder _queryBuilder;
+    private readonly ILogger<QueryEngineImplementation> _logger;
 
-    public QueryEngineImplementation()
+    public QueryEngineImplementation(
+        IQueryParser queryParser,
+        IQueryBuilder queryBuilder,
+        ILogger<QueryEngineImplementation> logger)
     {
-        var parser = new QueryParser();
-        var builder = new ParserBuilder<QueryToken, IQueryAst>();
-        var queryParser = builder.BuildParser(parser, ParserType.LL_RECURSIVE_DESCENT, "query");
-
-        if (queryParser.IsError)
-            throw new Exception($"Could not build query parser. Errors: {queryParser.Errors.Select(e => e.Message)}");
-
-        _queryParser = queryParser.Result;
+        _queryParser = queryParser;
+        _queryBuilder = queryBuilder;
+        _logger = logger;
     }
 
-    public QueryAbstractSyntaxTree Parse(string query)
+    public IQuery Parse(string queryText)
     {
-        var result = _queryParser.Parse(query);
+        _logger.LogDebug("Parsing query '{Query}'", queryText);
 
-        if (result.IsError)
-            throw new QueryParseException(result.Errors);
+        if (_queryParser.Parse(queryText) is not QueryExpression ast)
+            throw new QueryParseException(
+                $"Could not parse the query: '{queryText}'. The query is not a query expression.");
 
-        return (QueryAbstractSyntaxTree) result.Result;
+        var query = _queryBuilder.FromAst(ast);
+
+        _logger.LogDebug("Parsing finished");
+
+        return query;
     }
 }

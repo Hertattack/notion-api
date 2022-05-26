@@ -11,10 +11,13 @@ public class GraphDatabase : IGraphDatabase
     private readonly INotionClient _notionClient;
     private readonly IQueryEngine _queryEngine;
 
-    public GraphDatabase(Model model, INotionClient notionClient)
+    public GraphDatabase(
+        IMetamodelFactory modelFactory,
+        INotionClient notionClient,
+        IQueryEngine queryEngine)
     {
-        _model = model;
+        _model = modelFactory.CreateModel();
         _notionClient = notionClient;
-        _queryEngine = new QueryEngineImplementation();
+        _queryEngine = queryEngine;
     }
 }

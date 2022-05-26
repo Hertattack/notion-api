@@ -1,4 +1,4 @@
-﻿namespace NotionGraphDatabase.Query.Path;
+﻿namespace NotionGraphDatabase.QueryEngine.Query.Path;
 
 public class QueryPath
 {

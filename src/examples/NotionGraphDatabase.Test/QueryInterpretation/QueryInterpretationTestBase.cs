@@ -1,4 +1,4 @@
-﻿using NotionGraphDatabase.Query;
+﻿using NotionGraphDatabase.QueryEngine;
 using NotionGraphDatabase.Test.QueryParsing;
 using NUnit.Framework;
 

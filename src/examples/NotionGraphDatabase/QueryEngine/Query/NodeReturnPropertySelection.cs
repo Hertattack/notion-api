@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace NotionGraphDatabase.Query;
+namespace NotionGraphDatabase.QueryEngine.Query;
 
 public class NodeReturnPropertySelection
 {

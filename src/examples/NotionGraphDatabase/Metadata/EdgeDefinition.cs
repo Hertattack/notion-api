@@ -5,5 +5,5 @@ public class EdgeDefinition
     public EdgeSource From { get; set; }
     public EdgeSource To { get; set; }
 
-    public EdgeNavigability Navigability { get; set; } = new EdgeNavigability();
+    public EdgeNavigability Navigability { get; set; } = new();
 }

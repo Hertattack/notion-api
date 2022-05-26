@@ -1,6 +1,6 @@
 ﻿namespace NotionGraphDatabase.QueryEngine.Model;
 
-internal class ReturnSpecification : IQueryAst
+internal class ReturnSpecification : QueryPredicate
 {
     public PropertySelector Selector { get; }
 

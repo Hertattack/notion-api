@@ -1,6 +1,6 @@
 ﻿namespace NotionGraphDatabase.QueryEngine.Model;
 
-internal class Identifier : IQueryAst
+internal class Identifier : QueryPredicate
 {
     public string Name { get; }
 

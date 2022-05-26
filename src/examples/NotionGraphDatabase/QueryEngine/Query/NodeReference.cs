@@ -1,6 +1,6 @@
-﻿namespace NotionGraphDatabase.Query;
+﻿namespace NotionGraphDatabase.QueryEngine.Query;
 
-public class NodeReference
+public struct NodeReference
 {
     public string NodeName { get; }
     public string Alias { get; }

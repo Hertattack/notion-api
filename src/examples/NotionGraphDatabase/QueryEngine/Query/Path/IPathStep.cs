@@ -1,4 +1,4 @@
-﻿namespace NotionGraphDatabase.Query;
+﻿namespace NotionGraphDatabase.QueryEngine.Query.Path;
 
 public interface IPathStep
 {

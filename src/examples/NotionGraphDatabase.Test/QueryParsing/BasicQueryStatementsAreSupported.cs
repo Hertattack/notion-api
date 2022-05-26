@@ -13,10 +13,10 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test)";
 
         // Act
-        var result = queryEngine.Parse(queryString);
+        var result = _queryParser.Parse(queryString);
 
         // Assert
-        var selectExpression = result.SelectExpression;
+        var selectExpression = result.As<QueryExpression>().SelectExpression;
         Assert.IsInstanceOf<NodeClassReference>(selectExpression);
 
         var nodeClassReference = (NodeClassReference) selectExpression;
@@ -31,10 +31,10 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test)";
 
         // Act
-        var result = queryEngine.Parse(queryString);
+        var result = _queryParser.Parse(queryString);
 
         // Assert
-        result.ReturnSpecification.Should().BeAssignableTo<ReturnAllSpecification>();
+        result.As<QueryExpression>().ReturnSpecification.Should().BeAssignableTo<ReturnAllSpecification>();
     }
 
     [Test]
@@ -44,13 +44,15 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test) return test.*";
 
         // Act
-        var result = queryEngine.Parse(queryString);
+        var result = _queryParser.Parse(queryString);
 
         // Assert
-        var nodeClassReference = result.SelectExpression.As<NodeClassReference>();
+        var queryExpression = result.As<QueryExpression>();
+        var nodeClassReference = queryExpression.SelectExpression.As<NodeClassReference>();
 
-        result.ReturnSpecification.Selector.NodeTypeIdentifier.Should().BeEquivalentTo(nodeClassReference.NodeIdentifier);
-        result.ReturnSpecification.Selector.Should().BeAssignableTo<SelectAllProperties>();
+        queryExpression.ReturnSpecification.Selector.NodeTypeIdentifier.Should()
+            .BeEquivalentTo(nodeClassReference.NodeIdentifier);
+        queryExpression.ReturnSpecification.Selector.Should().BeAssignableTo<SelectAllProperties>();
     }
 
     [Test]
@@ -60,12 +62,28 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test)";
 
         // Act
-        var result = queryEngine.Parse(queryString);
+        var result = _queryParser.Parse(queryString);
 
         // Assert
-        var nodeClassReference = result.SelectExpression.As<NodeClassReference>();
+        var nodeClassReference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
 
         nodeClassReference.NodeIdentifier.Name.Should().Be("test");
         nodeClassReference.NodeIdentifier.Should().BeSameAs(nodeClassReference.Alias);
+    }
+
+    [Test]
+    public void Selection_of_node_with_alias_is_supported()
+    {
+        // Arrange
+        const string queryString = "(t:test)";
+
+        // Act
+        var result = _queryParser.Parse(queryString);
+
+        // Assert
+        var nodeClassReference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
+
+        nodeClassReference.NodeIdentifier.Name.Should().Be("test");
+        nodeClassReference.Alias.Name.Should().Be("t");
     }
 }

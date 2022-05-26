@@ -1,6 +1,6 @@
 ﻿namespace NotionGraphDatabase.QueryEngine.Model;
 
-internal class PropertySelector : IQueryAst
+internal class PropertySelector : QueryPredicate
 {
     public Identifier NodeTypeIdentifier { get; protected set; }
 }

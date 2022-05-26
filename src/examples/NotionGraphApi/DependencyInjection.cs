@@ -1,42 +1,29 @@
-﻿using Microsoft.Extensions.Options;
-using NotionApi;
-using NotionGraphDatabase;
+﻿using NotionApi;
 using NotionGraphDatabase.Interface;
 using RestUtil;
 
-namespace NotionGraphApi
+namespace NotionGraphApi;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static void Configure(WebApplicationBuilder builder)
     {
-        public static void Configure(WebApplicationBuilder builder)
-        {
-            var serviceCollection = builder.Services;
-            var configuration = builder.Configuration;
-            
-            serviceCollection.Configure<NotionGraphApiOptions>(o => configuration.GetSection(nameof(NotionGraphApi)).Bind(o));
-            serviceCollection.Configure<NotionClientOptions>(o => configuration.GetSection(nameof(NotionClient)).Bind(o));
-            serviceCollection.Configure<RestClientOptions>(o => configuration.GetSection(nameof(RestClient)).Bind(o));
+        var serviceCollection = builder.Services;
+        var configuration = builder.Configuration;
 
-            serviceCollection.AddTransient<IRestClient, RestClient>();
+        serviceCollection.Configure<NotionGraphApiOptions>(
+            o => configuration.GetSection(nameof(NotionGraphApi)).Bind(o));
+        serviceCollection.Configure<NotionClientOptions>(o => configuration.GetSection(nameof(NotionClient)).Bind(o));
+        serviceCollection.Configure<RestClientOptions>(o => configuration.GetSection(nameof(RestClient)).Bind(o));
 
-            ServiceConfigurator.Configure(serviceCollection);
+        serviceCollection.AddTransient<IRestClient, RestClient>();
 
-            serviceCollection.AddTransient<INotionClient, NotionClient>();
+        ServiceConfigurator.Configure(serviceCollection);
 
-            serviceCollection.AddSingleton(InitializeDatabase);
-        }
+        serviceCollection.AddTransient<INotionClient, NotionClient>();
 
-        private static IGraphDatabase InitializeDatabase(IServiceProvider serviceProvider)
-        {
-            var options = serviceProvider.GetService<IOptions<NotionGraphApiOptions>>()?.Value;
-            if (options is null)
-                throw new Exception($"Missing configuration for {nameof(NotionGraphApi)}");
+        serviceCollection.AddTransient<IMetamodelFactory, NotionGraphDatabaseModelFactory>();
 
-            var notionClient = serviceProvider.GetService<INotionClient>();
-            if (notionClient is null)
-                throw new Exception("No Notion client available.");
-            
-            return new GraphDatabase(options.Model, notionClient);
-        }
+        NotionGraphDatabase.DependencyInjection.Configure(serviceCollection);
     }
 }

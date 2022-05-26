@@ -1,5 +1,5 @@
 ﻿namespace NotionGraphDatabase.QueryEngine.Model;
 
-public interface IQueryAst
+internal class QueryPredicate
 {
 }
