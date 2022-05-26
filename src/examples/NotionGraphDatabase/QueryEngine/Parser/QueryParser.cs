@@ -41,10 +41,10 @@ internal class QueryParser
     [Production("nodeClassReference: LPAREN identifier RPAREN")]
     public QueryPredicate NodeClassReferenceExpression(
         Token<QueryToken> discardLparen,
-        Identifier tableIdentifier,
+        Identifier nodeIdentifier,
         Token<QueryToken> discardRparen)
     {
-        return new NodeClassReference(tableIdentifier);
+        return new NodeClassReference(nodeIdentifier);
     }
 
     [Production("nodeClassReference: LPAREN identifier COLON identifier RPAREN")]
@@ -52,10 +52,81 @@ internal class QueryParser
         Token<QueryToken> discardLparen,
         Identifier alias,
         Token<QueryToken> discardColon,
-        Identifier tableIdentifier,
+        Identifier nodeIdentifier,
         Token<QueryToken> discardRparen)
     {
-        return new NodeClassReference(tableIdentifier, alias);
+        return new NodeClassReference(nodeIdentifier, alias);
+    }
+
+    [Production("nodeClassReference: LPAREN identifier LBRACE filterExpressions RBRACE RPAREN")]
+    public QueryPredicate NodeClassReferenceExpression(
+        Token<QueryToken> discardLparen,
+        Identifier nodeIdentifier,
+        Token<QueryToken> discardLbrace,
+        FilterExpressionList filterExpressionList,
+        Token<QueryToken> discardRbrace,
+        Token<QueryToken> discardRparen)
+    {
+        return new NodeClassReference(nodeIdentifier, nodeIdentifier, filterExpressionList);
+    }
+
+    [Production("nodeClassReference: LPAREN identifier COLON identifier LBRACE filterExpressions RBRACE RPAREN")]
+    public QueryPredicate NodeClassReferenceExpression(
+        Token<QueryToken> discardLparen,
+        Identifier alias,
+        Token<QueryToken> discardColon,
+        Identifier nodeIdentifier,
+        Token<QueryToken> discardLbrace,
+        FilterExpressionList filterExpressionList,
+        Token<QueryToken> discardRbrace,
+        Token<QueryToken> discardRparen)
+    {
+        return new NodeClassReference(nodeIdentifier, alias, filterExpressionList);
+    }
+
+    [Production("filterExpressions: filterExpression")]
+    public QueryPredicate FilterExpressions(FilterExpression filterExpression)
+    {
+        return new FilterExpressionList(filterExpression);
+    }
+
+    [Production("filterExpressions: filterExpression COMMA filterExpressions")]
+    public QueryPredicate FilterExpressions(
+        FilterExpression filterExpression,
+        Token<QueryToken> discardComma,
+        FilterExpressionList filterExpressions)
+    {
+        return new FilterExpressionList(filterExpressions.Expressions.Prepend(filterExpression));
+    }
+
+    [Production("filterExpression: identifier EQUALS expression")]
+    public QueryPredicate FilterExpression(
+        Identifier propertyIdentifier,
+        Token<QueryToken> discardEquals,
+        Expression expression)
+    {
+        return new FilterExpression(propertyIdentifier, expression);
+    }
+
+    [Production("expression: INT")]
+    public QueryPredicate IntValueExpression(Token<QueryToken> intValue)
+    {
+        return new IntValue(intValue.IntValue);
+    }
+
+    [Production("expression: STRING")]
+    public QueryPredicate StringValueExpression(Token<QueryToken> stringValue)
+    {
+        return new StringValue(stringValue.StringWithoutQuotes);
+    }
+
+    [Production("expression: identifier OBJECT_ACCESS identifier")]
+    public QueryPredicate Expression(
+        Identifier nodeName,
+        Token<QueryToken> discardObjectAccess,
+        Identifier propertyName)
+    {
+        return new PropertyIdentifier(nodeName, propertyName);
     }
 
     [Production("identifier: IDENTIFIER")]

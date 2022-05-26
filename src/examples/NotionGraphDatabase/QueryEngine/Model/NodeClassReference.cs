@@ -4,6 +4,7 @@ internal class NodeClassReference : SelectExpression
 {
     public Identifier NodeIdentifier { get; }
     public Identifier Alias { get; }
+    public FilterExpressionList Filter { get; }
 
     public NodeClassReference(Identifier nodeIdentifier, Identifier alias)
     {
@@ -15,5 +16,12 @@ internal class NodeClassReference : SelectExpression
     {
         NodeIdentifier = nodeIdentifier;
         Alias = nodeIdentifier;
+    }
+
+    public NodeClassReference(Identifier nodeIdentifier, Identifier alias, FilterExpressionList filterExpression)
+    {
+        NodeIdentifier = nodeIdentifier;
+        Alias = alias;
+        Filter = filterExpression;
     }
 }

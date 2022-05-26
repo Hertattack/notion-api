@@ -4,14 +4,21 @@ namespace NotionGraphDatabase.QueryEngine;
 
 public class QueryParseException : Exception
 {
-    private readonly List<ParseError>? _resultErrors = null;
+    public override string Message { get; }
 
-    public QueryParseException(string message) : base(message)
+    public List<ParseError> ParseErrors { get; }
+
+    public QueryParseException(string message)
     {
+        Message = message;
+        ParseErrors = new List<ParseError>();
     }
 
-    public QueryParseException(List<ParseError>? resultErrors) : base("Parse errors.")
+    public QueryParseException(IEnumerable<ParseError> resultErrors)
     {
-        _resultErrors = resultErrors;
+        var parseErrors = resultErrors.ToList();
+        ParseErrors = parseErrors;
+        Message = string.Join(", ",
+            parseErrors.Select(e => $"{e.ErrorMessage} - on line: {e.Line} column: {e.Column}"));
     }
 }

@@ -13,7 +13,8 @@ internal enum QueryToken
 
     # region literals 1000 -> 1999
 
-    [Lexeme(GenericToken.Identifier)] IDENTIFIER = 1000,
+    [Lexeme(GenericToken.Identifier, IdentifierType.AlphaNumericDash)]
+    IDENTIFIER = 1000,
 
     [Lexeme(GenericToken.String, "'", "\\")]
     STRING = 1001,
@@ -21,6 +22,8 @@ internal enum QueryToken
     [Lexeme(GenericToken.Int)] INT = 1003,
 
     [Sugar("*")] ALL_PROPERTIES = 1004,
+
+    [Lexeme(GenericToken.Double)] DOUBLE = 1005,
 
     #endregion
 
@@ -31,6 +34,8 @@ internal enum QueryToken
     [Sugar("-")] MINUS = 2001,
 
     [Sugar(".")] OBJECT_ACCESS = 2002,
+
+    [Sugar("=")] EQUALS = 2003,
 
     #endregion
 
@@ -44,13 +49,15 @@ internal enum QueryToken
 
     [Sugar("{")] LBRACE = 3003,
 
-    [Sugar("{")] RBRACE = 3004,
+    [Sugar("}")] RBRACE = 3004,
 
     [Sugar(";")] SEMICOLON = 3005,
 
     [Sugar("[")] LSQBRACKET = 3006,
 
     [Sugar("]")] RSQBRACKET = 3007,
+
+    [Sugar(",")] COMMA = 3008,
 
     #endregion
 
