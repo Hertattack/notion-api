@@ -4,7 +4,6 @@ using NUnit.Framework;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
 
-[TestFixture]
 internal class QueryInterpretationTestBase : QueryParsingTestBase
 {
     protected QueryBuilder _queryBuilder;
