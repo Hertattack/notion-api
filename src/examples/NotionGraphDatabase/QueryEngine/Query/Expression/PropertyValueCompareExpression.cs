@@ -2,12 +2,18 @@
 
 internal class PropertyValueCompareExpression : ExpressionFunction
 {
-    private readonly string _nodeAlias;
-    private readonly string _propertyName;
+    public string NodeAlias { get; }
+
+    public string PropertyName { get; }
 
     public PropertyValueCompareExpression(string nodeAlias, string propertyName)
     {
-        _nodeAlias = nodeAlias;
-        _propertyName = propertyName;
+        NodeAlias = nodeAlias;
+        PropertyName = propertyName;
+    }
+
+    public override bool Matches(object value)
+    {
+        return false;
     }
 }

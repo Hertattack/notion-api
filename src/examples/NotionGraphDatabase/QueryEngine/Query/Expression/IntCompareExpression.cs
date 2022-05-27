@@ -8,4 +8,9 @@ public class IntCompareExpression : ExpressionFunction
     {
         _valueToCompare = valueToCompare;
     }
+
+    public override bool Matches(object value)
+    {
+        return value is int && value.Equals(_valueToCompare);
+    }
 }

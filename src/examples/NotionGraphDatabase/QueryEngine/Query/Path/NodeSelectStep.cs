@@ -4,12 +4,14 @@ namespace NotionGraphDatabase.QueryEngine.Query.Path;
 
 public class NodeSelectStep : ISelectStep
 {
-    private readonly NodeReference _nodeReference;
+    public NodeReference AssociatedNode { get; }
+
+    private readonly List<FilterExpression> _filter;
+    public IEnumerable<FilterExpression> Filter => _filter.AsReadOnly();
 
     public NodeSelectStep(NodeReference nodeReference, IEnumerable<FilterExpression> filter)
     {
-        _nodeReference = nodeReference;
+        AssociatedNode = nodeReference;
+        _filter = filter.ToList();
     }
-
-    public NodeReference AssociatedNode => _nodeReference;
 }

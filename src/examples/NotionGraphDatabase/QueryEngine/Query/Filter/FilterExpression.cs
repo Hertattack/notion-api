@@ -5,9 +5,12 @@ namespace NotionGraphDatabase.QueryEngine.Query.Filter;
 public class FilterExpression
 {
     private readonly IQuery _query;
-    private readonly NodeReference _nodeReference;
-    private readonly string _propertyName;
-    private readonly ExpressionFunction _expression;
+
+    public NodeReference NodeReference { get; }
+
+    public string PropertyName { get; }
+
+    public ExpressionFunction Expression { get; }
 
     public FilterExpression(
         IQuery query,
@@ -16,8 +19,8 @@ public class FilterExpression
         ExpressionFunction expression)
     {
         _query = query;
-        _nodeReference = nodeReference;
-        _propertyName = propertyName;
-        _expression = expression;
+        NodeReference = nodeReference;
+        PropertyName = propertyName;
+        Expression = expression;
     }
 }

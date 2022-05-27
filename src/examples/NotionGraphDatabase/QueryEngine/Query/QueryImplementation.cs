@@ -12,6 +12,7 @@ internal class QueryImplementation : IQuery
         _nodeReferences;
 
     private List<NodeSelectStepContext> _selectStepsContexts = new();
+    public IEnumerable<ISelectStepContext> SelectSteps => _selectStepsContexts.AsReadOnly();
 
     public IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections =>
         _selectedProperties.Select(kvp => new NodeReturnPropertySelection(kvp.Key, kvp.Value.AsReadOnly()));

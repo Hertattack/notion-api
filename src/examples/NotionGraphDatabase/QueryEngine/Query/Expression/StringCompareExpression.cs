@@ -8,4 +8,9 @@ public class StringCompareExpression : ExpressionFunction
     {
         _valueToCompare = valueToCompare;
     }
+
+    public override bool Matches(object value)
+    {
+        return value is string s && s.Equals(_valueToCompare);
+    }
 }
