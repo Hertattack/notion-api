@@ -38,13 +38,15 @@ internal class QueryParser
         return selectExpression;
     }
 
-    [Production("selectExpression: nodeClassReference MINUS LSQBRACKET identifier RSQBRACKET GREATER selectExpression")]
+    [Production(
+        "selectExpression: nodeClassReference MINUS LSQBRACKET identifier RSQBRACKET MINUS GREATER selectExpression")]
     public QueryPredicate SelectExpression(
         NodeClassReference fromExpression,
         Token<QueryToken> discardMinus,
         Token<QueryToken> discardLsqBracket,
         Identifier roleIdentifier,
         Token<QueryToken> discardRsqBracket,
+        Token<QueryToken> discardMinus2,
         Token<QueryToken> discardGreater,
         SelectExpression toExpression)
     {
