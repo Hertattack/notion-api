@@ -1,4 +1,7 @@
-﻿using NotionGraphDatabase.QueryEngine;
+﻿using NotionGraphDatabase.QueryEngine.Query;
+using NotionGraphDatabase.QueryEngine.Query.Expression;
+using NotionGraphDatabase.QueryEngine.Query.Filter;
+using NotionGraphDatabase.QueryEngine.Query.Path;
 using NotionGraphDatabase.Test.QueryParsing;
 using NUnit.Framework;
 
@@ -11,6 +14,9 @@ internal class QueryInterpretationTestBase : QueryParsingTestBase
     [SetUp]
     public void SetUp()
     {
-        _queryBuilder = new QueryBuilder();
+        var expressionBuilder = new ExpressionBuilder();
+        var filterBuilder = new FilterBuilder(expressionBuilder);
+        var selectPathBuilder = new SelectPathBuilder(filterBuilder);
+        _queryBuilder = new QueryBuilder(selectPathBuilder);
     }
 }

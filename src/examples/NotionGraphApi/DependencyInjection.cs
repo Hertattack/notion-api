@@ -22,7 +22,7 @@ public static class DependencyInjection
 
         serviceCollection.AddTransient<INotionClient, NotionClient>();
 
-        serviceCollection.AddTransient<IMetamodelFactory, NotionGraphDatabaseModelFactory>();
+        serviceCollection.AddTransient<IMetamodelStore, NotionGraphDatabaseModelStore>();
 
         NotionGraphDatabase.DependencyInjection.Configure(serviceCollection);
     }

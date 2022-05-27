@@ -6,4 +6,5 @@ public interface IQuery
 {
     IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections { get; }
     IEnumerable<NodeReference> NodeReferences { get; }
+    void AddNextSelectStep(NodeSelectStep nodeSelectStep);
 }

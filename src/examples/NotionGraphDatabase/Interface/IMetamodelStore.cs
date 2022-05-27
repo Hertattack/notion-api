@@ -2,7 +2,7 @@
 
 namespace NotionGraphDatabase.Interface;
 
-public interface IMetamodelFactory
+public interface IMetamodelStore
 {
-    Model CreateModel();
+    Metamodel Metamodel { get; }
 }

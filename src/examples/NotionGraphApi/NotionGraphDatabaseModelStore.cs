@@ -4,21 +4,16 @@ using NotionGraphDatabase.Metadata;
 
 namespace NotionGraphApi;
 
-public class NotionGraphDatabaseModelFactory : IMetamodelFactory
+public class NotionGraphDatabaseModelStore : IMetamodelStore
 {
-    private readonly Model _model;
+    public Metamodel Metamodel { get; }
 
-    public NotionGraphDatabaseModelFactory(IOptions<NotionGraphApiOptions> notionGraphApiOptionsOption)
+    public NotionGraphDatabaseModelStore(IOptions<NotionGraphApiOptions> notionGraphApiOptionsOption)
     {
         var options = notionGraphApiOptionsOption.Value;
         if (options is null)
             throw new Exception($"Missing configuration for {nameof(NotionGraphApi)}");
 
-        _model = options.Model;
-    }
-
-    public Model CreateModel()
-    {
-        return _model;
+        Metamodel = options.Metamodel;
     }
 }

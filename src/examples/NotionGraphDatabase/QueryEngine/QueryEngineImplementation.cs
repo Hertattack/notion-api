@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NotionGraphDatabase.Interface;
 using NotionGraphDatabase.QueryEngine.Model;
 using NotionGraphDatabase.QueryEngine.Query;
 
@@ -6,15 +7,18 @@ namespace NotionGraphDatabase.QueryEngine;
 
 internal class QueryEngineImplementation : IQueryEngine
 {
+    private readonly IMetamodelStore _metamodelStore;
     private readonly IQueryParser _queryParser;
     private readonly IQueryBuilder _queryBuilder;
     private readonly ILogger<QueryEngineImplementation> _logger;
 
     public QueryEngineImplementation(
+        IMetamodelStore metamodelStore,
         IQueryParser queryParser,
         IQueryBuilder queryBuilder,
         ILogger<QueryEngineImplementation> logger)
     {
+        _metamodelStore = metamodelStore;
         _queryParser = queryParser;
         _queryBuilder = queryBuilder;
         _logger = logger;

@@ -6,22 +6,19 @@ internal class QueryImplementation : IQuery
 {
     private Dictionary<NodeReference, List<NodePropertySelection>> _selectedProperties = new();
 
+    private ISet<NodeReference> _nodeReferences = new HashSet<NodeReference>();
+
+    public IEnumerable<NodeReference> NodeReferences =>
+        _nodeReferences;
+
+    private List<NodeSelectStepContext> _selectStepsContexts = new();
+
     public IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections =>
         _selectedProperties.Select(kvp => new NodeReturnPropertySelection(kvp.Key, kvp.Value.AsReadOnly()));
 
-    public IEnumerable<NodeReference> NodeReferences =>
-        SelectionPath.Aliases.Values.Select(s => s.AssociatedNode).Distinct();
-
-    public QueryImplementation(QueryPath queryPath)
-    {
-        SelectionPath = queryPath;
-    }
-
-    public QueryPath SelectionPath { get; }
-
     public NodeReference? FindNodeByAlias(string alias)
     {
-        return !SelectionPath.Aliases.TryGetValue(alias, out var pathStep) ? null : pathStep.AssociatedNode;
+        return _nodeReferences.FirstOrDefault(r => r.Alias == alias);
     }
 
     public void AddPropertySelection(NodePropertySelection propertySelection)
@@ -38,5 +35,12 @@ internal class QueryImplementation : IQuery
             _selectedProperties.Add(propertySelection.ReferencedNode,
                 new List<NodePropertySelection> {propertySelection});
         }
+    }
+
+    public void AddNextSelectStep(NodeSelectStep nodeSelectStep)
+    {
+        _nodeReferences.Add(nodeSelectStep.AssociatedNode);
+        var nextContext = new NodeSelectStepContext(_selectStepsContexts.LastOrDefault(), nodeSelectStep);
+        _selectStepsContexts.Add(nextContext);
     }
 }

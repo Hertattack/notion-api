@@ -1,0 +1,5 @@
+﻿namespace NotionGraphDatabase.Test.QueryInterpretation;
+
+internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInterpretationTestBase
+{
+}

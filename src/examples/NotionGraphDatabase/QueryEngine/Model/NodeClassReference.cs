@@ -10,12 +10,14 @@ internal class NodeClassReference : SelectExpression
     {
         NodeIdentifier = nodeIdentifier;
         Alias = alias;
+        Filter = new FilterExpressionList();
     }
 
     public NodeClassReference(Identifier nodeIdentifier)
     {
         NodeIdentifier = nodeIdentifier;
         Alias = nodeIdentifier;
+        Filter = new FilterExpressionList();
     }
 
     public NodeClassReference(Identifier nodeIdentifier, Identifier alias, FilterExpressionList filterExpression)
