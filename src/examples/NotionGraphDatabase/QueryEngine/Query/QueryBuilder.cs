@@ -31,7 +31,7 @@ internal class QueryBuilder : IQueryBuilder
             var nodeReference = query.FindNodeByAlias(alias);
 
             if (nodeReference is null)
-                throw new InvalidQueryException(
+                throw new InvalidQuerySyntaxException(
                     $"Expected node with alias: {alias} to be in the selection path but it was not found. Return specification is invalid.");
 
             query.AddPropertySelection(new NodeAllPropertiesSelected(nodeReference.Value));
@@ -43,7 +43,7 @@ internal class QueryBuilder : IQueryBuilder
         }
         else
         {
-            throw new InvalidQueryException($"Unsupported return specification.");
+            throw new InvalidQuerySyntaxException($"Unsupported return specification.");
         }
     }
 }

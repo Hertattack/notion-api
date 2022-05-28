@@ -20,6 +20,6 @@ internal class FilterBuilder : IFilterBuilder
                 query,
                 nodeReference,
                 e.PropertyIdentifier.Name,
-                _expressionBuilder.FromAst(query, nodeClassReference, e.Expression)));
+                _expressionBuilder.FromAst(query, nodeClassReference, e.PropertyIdentifier.Name, e.Expression)));
     }
 }

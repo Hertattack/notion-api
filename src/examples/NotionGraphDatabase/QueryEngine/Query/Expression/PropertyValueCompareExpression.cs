@@ -2,18 +2,26 @@
 
 internal class PropertyValueCompareExpression : ExpressionFunction
 {
-    public string NodeAlias { get; }
+    public string RightAlias { get; }
 
-    public string PropertyName { get; }
+    public string RightPropertyName { get; }
 
-    public PropertyValueCompareExpression(string nodeAlias, string propertyName)
+    public PropertyValueCompareExpression(
+        string leftAlias, string leftPropertyName,
+        string rightAlias, string rightPropertyName)
+        : base(leftAlias, leftPropertyName)
     {
-        NodeAlias = nodeAlias;
-        PropertyName = propertyName;
+        RightAlias = rightAlias;
+        RightPropertyName = rightPropertyName;
     }
 
     public override bool Matches(object value)
     {
         return false;
+    }
+
+    public override string ToString()
+    {
+        return $"Property Value Comparison filter: {LeftAlias}.{LeftPropertyName}={RightAlias}.{RightPropertyName}";
     }
 }

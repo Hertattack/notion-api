@@ -4,7 +4,8 @@ public class IntCompareExpression : ExpressionFunction
 {
     private readonly int _valueToCompare;
 
-    public IntCompareExpression(int valueToCompare)
+    public IntCompareExpression(string leftAlias, string leftPropertyName, int valueToCompare)
+        : base(leftAlias, leftPropertyName)
     {
         _valueToCompare = valueToCompare;
     }
@@ -12,5 +13,10 @@ public class IntCompareExpression : ExpressionFunction
     public override bool Matches(object value)
     {
         return value is int && value.Equals(_valueToCompare);
+    }
+
+    public override string ToString()
+    {
+        return $"Integer Value Comparison filter: {LeftAlias}.{LeftPropertyName}={_valueToCompare}";
     }
 }

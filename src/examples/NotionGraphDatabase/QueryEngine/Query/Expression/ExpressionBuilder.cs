@@ -4,25 +4,27 @@ namespace NotionGraphDatabase.QueryEngine.Query.Expression;
 
 internal class ExpressionBuilder : IExpressionBuilder
 {
-    public ExpressionFunction FromAst(
-        IQuery query,
+    public ExpressionFunction FromAst(IQuery query,
         NodeClassReference nodeClassReference,
+        string propertyName,
         Model.Expression expression)
     {
         return expression switch
         {
             StringValue stringValue =>
-                new StringCompareExpression(stringValue.Value),
+                new StringCompareExpression(nodeClassReference.Alias.Name, propertyName, stringValue.Value),
 
             IntValue intValue =>
-                new IntCompareExpression(intValue.Value),
+                new IntCompareExpression(nodeClassReference.Alias.Name, propertyName, intValue.Value),
 
             PropertyIdentifier propertyIdentifier =>
                 new PropertyValueCompareExpression(
+                    nodeClassReference.Alias.Name,
+                    propertyName,
                     propertyIdentifier.NodeNameOrAlias.Name,
                     propertyIdentifier.PropertyName.Name),
 
-            _ => throw new InvalidQueryException($"Unsupported expression type: {expression.GetType().FullName}.")
+            _ => throw new InvalidQuerySyntaxException($"Unsupported expression type: {expression.GetType().FullName}.")
         };
     }
 }

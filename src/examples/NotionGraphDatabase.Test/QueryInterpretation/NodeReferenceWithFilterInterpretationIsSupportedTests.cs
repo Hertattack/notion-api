@@ -71,8 +71,8 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<PropertyValueCompareExpression>();
-        expressionFunction.NodeAlias.Should().Be("o");
-        expressionFunction.PropertyName.Should().Be("property2");
+        expressionFunction.RightAlias.Should().Be("o");
+        expressionFunction.RightPropertyName.Should().Be("property2");
     }
 
     [Test]

@@ -4,5 +4,6 @@ namespace NotionGraphDatabase.QueryEngine.Query.Expression;
 
 internal interface IExpressionBuilder
 {
-    ExpressionFunction FromAst(IQuery query, NodeClassReference nodeClassReference, Model.Expression argExpression);
+    ExpressionFunction FromAst(IQuery query, NodeClassReference nodeClassReference, string propertyName,
+        Model.Expression argExpression);
 }

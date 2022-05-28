@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Storage" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\NotionApi\NotionApi.csproj" />
     </ItemGroup>
 
