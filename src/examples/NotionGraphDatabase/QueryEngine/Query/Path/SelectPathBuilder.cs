@@ -1,4 +1,4 @@
-﻿using NotionGraphDatabase.QueryEngine.Model;
+﻿using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Query.Filter;
 
 namespace NotionGraphDatabase.QueryEngine.Query.Path;

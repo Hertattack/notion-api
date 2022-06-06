@@ -50,16 +50,25 @@ internal class ExecutionPlan : IQueryPlan
 
             Steps.Add(new SelectFromNodeStep(database, currentStep.AssociatedNode.Alias, currentStep.Filter));
         }
+
+        var returnProperties = Query.ReturnPropertySelections
+            .Select(CreateReturnMapping).ToList();
+        Steps.Add(new CreateResultStep());
+    }
+
+    private ReturnMapping CreateReturnMapping(NodeReturnPropertySelection selection)
+    {
+        var nodeReference = selection.NodeReference;
+        var database = Databases[nodeReference.NodeName];
+        var properties = selection.SelectedProperties.Select(p => p.ReferencedNode);
+        return new ReturnMapping();
     }
 
     public QueryResult Execute(IStorageBackend storageBackend)
     {
         var result = new QueryResult(Query, Metamodel);
         var context = new QueryExecutionContext();
-        foreach (var step in Steps)
-        {
-            step.Execute(context, storageBackend);
-        }
+        foreach (var step in Steps) step.Execute(context, storageBackend);
         return result;
     }
 }

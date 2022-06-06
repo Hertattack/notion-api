@@ -2,9 +2,8 @@
 
 internal class NodeAllPropertiesSelected : NodePropertySelection
 {
-    public NodeAllPropertiesSelected(NodeReference nodeReference)
+    public NodeAllPropertiesSelected(NodeReference referencedNode) : base(referencedNode)
     {
-        ReferencedNode = nodeReference;
     }
 
     public override bool MatchesOrExtends(NodePropertySelection otherSelection)

@@ -1,4 +1,4 @@
-﻿using NotionGraphDatabase.QueryEngine.Model;
+﻿using NotionGraphDatabase.QueryEngine.Ast;
 using sly.lexer;
 using sly.parser.generator;
 

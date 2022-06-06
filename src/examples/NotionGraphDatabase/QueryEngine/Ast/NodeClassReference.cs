@@ -1,4 +1,4 @@
-﻿namespace NotionGraphDatabase.QueryEngine.Model;
+﻿namespace NotionGraphDatabase.QueryEngine.Ast;
 
 internal class NodeClassReference : SelectExpression
 {

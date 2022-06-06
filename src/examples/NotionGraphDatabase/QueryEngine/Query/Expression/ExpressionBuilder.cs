@@ -1,4 +1,4 @@
-﻿using NotionGraphDatabase.QueryEngine.Model;
+﻿using NotionGraphDatabase.QueryEngine.Ast;
 
 namespace NotionGraphDatabase.QueryEngine.Query.Expression;
 
@@ -7,7 +7,7 @@ internal class ExpressionBuilder : IExpressionBuilder
     public ExpressionFunction FromAst(IQuery query,
         NodeClassReference nodeClassReference,
         string propertyName,
-        Model.Expression expression)
+        Ast.Expression expression)
     {
         return expression switch
         {

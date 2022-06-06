@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotionGraphDatabase.Interface;
 using NotionGraphDatabase.Interface.Result;
-using NotionGraphDatabase.QueryEngine.Model;
+using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Plan;
 using NotionGraphDatabase.QueryEngine.Query;
 using NotionGraphDatabase.QueryEngine.Validation;

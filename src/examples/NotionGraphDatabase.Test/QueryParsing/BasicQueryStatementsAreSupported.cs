@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using NotionGraphDatabase.QueryEngine.Model;
+using NotionGraphDatabase.QueryEngine.Ast;
 using NUnit.Framework;
 
 namespace NotionGraphDatabase.Test.QueryParsing;
@@ -85,5 +85,18 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
 
         nodeClassReference.NodeIdentifier.Name.Should().Be("test");
         nodeClassReference.Alias.Name.Should().Be("t");
+    }
+
+    [Test]
+    public void Selection_of_specific_return_properties_is_supported()
+    {
+        // Arrange
+        const string queryString = "(test) return test.property_a";
+
+        // Act
+        var result = _queryParser.Parse(queryString);
+
+        // Assert
+        var returnSpecification = result.As<QueryExpression>().ReturnSpecification;
     }
 }
