@@ -1,16 +1,14 @@
-﻿using System.Collections.ObjectModel;
-
-namespace NotionGraphDatabase.QueryEngine.Query;
+﻿namespace NotionGraphDatabase.QueryEngine.Query;
 
 public class NodeReturnPropertySelection
 {
     public NodeReference NodeReference { get; }
-    public ReadOnlyCollection<NodePropertySelection> SelectedProperties { get; }
+    public NodePropertySelection PropertySelection { get; }
 
     public NodeReturnPropertySelection(NodeReference nodeReference,
-        ReadOnlyCollection<NodePropertySelection> selectedProperties)
+        NodePropertySelection propertySelection)
     {
         NodeReference = nodeReference;
-        SelectedProperties = selectedProperties;
+        PropertySelection = propertySelection;
     }
 }

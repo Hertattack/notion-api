@@ -2,8 +2,7 @@
 
 internal class SelectAllProperties : PropertySelector
 {
-    public SelectAllProperties(Identifier identifier)
+    public SelectAllProperties(Identifier identifier) : base(identifier)
     {
-        NodeTypeIdentifier = identifier;
     }
 }

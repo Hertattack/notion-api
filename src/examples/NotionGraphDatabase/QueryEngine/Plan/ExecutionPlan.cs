@@ -60,8 +60,19 @@ internal class ExecutionPlan : IQueryPlan
     {
         var nodeReference = selection.NodeReference;
         var database = Databases[nodeReference.NodeName];
-        var properties = selection.SelectedProperties.Select(p => p.ReferencedNode);
-        return new ReturnMapping();
+        var alias = nodeReference.Alias;
+
+        return selection.PropertySelection switch
+        {
+            NodeAllPropertiesSelected =>
+                new ReturnMapping(database, alias) {AllSelected = true},
+
+            NodeSpecificPropertiesSelected specificPropertiesSelected =>
+                new ReturnMapping(database, alias, specificPropertiesSelected.PropertyNames),
+
+            _ =>
+                throw new QueryPlanGenerationException($"")
+        };
     }
 
     public QueryResult Execute(IStorageBackend storageBackend)

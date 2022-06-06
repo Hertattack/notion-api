@@ -7,6 +7,5 @@ internal class CreateResultStep : ExecutionPlanStep
 {
     public override void Execute(QueryExecutionContext context, IStorageBackend storageBackend)
     {
-        throw new NotImplementedException();
     }
 }

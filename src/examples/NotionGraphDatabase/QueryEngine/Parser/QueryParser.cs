@@ -19,17 +19,58 @@ internal class QueryParser
         return new QueryExpression(selectExpression, returnSpecification);
     }
 
-    [Production("returnSpecification: RETURN propertySelector")]
-    public QueryPredicate ReturnSpecification(Token<QueryToken> returnStatement, PropertySelector selector)
+    [Production("returnSpecification: RETURN propertySelectors")]
+    public QueryPredicate ReturnSpecification(
+        Token<QueryToken> returnStatement,
+        ReturnPropertySelectionList propertySelectionList)
     {
-        return new ReturnSpecification(selector);
+        return new ReturnSpecification(propertySelectionList);
+    }
+
+    [Production("propertySelectors: propertySelector")]
+    public QueryPredicate PropertySelectors(PropertySelector selector)
+    {
+        return new ReturnPropertySelectionList(selector);
+    }
+
+    [Production("propertySelectors: propertySelector COMMA propertySelectors")]
+    public QueryPredicate PropertySelectors(
+        PropertySelector selector,
+        Token<QueryToken> discardComma,
+        ReturnPropertySelectionList returnPropertySelectionList)
+    {
+        returnPropertySelectionList.Add(selector);
+        return returnPropertySelectionList;
     }
 
     [Production("propertySelector: identifier OBJECT_ACCESS ALL_PROPERTIES")]
-    public QueryPredicate PropertySelector(Identifier identifier, Token<QueryToken> objectAccessToken,
-        Token<QueryToken> allPropertiesToken)
+    public QueryPredicate PropertySelector(
+        Identifier identifier,
+        Token<QueryToken> discardObjectAccessToken,
+        Token<QueryToken> discardAllPropertiesToken)
     {
         return new SelectAllProperties(identifier);
+    }
+
+    [Production("propertySelector: identifier OBJECT_ACCESS propertyIdentifier")]
+    public QueryPredicate PropertySelector(
+        Identifier identifier,
+        Token<QueryToken> objectAccessToken,
+        PropertyName propertyName)
+    {
+        return new SelectSpecificProperty(identifier, propertyName.Name);
+    }
+
+    [Production("propertyIdentifier: identifier")]
+    public PropertyName PropertyIdentifier(Identifier identifier)
+    {
+        return new PropertyName(identifier.Name);
+    }
+
+    [Production("propertyIdentifier: STRING")]
+    public PropertyName PropertyIdentifier(Token<QueryToken> stringValue)
+    {
+        return new PropertyName(stringValue.StringWithoutQuotes);
     }
 
     [Production("selectExpression: nodeClassReference")]

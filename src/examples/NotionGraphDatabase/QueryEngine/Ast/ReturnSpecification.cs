@@ -2,11 +2,13 @@
 
 internal class ReturnSpecification : QueryPredicate
 {
-    public PropertySelector Selector { get; }
+    private readonly List<PropertySelector> _selectors = new();
 
-    public ReturnSpecification(PropertySelector selector)
+    public IEnumerable<PropertySelector> Selectors => _selectors;
+
+    public ReturnSpecification(ReturnPropertySelectionList returnPropertySelection)
     {
-        Selector = selector;
+        _selectors.AddRange(returnPropertySelection.Selectors);
     }
 
     protected ReturnSpecification()

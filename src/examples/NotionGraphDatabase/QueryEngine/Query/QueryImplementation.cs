@@ -4,7 +4,7 @@ namespace NotionGraphDatabase.QueryEngine.Query;
 
 internal class QueryImplementation : IQuery
 {
-    private Dictionary<NodeReference, List<NodePropertySelection>> _selectedProperties = new();
+    private Dictionary<NodeReference, NodePropertySelection> _selectedProperties = new();
 
     private ISet<NodeReference> _nodeReferences = new HashSet<NodeReference>();
 
@@ -15,27 +15,18 @@ internal class QueryImplementation : IQuery
     public IEnumerable<ISelectStepContext> SelectSteps => _selectStepsContexts.AsReadOnly();
 
     public IEnumerable<NodeReturnPropertySelection> ReturnPropertySelections =>
-        _selectedProperties.Select(kvp => new NodeReturnPropertySelection(kvp.Key, kvp.Value.AsReadOnly()));
+        _selectedProperties.Select(kvp =>
+            new NodeReturnPropertySelection(kvp.Key, kvp.Value));
 
     public NodeReference? FindNodeByAlias(string alias)
     {
         return _nodeReferences.FirstOrDefault(r => r.Alias == alias);
     }
 
-    public void AddPropertySelection(NodePropertySelection propertySelection)
+    public void SetPropertySelection(NodePropertySelection propertySelection)
     {
-        if (_selectedProperties.TryGetValue(propertySelection.ReferencedNode, out var selectedProperties))
-        {
-            if (selectedProperties.Any(s => s.MatchesOrExtends(propertySelection)))
-                return;
-
-            selectedProperties.Add(propertySelection);
-        }
-        else
-        {
-            _selectedProperties.Add(propertySelection.ReferencedNode,
-                new List<NodePropertySelection> {propertySelection});
-        }
+        var nodeReference = propertySelection.ReferencedNode;
+        _selectedProperties[nodeReference] = propertySelection;
     }
 
     public void AddNextSelectStep(NodeSelectStep nodeSelectStep)

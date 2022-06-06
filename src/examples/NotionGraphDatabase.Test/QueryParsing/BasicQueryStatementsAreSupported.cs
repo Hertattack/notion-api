@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NUnit.Framework;
 
@@ -50,9 +51,11 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         var queryExpression = result.As<QueryExpression>();
         var nodeClassReference = queryExpression.SelectExpression.As<NodeClassReference>();
 
-        queryExpression.ReturnSpecification.Selector.NodeTypeIdentifier.Should()
-            .BeEquivalentTo(nodeClassReference.NodeIdentifier);
-        queryExpression.ReturnSpecification.Selector.Should().BeAssignableTo<SelectAllProperties>();
+        queryExpression.ReturnSpecification.Selectors.Should().HaveCount(1);
+
+        var selector = queryExpression.ReturnSpecification.Selectors.First();
+        selector.NodeIdentifier.Should().BeEquivalentTo(nodeClassReference.NodeIdentifier);
+        selector.Should().BeAssignableTo<SelectAllProperties>();
     }
 
     [Test]
@@ -88,7 +91,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
     }
 
     [Test]
-    public void Selection_of_specific_return_properties_is_supported()
+    public void Selection_of_specific_return_property_is_supported()
     {
         // Arrange
         const string queryString = "(test) return test.property_a";
@@ -98,5 +101,49 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
 
         // Assert
         var returnSpecification = result.As<QueryExpression>().ReturnSpecification;
+        returnSpecification.Selectors.Should().HaveCount(1);
+
+        var selector = returnSpecification.Selectors.First().As<SelectSpecificProperty>();
+        selector.NodeIdentifier.Name.Should().Be("test");
+        selector.PropertyName.Should().Be("property_a");
+    }
+
+    [Test]
+    public void Selection_of_specific_return_property_string_is_supported()
+    {
+        // Arrange
+        const string queryString = "(test) return test.'Property A'";
+
+        // Act
+        var result = _queryParser.Parse(queryString);
+
+        // Assert
+        var returnSpecification = result.As<QueryExpression>().ReturnSpecification;
+        returnSpecification.Selectors.Should().HaveCount(1);
+
+        var selector = returnSpecification.Selectors.First().As<SelectSpecificProperty>();
+        selector.NodeIdentifier.Name.Should().Be("test");
+        selector.PropertyName.Should().Be("Property A");
+    }
+
+    [Test]
+    public void Multiple_selections_of_specific_return_properties_are_supported()
+    {
+        // Arrange
+        const string queryString = "(test) return test.'Property A', test.property_b, test.'other prop'";
+
+        // Act
+        var result = _queryParser.Parse(queryString);
+
+        // Assert
+        var returnSpecification = result.As<QueryExpression>().ReturnSpecification;
+        returnSpecification.Selectors.Should().HaveCount(3);
+
+        returnSpecification.Selectors.Should()
+            .ContainSingle(i => i.As<SelectSpecificProperty>().PropertyName == "Property A")
+            .And
+            .ContainSingle(i => i.As<SelectSpecificProperty>().PropertyName == "property_b")
+            .And
+            .ContainSingle(i => i.As<SelectSpecificProperty>().PropertyName == "other prop");
     }
 }

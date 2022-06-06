@@ -23,11 +23,8 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
         var selection = selectedProperties[0];
         selection.NodeReference.Alias.Should().Be("test");
         selection.NodeReference.NodeName.Should().Be("test");
-
-        selection.SelectedProperties.Count.Should().Be(1);
-        var selectedProperty = selection.SelectedProperties[0];
-        selectedProperty.Should().BeAssignableTo<NodeAllPropertiesSelected>();
-        selectedProperty.ReferencedNode.Should().BeEquivalentTo(selection.NodeReference);
+        selection.PropertySelection.As<NodeAllPropertiesSelected>()
+            .ReferencedNode.Should().BeEquivalentTo(selection.NodeReference);
     }
 
     [Test]
@@ -56,7 +53,6 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
         query.ReturnPropertySelections.Should().HaveCount(1);
         var returnSelection = query.ReturnPropertySelections.First().As<NodeReturnPropertySelection>();
         returnSelection.NodeReference.NodeName.Should().Be("test");
-        returnSelection.SelectedProperties.Should().HaveCount(1)
-            .And.Subject.First().Should().BeAssignableTo<NodeAllPropertiesSelected>();
+        returnSelection.PropertySelection.Should().BeAssignableTo<NodeAllPropertiesSelected>();
     }
 }
