@@ -12,7 +12,7 @@ internal class QueryExecutionContext
 
     public ResultContext GetNextResultContext(string alias)
     {
-        var context = new ResultContext(alias);
+        var context = new ResultContext(this, GetCurrentResultContext(), alias);
         _contexts.Add(context);
         _contextsByAlias.Add(alias, context);
         return context;

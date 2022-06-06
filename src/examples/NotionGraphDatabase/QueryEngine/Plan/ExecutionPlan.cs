@@ -51,9 +51,9 @@ internal class ExecutionPlan : IQueryPlan
             Steps.Add(new SelectFromNodeStep(database, currentStep.AssociatedNode.Alias, currentStep.Filter));
         }
 
-        var returnProperties = Query.ReturnPropertySelections
+        var returnPropertyMappings = Query.ReturnPropertySelections
             .Select(CreateReturnMapping).ToList();
-        Steps.Add(new CreateResultStep());
+        Steps.Add(new CreateResultStep(returnPropertyMappings));
     }
 
     private ReturnMapping CreateReturnMapping(NodeReturnPropertySelection selection)
