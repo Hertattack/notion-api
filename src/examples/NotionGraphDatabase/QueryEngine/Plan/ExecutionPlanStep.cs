@@ -1,5 +1,9 @@
-﻿namespace NotionGraphDatabase.QueryEngine.Plan;
+﻿using NotionGraphDatabase.QueryEngine.Execution;
+using NotionGraphDatabase.Storage;
 
-internal class ExecutionPlanStep
+namespace NotionGraphDatabase.QueryEngine.Plan;
+
+internal abstract class ExecutionPlanStep
 {
+    public abstract void Execute(QueryExecutionContext context, IStorageBackend storageBackend);
 }

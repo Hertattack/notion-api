@@ -4,13 +4,13 @@ namespace NotionGraphDatabase.QueryEngine.Query.Path;
 
 internal class NodeSelectStepContext : ISelectStepContext
 {
-    public NodeSelectStepContext? PreviousStepContext { get; }
+    public ISelectStepContext? PreviousStepContext { get; }
 
     private readonly NodeSelectStep _currentStep;
     public ISelectStep Step => _currentStep;
 
     private readonly List<NodeSelectStepContext> _path;
-    public IEnumerable<NodeSelectStepContext> Path => _path.AsReadOnly();
+    public IEnumerable<ISelectStepContext> Path => _path.AsReadOnly();
 
     public NodeSelectStepContext(NodeSelectStepContext? previousStep, NodeSelectStep currentStep)
     {

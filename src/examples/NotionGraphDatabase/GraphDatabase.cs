@@ -1,5 +1,6 @@
 ﻿using NotionApi;
 using NotionGraphDatabase.Interface;
+using NotionGraphDatabase.Interface.Result;
 using NotionGraphDatabase.QueryEngine;
 
 namespace NotionGraphDatabase;
@@ -15,5 +16,10 @@ public class GraphDatabase : IGraphDatabase
     {
         _notionClient = notionClient;
         _queryEngine = queryEngine;
+    }
+
+    public QueryResult Execute(string queryText)
+    {
+        return _queryEngine.Execute(queryText);
     }
 }

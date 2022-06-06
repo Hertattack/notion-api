@@ -1,7 +1,7 @@
 ﻿using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.QueryEngine.Query;
 
-namespace NotionGraphDatabase.QueryEngine;
+namespace NotionGraphDatabase.Interface.Result;
 
 public class QueryResult
 {
