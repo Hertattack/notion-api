@@ -1,4 +1,5 @@
 ﻿using NotionApi.Rest.Response.Page;
+using NotionGraphDatabase.Storage.Mappers;
 
 namespace NotionGraphDatabase.Storage.DataModel;
 
@@ -18,6 +19,9 @@ public class DatabasePage : Page
     public string Id { get; }
     public DateTime LastEditTimestamp { get; set; }
 
+    public IEnumerable<PropertyDefinition> Properties =>
+        _database?.Properties ?? Array.Empty<PropertyDefinition>();
+
     public void Update(PageObject notionObject)
     {
         if (_database is null)
@@ -34,5 +38,16 @@ public class DatabasePage : Page
     public void Delete()
     {
         _database = null;
+    }
+
+    public object? this[string propertyName]
+    {
+        get
+        {
+            if (_notionObject.Properties.ContainsKey(propertyName))
+                return PropertyValueMapper.Map(_notionObject.Properties[propertyName]);
+
+            throw new UndefinedPropertyException(propertyName);
+        }
     }
 }

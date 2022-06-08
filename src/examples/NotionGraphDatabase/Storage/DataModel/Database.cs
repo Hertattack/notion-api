@@ -1,4 +1,5 @@
 ﻿using NotionApi.Rest.Response.Database;
+using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using Util.Extensions;
 
@@ -16,6 +17,11 @@ public class Database : IDataStoreObject
 
     private Dictionary<string, DatabasePage> _pages = new();
 
+    private List<PropertyDefinition> _properties = new();
+
+    public IEnumerable<PropertyDefinition> Properties =>
+        _properties.AsReadOnly();
+
     public Database(DataStore? store, string databaseId)
     {
         _store = store;
@@ -30,6 +36,24 @@ public class Database : IDataStoreObject
             throw new StorageException("Updating deleted definition.");
 
         _notionRepresentation = notionRepresentation;
+        _properties = _notionRepresentation.Properties
+            .Select(kvp => CreatePropertyDefinition(kvp.Key, kvp.Value))
+            .ToList();
+    }
+
+    private static PropertyDefinition CreatePropertyDefinition(string propertyName,
+        NotionPropertyConfiguration configuration)
+    {
+        return configuration switch
+        {
+            FormulaPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
+            NumberPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
+            RelationPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
+            RollupPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
+            SelectPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
+            MultiSelectPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
+            _ => new PropertyDefinition(propertyName, configuration.Type)
+        };
     }
 
     public void FullUpdate(IEnumerable<PageObject> allPages)

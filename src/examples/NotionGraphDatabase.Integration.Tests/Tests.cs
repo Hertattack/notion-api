@@ -1,4 +1,5 @@
 using System;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NotionGraphDatabase.Integration.Tests.Util;
 using NotionGraphDatabase.Interface;
@@ -31,5 +32,6 @@ public class Tests
         var result = notionDatabase.Execute("(source)");
 
         // Assert
+        result.Result.Rows.Should().HaveCount(3);
     }
 }

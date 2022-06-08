@@ -2,23 +2,21 @@
 
 internal class QueryExecutionContext
 {
-    private List<ResultContext> _contexts = new();
+    private List<IntermediateResultContext> _contexts = new();
 
-    private Dictionary<string, ResultContext> _contextsByAlias = new();
+    private Dictionary<string, IntermediateResultContext> _contextsByAlias = new();
 
-    public QueryExecutionContext()
+    public ResultSet ResultSet { get; } = new();
+
+    public IntermediateResultContext GetNextResultContext(string alias)
     {
-    }
-
-    public ResultContext GetNextResultContext(string alias)
-    {
-        var context = new ResultContext(this, GetCurrentResultContext(), alias);
+        var context = new IntermediateResultContext(this, GetCurrentResultContext(), alias);
         _contexts.Add(context);
         _contextsByAlias.Add(alias, context);
         return context;
     }
 
-    public ResultContext? GetCurrentResultContext()
+    public IntermediateResultContext? GetCurrentResultContext()
     {
         return _contexts.LastOrDefault();
     }

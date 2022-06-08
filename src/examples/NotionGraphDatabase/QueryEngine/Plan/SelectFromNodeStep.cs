@@ -33,6 +33,6 @@ internal class SelectFromNodeStep : ExecutionPlanStep
         var nextResultContext = context.GetNextResultContext(_alias);
 
         var database = storageBackend.GetDatabase(_database.Id);
-        nextResultContext.AddRange(database.ThrowIfNull().Pages.Select(p => new ResultRow(p)));
+        nextResultContext.AddRange(database.ThrowIfNull().Pages.Select(p => new IntermediateResultRow(p)));
     }
 }

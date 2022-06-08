@@ -77,9 +77,9 @@ internal class ExecutionPlan : IQueryPlan
 
     public QueryResult Execute(IStorageBackend storageBackend)
     {
-        var result = new QueryResult(Query, Metamodel);
         var context = new QueryExecutionContext();
         foreach (var step in Steps) step.Execute(context, storageBackend);
+        var result = new QueryResult(Query, Metamodel, context.ResultSet);
         return result;
     }
 }

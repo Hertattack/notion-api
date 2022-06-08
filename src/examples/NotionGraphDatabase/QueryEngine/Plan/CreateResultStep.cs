@@ -18,12 +18,20 @@ internal class CreateResultStep : ExecutionPlanStep
 
         if (resultContext is null)
             return;
-        
-        var resultSet = new List<Dictionary<string, object>>();
-        foreach (var row in resultContext.DenormalizeRows())
+
+        var resultSet = context.ResultSet;
+
+        if (!_mappings.ContainsKey(resultContext.Alias)) return;
+
+        var mapping = _mappings[resultContext.Alias];
+        if (!mapping.AllSelected && !mapping.PropertyNames.Any()) return;
+
+        foreach (var intermediateResultRow in resultContext.IntermediateResultRows)
         {
-            var resultRow = new Dictionary<string, object>();
-            
+            var propertyNames = mapping.AllSelected ? intermediateResultRow.PropertyNames : mapping.PropertyNames;
+            var resultRow = resultSet[intermediateResultRow.Id];
+            foreach (var propertyName in propertyNames)
+                resultRow[propertyName] = intermediateResultRow[propertyName];
         }
     }
 }
