@@ -24,7 +24,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         var filter = reference.Filter.Expressions.ToList();
         filter.Should().HaveCount(1);
 
-        filter[0].PropertyIdentifier.Name.Should().Be("property");
+        filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<StringValue>().Value.Should().Be("value");
     }
 
@@ -45,7 +45,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         var filter = reference.Filter.Expressions.ToList();
         filter.Should().HaveCount(1);
 
-        filter[0].PropertyIdentifier.Name.Should().Be("property");
+        filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<IntValue>().Value.Should().Be(1);
     }
 
@@ -66,7 +66,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         var filter = reference.Filter.Expressions.ToList();
         filter.Should().HaveCount(1);
 
-        filter[0].PropertyIdentifier.Name.Should().Be("property");
+        filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<PropertyIdentifier>().NodeNameOrAlias.Name.Should().Be("o");
         filter[0].Expression.As<PropertyIdentifier>().PropertyName.Name.Should().Be("property2");
     }
@@ -84,7 +84,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
         var filter = reference.Filter.Expressions.ToList();
         filter.Should().HaveCount(1);
-        filter[0].PropertyIdentifier.Name.Should().Be("property");
+        filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<IntValue>().Value.Should().Be(1);
         reference.Alias.Name.Should().Be("t");
         reference.NodeIdentifier.Name.Should().Be("test");
@@ -105,10 +105,10 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         var filter = reference.Filter.Expressions.ToList();
         filter.Should().HaveCount(2);
 
-        filter[0].PropertyIdentifier.Name.Should().Be("property");
+        filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<IntValue>().Value.Should().Be(1);
 
-        filter[1].PropertyIdentifier.Name.Should().Be("otherproperty");
+        filter[1].PropertyName.Name.Should().Be("otherproperty");
         filter[1].Expression.As<IntValue>().Value.Should().Be(2);
     }
 
@@ -127,10 +127,10 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         var filter = reference.Filter.Expressions.ToList();
         filter.Should().HaveCount(2);
 
-        filter[0].PropertyIdentifier.Name.Should().Be("property");
+        filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<IntValue>().Value.Should().Be(1);
 
-        filter[1].PropertyIdentifier.Name.Should().Be("otherproperty");
+        filter[1].PropertyName.Name.Should().Be("otherproperty");
         filter[1].Expression.As<StringValue>().Value.Should().Be("str value");
     }
 }

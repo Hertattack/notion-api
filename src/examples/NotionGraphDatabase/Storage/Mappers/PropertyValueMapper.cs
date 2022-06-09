@@ -1,6 +1,5 @@
 ﻿using NotionApi.Rest.Response.Page.Properties;
 using NotionApi.Rest.Response.Page.Properties.Relation;
-using NotionApi.Rest.Response.Text;
 using NotionGraphDatabase.Util;
 
 namespace NotionGraphDatabase.Storage.Mappers;
@@ -29,11 +28,10 @@ public static class PropertyValueMapper
             PhoneNumberPropertyValue phoneNumberPropertyValue => phoneNumberPropertyValue.PhoneNumber.ValueOrDefault(),
             OneToManyRelationPropertyValue oneToManyRelationPropertyValue => oneToManyRelationPropertyValue.Relations
                 .Select(r => r.Id).ToList(),
-            RichTextPropertyValue richTextPropertyValue => richTextPropertyValue.RichText.ValueOrElse(
-                new List<RichTextObject>()),
+            RichTextPropertyValue richTextPropertyValue => richTextPropertyValue.ToString(),
             RollupPropertyValue rollupPropertyValue => rollupPropertyValue.Rollup.ValueOrDefault()?.Type ?? "unknown",
             SelectPropertyValue selectPropertyValue => selectPropertyValue.SelectedOption.ValueOrDefault(),
-            TitlePropertyValue titlePropertyValue => titlePropertyValue.Title.ValueOrElse(new List<RichTextObject>()),
+            TitlePropertyValue titlePropertyValue => titlePropertyValue.ToString(),
             UrlPropertyValue urlPropertyValue => urlPropertyValue.Url.ValueOrDefault(),
             _ => throw new ArgumentOutOfRangeException(nameof(notionObjectProperty), notionObjectProperty, null)
         };

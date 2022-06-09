@@ -15,9 +15,9 @@ internal class PropertyValueCompareExpression : ExpressionFunction
         RightPropertyName = rightPropertyName;
     }
 
-    public override bool Matches(object value)
+    public override bool Matches(IPropertyValueResolver resolver)
     {
-        return false;
+        return resolver.GetValue(LeftAlias, LeftPropertyName) == resolver.GetValue(RightAlias, RightPropertyName);
     }
 
     public override string ToString()

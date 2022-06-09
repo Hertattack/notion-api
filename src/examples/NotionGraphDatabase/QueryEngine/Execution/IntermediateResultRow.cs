@@ -17,4 +17,9 @@ public class IntermediateResultRow
     }
 
     public object? this[string propertyName] => _databasePage[propertyName];
+
+    public IntermediateResultRow GetParentByAlias(string alias)
+    {
+        throw new Exception("Chain of results not supported yet.");
+    }
 }

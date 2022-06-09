@@ -10,8 +10,9 @@ public class IntCompareExpression : ExpressionFunction
         _valueToCompare = valueToCompare;
     }
 
-    public override bool Matches(object value)
+    public override bool Matches(IPropertyValueResolver resolver)
     {
+        var value = resolver.GetValue(LeftAlias, LeftPropertyName);
         return value is int && value.Equals(_valueToCompare);
     }
 

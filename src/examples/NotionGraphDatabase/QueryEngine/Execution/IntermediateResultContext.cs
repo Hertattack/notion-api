@@ -23,4 +23,32 @@ internal class IntermediateResultContext
     {
         _resultRows.AddRange(resultRows.ToList());
     }
+
+    public IEnumerable<string> SelectedAliases()
+    {
+        var result = new List<string> {Alias};
+
+        var previous = _parentContext;
+        while (previous is not null)
+        {
+            result.Add(previous.Alias);
+            previous = previous._parentContext;
+        }
+
+        return result;
+    }
+
+    public IReadOnlyDictionary<string, IntermediateResultContext> GetSelectedContextsByAlias()
+    {
+        var result = new Dictionary<string, IntermediateResultContext> {{Alias, this}};
+
+        var previous = _parentContext;
+        while (previous is not null)
+        {
+            result[previous.Alias] = previous;
+            previous = previous._parentContext;
+        }
+
+        return result;
+    }
 }

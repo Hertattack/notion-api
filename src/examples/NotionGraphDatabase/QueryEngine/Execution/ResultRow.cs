@@ -3,6 +3,7 @@
 public class ResultRow
 {
     public CompositeKey Key { get; }
+    public IEnumerable<string> PropertyNames => _values.Keys;
 
     private Dictionary<string, object?> _values = new();
 

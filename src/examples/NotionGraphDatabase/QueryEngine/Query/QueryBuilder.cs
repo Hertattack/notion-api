@@ -58,6 +58,7 @@ internal class QueryBuilder : IQueryBuilder
                         continue;
 
                     ((NodeSpecificPropertiesSelected) existingSelector).Add(propertyName);
+                    continue;
                 }
 
                 var newSelector = new NodeSpecificPropertiesSelected(nodeReference.Value);

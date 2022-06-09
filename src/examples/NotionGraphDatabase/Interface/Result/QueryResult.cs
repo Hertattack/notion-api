@@ -8,12 +8,12 @@ public class QueryResult
 {
     public IQuery Query { get; }
     public Metamodel Metamodel { get; }
-    public ResultSet Result { get; }
+    public ResultSet ResultSet { get; }
 
-    public QueryResult(IQuery query, Metamodel metamodel, ResultSet resultSet)
+    public QueryResult(IQuery query, Metamodel metamodel, ResultSet resultSetSet)
     {
         Query = query;
         Metamodel = metamodel;
-        Result = resultSet;
+        ResultSet = resultSetSet;
     }
 }

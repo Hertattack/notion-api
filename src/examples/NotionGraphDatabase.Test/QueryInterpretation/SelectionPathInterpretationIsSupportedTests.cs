@@ -3,6 +3,7 @@ using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.QueryEngine.Query.Path;
+using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
@@ -51,11 +52,13 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
 
         var selectStep = steps[0].Step.As<NodeSelectStep>();
         selectStep.Filter.Should().HaveCount(1);
-        selectStep.Filter.First().Expression.As<IntCompareExpression>().Matches(1).Should().BeTrue();
+        var resolver = PropertyValueResolver.For("fromNode", "property", 1);
+        selectStep.Filter.First().Expression.As<IntCompareExpression>().Matches(resolver).Should().BeTrue();
 
         selectStep = steps[1].Step.As<NodeSelectStep>();
         selectStep.Filter.Should().HaveCount(1);
-        selectStep.Filter.First().Expression.As<StringCompareExpression>().Matches("value").Should().BeTrue();
+        resolver = PropertyValueResolver.For("toNode", "property", "value");
+        selectStep.Filter.First().Expression.As<StringCompareExpression>().Matches(resolver).Should().BeTrue();
     }
 
     [Test]

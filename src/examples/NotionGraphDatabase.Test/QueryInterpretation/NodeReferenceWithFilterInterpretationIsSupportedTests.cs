@@ -2,6 +2,7 @@
 using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Query.Expression;
+using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
@@ -27,7 +28,8 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<StringCompareExpression>();
-        expressionFunction.Matches("value").Should().BeTrue();
+        var resolver = PropertyValueResolver.For("test", "property", "value");
+        expressionFunction.Matches(resolver).Should().BeTrue();
     }
 
     [Test]
@@ -49,7 +51,8 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        expressionFunction.Matches(1).Should().BeTrue();
+        var resolver = PropertyValueResolver.For("test", "property", 1);
+        expressionFunction.Matches(resolver).Should().BeTrue();
     }
 
     [Test]
@@ -97,7 +100,8 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        expressionFunction.Matches(3421).Should().BeTrue();
+        var resolver = PropertyValueResolver.For("t", "property", 3421);
+        expressionFunction.Matches(resolver).Should().BeTrue();
     }
 
     [Test]
@@ -119,11 +123,13 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
 
         filter[0].PropertyName.Should().Be("property");
         var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        expressionFunction.Matches(1).Should().BeTrue();
+        var resolver = PropertyValueResolver.For("test", "property", 1);
+        expressionFunction.Matches(resolver).Should().BeTrue();
 
         filter[1].PropertyName.Should().Be("otherproperty");
         expressionFunction = filter[1].Expression.As<IntCompareExpression>();
-        expressionFunction.Matches(2).Should().BeTrue();
+        resolver = PropertyValueResolver.For("test", "otherproperty", 2);
+        expressionFunction.Matches(resolver).Should().BeTrue();
     }
 
     [Test]
@@ -145,10 +151,12 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
 
         filter[0].PropertyName.Should().Be("property");
         var firstExpressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        firstExpressionFunction.Matches(1).Should().BeTrue();
+        var resolver = PropertyValueResolver.For("test", "property", 1);
+        firstExpressionFunction.Matches(resolver).Should().BeTrue();
 
         filter[1].PropertyName.Should().Be("otherproperty");
         var secondExpressionFunction = filter[1].Expression.As<StringCompareExpression>();
-        secondExpressionFunction.Matches("str value").Should().BeTrue();
+        resolver = PropertyValueResolver.For("test", "otherproperty", "str value");
+        secondExpressionFunction.Matches(resolver).Should().BeTrue();
     }
 }

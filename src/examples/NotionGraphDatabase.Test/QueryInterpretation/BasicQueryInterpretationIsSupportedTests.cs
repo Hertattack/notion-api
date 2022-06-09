@@ -55,4 +55,21 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
         returnSelection.NodeReference.NodeName.Should().Be("test");
         returnSelection.PropertySelection.Should().BeAssignableTo<NodeAllPropertiesSelected>();
     }
+
+    [Test]
+    public void Selecting_multiple_return_properties_is_supported()
+    {
+        // Arrange
+        var queryAst = _queryParser.Parse("(t:test) return t.A, t.'b B', t.c").As<QueryExpression>();
+
+        // Act
+        var query = _queryBuilder.FromAst(queryAst);
+
+        // Assert
+        query.ReturnPropertySelections.Should().HaveCount(1);
+        var returnSelection = query.ReturnPropertySelections.First().As<NodeReturnPropertySelection>();
+        returnSelection.NodeReference.NodeName.Should().Be("test");
+        var selection = returnSelection.PropertySelection.As<NodeSpecificPropertiesSelected>();
+        selection.PropertyNames.Should().BeEquivalentTo("A", "b B", "c");
+    }
 }

@@ -61,18 +61,6 @@ internal class QueryParser
         return new SelectSpecificProperty(identifier, propertyName.Name);
     }
 
-    [Production("propertyIdentifier: identifier")]
-    public PropertyName PropertyIdentifier(Identifier identifier)
-    {
-        return new PropertyName(identifier.Name);
-    }
-
-    [Production("propertyIdentifier: STRING")]
-    public PropertyName PropertyIdentifier(Token<QueryToken> stringValue)
-    {
-        return new PropertyName(stringValue.StringWithoutQuotes);
-    }
-
     [Production("selectExpression: nodeClassReference")]
     public QueryPredicate SelectExpression(SelectExpression selectExpression)
     {
@@ -155,13 +143,24 @@ internal class QueryParser
         return new FilterExpressionList(filterExpressions.Expressions.Prepend(filterExpression));
     }
 
-    [Production("filterExpression: identifier EQUALS expression")]
+    [Production("filterExpression: propertyIdentifier EQUALS expression")]
     public QueryPredicate FilterExpression(
-        Identifier propertyIdentifier,
+        PropertyName propertyName,
         Token<QueryToken> discardEquals,
         Expression expression)
     {
-        return new FilterExpression(propertyIdentifier, expression);
+        return new FilterExpression(propertyName, expression);
+    }
+
+    [Production("filterExpression: identifier OBJECT_ACCESS propertyIdentifier EQUALS expression")]
+    public QueryPredicate FilterExpression(
+        Identifier nodeIdentifier,
+        Token<QueryToken> discardObjectAccess,
+        PropertyName propertyName,
+        Token<QueryToken> discardEquals,
+        Expression expression)
+    {
+        return new FilterExpression(nodeIdentifier, propertyName, expression);
     }
 
     [Production("expression: INT")]
@@ -183,6 +182,18 @@ internal class QueryParser
         Identifier propertyName)
     {
         return new PropertyIdentifier(nodeName, propertyName);
+    }
+
+    [Production("propertyIdentifier: identifier")]
+    public PropertyName PropertyIdentifier(Identifier identifier)
+    {
+        return new PropertyName(identifier.Name);
+    }
+
+    [Production("propertyIdentifier: STRING")]
+    public PropertyName PropertyIdentifier(Token<QueryToken> stringValue)
+    {
+        return new PropertyName(stringValue.StringWithoutQuotes);
     }
 
     [Production("identifier: IDENTIFIER")]

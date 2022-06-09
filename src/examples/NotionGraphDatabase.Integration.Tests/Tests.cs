@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NotionGraphDatabase.Integration.Tests.Util;
@@ -32,6 +33,42 @@ public class Tests
         var result = notionDatabase.Execute("(source)");
 
         // Assert
-        result.Result.Rows.Should().HaveCount(3);
+        result.ResultSet.Rows.Should().HaveCount(3);
+    }
+
+    [Test]
+    public void Select_specific_property_from_single_database()
+    {
+        // Act
+        var result = notionDatabase.Execute("(source) return source.Name");
+
+        // Assert
+        result.ResultSet.Rows.Should().HaveCount(3);
+
+        var firstRow = result.ResultSet.Rows.First(r => (string) r["Name"]! == "C");
+        firstRow.PropertyNames.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void Select_specific_properties_from_single_database()
+    {
+        // Act
+        var result = notionDatabase.Execute("(s:source) return s.Name, s.'Last Edited'");
+
+        // Assert
+        result.ResultSet.Rows.Should().HaveCount(3);
+
+        var firstRow = result.ResultSet.Rows.First(r => (string) r["Name"]! == "C");
+        firstRow.PropertyNames.Should().BeEquivalentTo("Name", "Last Edited");
+    }
+
+    [Test]
+    public void Single_node_can_be_filtered()
+    {
+        // Act
+        var result = notionDatabase.Execute("(source{source.Name = 'C'})");
+
+        // Assert
+        result.ResultSet.Rows.Should().HaveCount(1);
     }
 }

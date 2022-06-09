@@ -6,7 +6,7 @@ public class FilterExpression
 {
     private readonly IQuery _query;
 
-    public NodeReference NodeReference { get; }
+    public string Alias { get; }
 
     public string PropertyName { get; }
 
@@ -14,12 +14,12 @@ public class FilterExpression
 
     public FilterExpression(
         IQuery query,
-        NodeReference nodeReference,
+        string alias,
         string propertyName,
         ExpressionFunction expression)
     {
         _query = query;
-        NodeReference = nodeReference;
+        Alias = alias;
         PropertyName = propertyName;
         Expression = expression;
     }

@@ -1,9 +1,10 @@
-﻿using NotionGraphDatabase.QueryEngine.Ast;
-
-namespace NotionGraphDatabase.QueryEngine.Query.Expression;
+﻿namespace NotionGraphDatabase.QueryEngine.Query.Expression;
 
 internal interface IExpressionBuilder
 {
-    ExpressionFunction FromAst(IQuery query, NodeClassReference nodeClassReference, string propertyName,
+    ExpressionFunction FromAst(
+        IQuery query,
+        string alias,
+        string propertyName,
         Ast.Expression argExpression);
 }

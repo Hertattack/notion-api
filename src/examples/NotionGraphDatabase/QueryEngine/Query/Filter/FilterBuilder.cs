@@ -16,10 +16,13 @@ internal class FilterBuilder : IFilterBuilder
     {
         var nodeReference = new NodeReference(nodeClassReference.NodeIdentifier.Name, nodeClassReference.Alias.Name);
         return nodeClassReference.Filter.Expressions.Select(e =>
-            new FilterExpression(
+        {
+            var alias = (e.NodeIdentifier ?? nodeClassReference.Alias).Name;
+            return new FilterExpression(
                 query,
-                nodeReference,
-                e.PropertyIdentifier.Name,
-                _expressionBuilder.FromAst(query, nodeClassReference, e.PropertyIdentifier.Name, e.Expression)));
+                alias,
+                e.PropertyName.Name,
+                _expressionBuilder.FromAst(query, alias, e.PropertyName.Name, e.Expression));
+        });
     }
 }
