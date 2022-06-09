@@ -44,11 +44,16 @@ internal class ExecutionPlan : IQueryPlan
                 var previousStep = selectStepContext.PreviousStepContext.ThrowIfNull();
                 var role = currentStep.Role;
                 var associatedNode = previousStep.Step.AssociatedNode;
-                var targetDatabase = Databases[associatedNode.NodeName];
-                Steps.Add(new RelationalFilterStep(role, targetDatabase));
+                var parentDatabase = Databases[associatedNode.NodeName];
+                var relationalFilterStep = new SelectNodeViaRelationStep(
+                    role, database,
+                    currentStep.AssociatedNode.Alias, currentStep.Filter);
+                Steps.Add(relationalFilterStep);
             }
-
-            Steps.Add(new SelectFromNodeStep(database, currentStep.AssociatedNode.Alias, currentStep.Filter));
+            else
+            {
+                Steps.Add(new SelectFromNodeStep(database, currentStep.AssociatedNode.Alias, currentStep.Filter));
+            }
         }
 
         var returnPropertyMappings = Query.ReturnPropertySelections
@@ -77,7 +82,7 @@ internal class ExecutionPlan : IQueryPlan
 
     public QueryResult Execute(IStorageBackend storageBackend)
     {
-        var context = new QueryExecutionContext();
+        var context = new QueryExecutionContext(Metamodel);
         foreach (var step in Steps) step.Execute(context, storageBackend);
         var result = new QueryResult(Query, Metamodel, context.ResultSet);
         return result;

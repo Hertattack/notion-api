@@ -71,4 +71,13 @@ public class Tests
         // Assert
         result.ResultSet.Rows.Should().HaveCount(1);
     }
+
+    [Test]
+    public void A_path_of_nodes_can_be_selected()
+    {
+        // Act
+        var result = notionDatabase.Execute("(source)-[Target]->(target)");
+
+        // Assert
+    }
 }

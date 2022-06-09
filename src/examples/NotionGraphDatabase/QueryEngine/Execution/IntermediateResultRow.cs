@@ -5,6 +5,7 @@ namespace NotionGraphDatabase.QueryEngine.Execution;
 public class IntermediateResultRow
 {
     private readonly DatabasePage _databasePage;
+    private readonly IEnumerable<IntermediateResultRow>? _parentRecords;
 
     public IEnumerable<string> PropertyNames =>
         _databasePage.Properties.Select(p => p.Name);
@@ -14,6 +15,12 @@ public class IntermediateResultRow
     public IntermediateResultRow(DatabasePage databasePage)
     {
         _databasePage = databasePage;
+    }
+
+    public IntermediateResultRow(DatabasePage databasePage, IEnumerable<IntermediateResultRow> parentRecords)
+    {
+        _databasePage = databasePage;
+        _parentRecords = parentRecords;
     }
 
     public object? this[string propertyName] => _databasePage[propertyName];

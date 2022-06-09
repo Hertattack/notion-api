@@ -1,4 +1,6 @@
-﻿namespace NotionGraphDatabase.QueryEngine.Execution;
+﻿using NotionGraphDatabase.Storage.DataModel;
+
+namespace NotionGraphDatabase.QueryEngine.Execution;
 
 internal class IntermediateResultContext
 {
@@ -9,14 +11,17 @@ internal class IntermediateResultContext
     public string Alias => _alias;
 
     private List<IntermediateResultRow> _resultRows = new();
+    private readonly List<PropertyDefinition> _propertyDefinitions;
+    public IEnumerable<PropertyDefinition> PropertyDefinitions => _propertyDefinitions.AsReadOnly();
     public IEnumerable<IntermediateResultRow> IntermediateResultRows => _resultRows.AsReadOnly();
 
     public IntermediateResultContext(QueryExecutionContext context, IntermediateResultContext? parentContext,
-        string alias)
+        string alias, IEnumerable<PropertyDefinition> propertyDefinitions)
     {
         _context = context;
         _parentContext = parentContext;
         _alias = alias;
+        _propertyDefinitions = propertyDefinitions.ToList();
     }
 
     public void AddRange(IEnumerable<IntermediateResultRow> resultRows)
