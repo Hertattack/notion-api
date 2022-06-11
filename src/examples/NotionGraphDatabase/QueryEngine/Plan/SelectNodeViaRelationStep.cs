@@ -45,17 +45,27 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
 
         nextResultContext.AddRange(
             database.Pages
-                .Select(p => Join(p, previousResultContext, propertyName))
+                .Select(p => Join(p, previousResultContext, propertyDefinition))
                 .Where(r => r is not null && ApplyFilters(r, nextResultContext))!
         );
     }
 
-    private static IntermediateResultRow? Join(DatabasePage page, IntermediateResultContext previousResultContext,
-        string propertyName)
+    private static IntermediateResultRow? Join(
+        DatabasePage page,
+        IntermediateResultContext previousResultContext,
+        PropertyDefinition propertyDefinition)
     {
         var id = page.Id;
         var parentRecords = previousResultContext.IntermediateResultRows.Where(
-            r => r[propertyName] == id).ToList();
+            r =>
+            {
+                var propertyValue = r[propertyDefinition.Name];
+
+                if (propertyValue is List<string> list)
+                    return list.Any(v => v == id);
+
+                return propertyValue is string strValue && strValue == id;
+            }).ToList();
 
         return !parentRecords.Any() ? null : new IntermediateResultRow(page, parentRecords);
     }

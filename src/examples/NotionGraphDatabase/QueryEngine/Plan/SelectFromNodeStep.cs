@@ -19,7 +19,7 @@ internal class SelectFromNodeStep : ExecutionPlanStep
         _database = database;
         _alias = alias;
         _filters = filters.ToList();
-        _noFilters = _filters.Count > 0;
+        _noFilters = _filters.Count <= 0;
         _resolver = new PropertyValueResolver();
     }
 
@@ -43,7 +43,7 @@ internal class SelectFromNodeStep : ExecutionPlanStep
 
     protected bool ApplyFilters(IntermediateResultRow row, IntermediateResultContext context)
     {
-        return !_noFilters
+        return _noFilters
                || _filters.All(f => f.Expression.Matches(_resolver.SetRow(row)));
     }
 }

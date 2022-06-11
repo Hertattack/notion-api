@@ -76,7 +76,8 @@ internal class ExecutionPlan : IQueryPlan
                 new ReturnMapping(database, alias, specificPropertiesSelected.PropertyNames),
 
             _ =>
-                throw new QueryPlanGenerationException($"")
+                throw new QueryPlanGenerationException(
+                    $"Unsupported type of property selection: '{selection.GetType()}'")
         };
     }
 

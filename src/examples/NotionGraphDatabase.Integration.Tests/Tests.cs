@@ -79,5 +79,6 @@ public class Tests
         var result = notionDatabase.Execute("(source)-[Target]->(target)");
 
         // Assert
+        result.ResultSet.Rows.Should().HaveCount(3);
     }
 }
