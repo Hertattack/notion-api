@@ -17,7 +17,7 @@ public class DatabasePage : Page
     }
 
     public string Id { get; }
-    public DateTime LastEditTimestamp { get; set; }
+    public string? LastEditTimestamp { get; set; }
 
     public IEnumerable<PropertyDefinition> Properties =>
         _database?.Properties ?? Array.Empty<PropertyDefinition>();
@@ -32,7 +32,7 @@ public class DatabasePage : Page
 
         _notionObject = notionObject;
 
-        LastEditTimestamp = Convert.ToDateTime(_notionObject.LastEditedTime);
+        LastEditTimestamp = _notionObject.LastEditedTime;
     }
 
     public void Delete()

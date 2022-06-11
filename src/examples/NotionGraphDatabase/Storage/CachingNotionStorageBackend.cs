@@ -13,10 +13,13 @@ public class CachingNotionStorageBackend : IStorageBackend
     private readonly ILogger<CachingNotionStorageBackend> _logger;
     private readonly DataStore _dataStore;
 
-    public CachingNotionStorageBackend(INotionClient notionClient, ILogger<CachingNotionStorageBackend> logger)
+    public CachingNotionStorageBackend(
+        INotionClient notionClient,
+        ILogger<CachingNotionStorageBackend> logger)
     {
         _notionClient = notionClient;
         _logger = logger;
+        
         _dataStore = new DataStore();
     }
 
@@ -43,7 +46,7 @@ public class CachingNotionStorageBackend : IStorageBackend
                 var ts = definition.GetLastKnowEditTimestamp();
                 databaseContentsRequest.Parameters.Filter = new DatabaseLastEditedTimestampFilter
                 {
-                    LastEditedTimeFilter = new EqualsTimeFilter(ts)
+                    LastEditedTimeFilter = new OnOrAfterDateTimeFilter(ts)
                 };
             }
 

@@ -1,4 +1,5 @@
-﻿using NotionApi.Rest.Response.Database;
+﻿using System.Globalization;
+using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using Util.Extensions;
@@ -104,7 +105,8 @@ public class Database : IDataStoreObject
         if (_pages.Count == 0)
             return "";
 
-        return _pages.Max(p => p.Value.LastEditTimestamp).ToLongDateString();
+        return _pages.Max(p => Convert.ToDateTime(p.Value.LastEditTimestamp, CultureInfo.InvariantCulture))
+            .ToLongDateString();
     }
 
     public bool HasPages()

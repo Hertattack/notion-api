@@ -22,11 +22,13 @@ internal class QueryEngineImplementation : IQueryEngine
         IMetamodelStore metamodelStore,
         IQueryParser queryParser,
         IQueryBuilder queryBuilder,
-        IQueryValidator queryValidator,
         IExecutionPlanBuilder executionPlanBuilder,
         IStorageBackend storageBackend,
         ILogger<QueryEngineImplementation> logger)
     {
+        if (metamodelStore.Metamodel is null)
+            throw new Exception("No metamodel available for querying.");
+
         _metamodelStore = metamodelStore;
         _queryParser = queryParser;
         _queryBuilder = queryBuilder;

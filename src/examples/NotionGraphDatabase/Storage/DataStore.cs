@@ -1,4 +1,5 @@
 ﻿using NotionGraphDatabase.Storage.DataModel;
+using NotionGraphDatabase.Util;
 
 namespace NotionGraphDatabase.Storage;
 
@@ -8,6 +9,8 @@ public class DataStore
 
     public Database GetDatabase(string databaseId)
     {
+        var unifiedGuid = databaseId.RemoveDashes();
+
         if (_databases.ContainsKey(databaseId))
             return _databases[databaseId];
 

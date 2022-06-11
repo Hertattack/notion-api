@@ -2,6 +2,10 @@ using NotionGraphApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#if DEBUG
+builder.Configuration.AddJsonFile("appsettings.Debug.json", true, true);
+#endif
+
 DependencyInjection.Configure(builder);
 
 // Add services to the container.
