@@ -5,5 +5,5 @@ namespace NotionGraphDatabase.QueryEngine.Plan;
 
 internal abstract class ExecutionPlanStep
 {
-    public abstract void Execute(QueryExecutionContext context, IStorageBackend storageBackend);
+    public abstract void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend);
 }

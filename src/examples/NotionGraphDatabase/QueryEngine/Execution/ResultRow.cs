@@ -3,18 +3,25 @@
 public class ResultRow
 {
     public CompositeKey Key { get; }
-    public IEnumerable<string> PropertyNames => _values.Keys;
+    public IEnumerable<FieldIdentifier> PropertyNames => _values.Keys;
 
-    private Dictionary<string, object?> _values = new();
+    private Dictionary<FieldIdentifier, object?> _values = new();
 
     public ResultRow(CompositeKey key)
     {
         Key = key;
     }
 
-    public object? this[string propertyName]
+    public object? this[FieldIdentifier fieldId]
     {
-        get => _values[propertyName];
-        set => _values[propertyName] = value;
+        get => _values[fieldId];
+        set => _values[fieldId] = value;
+    }
+
+    public ResultRow Duplicate()
+    {
+        var duplicate = new ResultRow(Key.Duplicate());
+        foreach (var dictionaryEntry in _values) duplicate[dictionaryEntry.Key] = dictionaryEntry.Value;
+        return duplicate;
     }
 }

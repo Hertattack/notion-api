@@ -23,15 +23,15 @@ internal class SelectFromNodeStep : ExecutionPlanStep
         _resolver = new PropertyValueResolver();
     }
 
-    public override void Execute(QueryExecutionContext context, IStorageBackend storageBackend)
+    public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        var previousResultContext = context.GetCurrentResultContext();
+        var previousResultContext = executionContext.GetCurrentResultContext();
 
         if (previousResultContext is not null)
             throw new Exception("Only one select-step supported.");
 
         var database = storageBackend.GetDatabase(_database.Id).ThrowIfNull();
-        var nextResultContext = context.GetNextResultContext(database.Properties, _alias);
+        var nextResultContext = executionContext.GetNextResultContext(database.Properties, _alias);
         _resolver.SetContext(nextResultContext);
 
         nextResultContext.AddRange(

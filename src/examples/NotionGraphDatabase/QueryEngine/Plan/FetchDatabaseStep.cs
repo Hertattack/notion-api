@@ -13,7 +13,7 @@ internal class FetchDatabaseStep : ExecutionPlanStep
         _database = database;
     }
 
-    public override void Execute(QueryExecutionContext context, IStorageBackend storageBackend)
+    public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
         storageBackend.GetDatabase(_database.Id.Replace("-", ""));
     }

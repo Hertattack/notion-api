@@ -5,18 +5,20 @@ public class ResultSet
     private List<ResultRow> _resultRows = new();
     public IEnumerable<ResultRow> Rows => _resultRows.AsReadOnly();
 
-    public ResultRow this[string id]
+    public IEnumerable<ResultRow> this[string id]
     {
         get
         {
-            var resultRow = _resultRows.FirstOrDefault(r => r.Key.Matches(id));
+            var resultRows = _resultRows.Where(r => r.Key.Matches(id)).ToList();
 
-            if (resultRow is not null) return resultRow;
+            if (resultRows.Any()) return resultRows;
 
-            resultRow = new ResultRow(new CompositeKey(id));
-            _resultRows.Add(resultRow);
-
-            return resultRow;
+            return Array.Empty<ResultRow>();
         }
+    }
+
+    public void AddRow(ResultRow newRow)
+    {
+        _resultRows.Add(newRow);
     }
 }

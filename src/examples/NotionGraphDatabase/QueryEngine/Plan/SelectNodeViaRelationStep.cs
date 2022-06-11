@@ -17,9 +17,9 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
         _role = role;
     }
 
-    public override void Execute(QueryExecutionContext context, IStorageBackend storageBackend)
+    public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        var relation = context.Metamodel.Edges.FirstOrDefault(e =>
+        var relation = executionContext.Metamodel.Edges.FirstOrDefault(e =>
                 (e.From.Alias == _alias && e.Navigability.Reverse.Role == _role)
                 || (e.To.Alias == _alias && e.Navigability.Forward.Role == _role))
             .ThrowIfNull($"Relation for role: '{_role}' not found for alias: '{_alias}'.");
@@ -28,7 +28,7 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
             ? relation.Navigability.Reverse.Label
             : relation.Navigability.Forward.Label;
 
-        var previousResultContext = context.GetCurrentResultContext();
+        var previousResultContext = executionContext.GetCurrentResultContext();
 
         if (previousResultContext is null)
             throw new Exception(
@@ -40,7 +40,7 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
                 $"Property: '{propertyName}' for relational select not found on: '{previousResultContext.Alias}'");
 
         var database = storageBackend.GetDatabase(_database.Id).ThrowIfNull();
-        var nextResultContext = context.GetNextResultContext(database.Properties, _alias);
+        var nextResultContext = executionContext.GetNextResultContext(database.Properties, _alias);
         _resolver.SetContext(nextResultContext);
 
         nextResultContext.AddRange(

@@ -5,7 +5,7 @@ namespace NotionGraphDatabase.QueryEngine.Execution;
 internal class IntermediateResultContext
 {
     private readonly QueryExecutionContext _context;
-    private readonly IntermediateResultContext? _parentContext;
+    public IntermediateResultContext? ParentContext { get; }
 
     private readonly string _alias;
     public string Alias => _alias;
@@ -19,7 +19,7 @@ internal class IntermediateResultContext
         string alias, IEnumerable<PropertyDefinition> propertyDefinitions)
     {
         _context = context;
-        _parentContext = parentContext;
+        ParentContext = parentContext;
         _alias = alias;
         _propertyDefinitions = propertyDefinitions.ToList();
     }
@@ -33,11 +33,11 @@ internal class IntermediateResultContext
     {
         var result = new List<string> {Alias};
 
-        var previous = _parentContext;
+        var previous = ParentContext;
         while (previous is not null)
         {
             result.Add(previous.Alias);
-            previous = previous._parentContext;
+            previous = previous.ParentContext;
         }
 
         return result;
@@ -47,11 +47,11 @@ internal class IntermediateResultContext
     {
         var result = new Dictionary<string, IntermediateResultContext> {{Alias, this}};
 
-        var previous = _parentContext;
+        var previous = ParentContext;
         while (previous is not null)
         {
             result[previous.Alias] = previous;
-            previous = previous._parentContext;
+            previous = previous.ParentContext;
         }
 
         return result;

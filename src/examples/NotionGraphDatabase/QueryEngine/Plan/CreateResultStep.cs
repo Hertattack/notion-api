@@ -12,26 +12,67 @@ internal class CreateResultStep : ExecutionPlanStep
         _mappings = mappings.ToDictionary(m => m.Alias);
     }
 
-    public override void Execute(QueryExecutionContext context, IStorageBackend storageBackend)
+    public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        var resultContext = context.GetCurrentResultContext();
+        var resultContext = executionContext.GetCurrentResultContext();
 
         if (resultContext is null)
             return;
 
-        var resultSet = context.ResultSet;
-
-        if (!_mappings.ContainsKey(resultContext.Alias)) return;
-
-        var mapping = _mappings[resultContext.Alias];
-        if (!mapping.AllSelected && !mapping.PropertyNames.Any()) return;
+        var mapping = _mappings.ContainsKey(resultContext.Alias) ? _mappings[resultContext.Alias] : null;
+        var resultSet = executionContext.ResultSet;
 
         foreach (var intermediateResultRow in resultContext.IntermediateResultRows)
         {
-            var propertyNames = mapping.AllSelected ? intermediateResultRow.PropertyNames : mapping.PropertyNames;
-            var resultRow = resultSet[intermediateResultRow.Id];
-            foreach (var propertyName in propertyNames)
-                resultRow[propertyName] = intermediateResultRow[propertyName];
+            var resultRow = new ResultRow(new CompositeKey(intermediateResultRow.Id));
+            resultSet.AddRow(resultRow);
+
+            if (mapping is not null)
+                foreach (var propertyName in mapping.AllSelected
+                             ? intermediateResultRow.PropertyNames
+                             : mapping.PropertyNames)
+                    resultRow[new FieldIdentifier(resultContext.Alias, propertyName)] =
+                        intermediateResultRow[propertyName];
+
+            AddParentRows(resultSet, resultRow, resultContext.ParentContext, intermediateResultRow.ParentRows);
+        }
+    }
+
+    private void AddParentRows(
+        ResultSet resultSet,
+        ResultRow resultRow,
+        IntermediateResultContext? parentContext,
+        IEnumerable<IntermediateResultRow> parentRows)
+    {
+        if (parentContext is null)
+            return;
+
+        var mapping = _mappings.ContainsKey(parentContext.Alias) ? _mappings[parentContext.Alias] : null;
+
+        var denormalizedSet = parentRows.Select(
+            (intermediateResultRow, i) =>
+            {
+                var newResultRow = i == 0 ? resultRow : resultRow.Duplicate();
+                newResultRow.Key.Add(intermediateResultRow.Id);
+
+                if (i >= 1)
+                    resultSet.AddRow(newResultRow);
+
+                return (newResultRow, intermediateResultRow);
+            });
+
+        var nextParentContext = parentContext.ParentContext;
+        foreach (var (newResultRow, intermediateResultRow) in denormalizedSet)
+        {
+            if (mapping is not null)
+                foreach (var propertyName in mapping.AllSelected
+                             ? intermediateResultRow.PropertyNames
+                             : mapping.PropertyNames)
+                    newResultRow[new FieldIdentifier(parentContext.Alias, propertyName)] =
+                        intermediateResultRow[propertyName];
+
+
+            AddParentRows(resultSet, newResultRow, nextParentContext, intermediateResultRow.ParentRows);
         }
     }
 }
