@@ -1,4 +1,5 @@
-﻿using NotionApi.Rest.Response.Page;
+﻿using System.Globalization;
+using NotionApi.Rest.Response.Page;
 using NotionGraphDatabase.Storage.Mappers;
 using NotionGraphDatabase.Util;
 
@@ -9,12 +10,12 @@ public class DatabasePage : Page
     private Database? _database;
     private PageObject _notionObject = null!;
 
-    public DatabasePage(Database database, PageObject pageObject, DateTime lastEditTime)
+    public DatabasePage(Database database, PageObject pageObject)
     {
         _database = database;
         Id = pageObject.Id.RemoveDashes();
 
-        Update(pageObject, lastEditTime);
+        Update(pageObject);
     }
 
     public string Id { get; }
@@ -23,7 +24,7 @@ public class DatabasePage : Page
     public IEnumerable<PropertyDefinition> Properties =>
         _database?.Properties ?? Array.Empty<PropertyDefinition>();
 
-    public void Update(PageObject notionObject, DateTime lastEditTime)
+    public void Update(PageObject notionObject)
     {
         if (_database is null)
             throw new StorageException("Page is deleted.");
@@ -33,7 +34,7 @@ public class DatabasePage : Page
 
         _notionObject = notionObject;
 
-        LastEditTimestamp = lastEditTime;
+        LastEditTimestamp = DateTime.Parse(notionObject.LastEditedTime, null, DateTimeStyles.RoundtripKind);
     }
 
     public void Delete()

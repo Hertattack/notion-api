@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using NotionApi.Rest.Response.Database;
+﻿using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using Util.Extensions;
@@ -82,12 +81,12 @@ public class Database : IDataStoreObject
         _notionRepresentation = null;
     }
 
-    public DateTime? GetLastKnowEditTimestamp(CultureInfo cultureInfo)
+    public DateTime? GetLastKnowEditTimestamp()
     {
         if (_pages.Count == 0)
             return null;
 
-        return _pages.Max(p => Convert.ToDateTime(p.Value.LastEditTimestamp, cultureInfo));
+        return _pages.Max(p => p.Value.LastEditTimestamp);
     }
 
     public bool HasPages()
@@ -97,12 +96,10 @@ public class Database : IDataStoreObject
 
     public void UpdateAndInsert(IEnumerable<PageObject> updatedAndNewPages)
     {
-        var conversionCulture = _store.ConfigurationProvider.DateTimeConversionCulture;
-
         if (_pages.Count == 0)
         {
             _pages = updatedAndNewPages.ToDictionary(p => p.Id,
-                p => new DatabasePage(this, p, Convert.ToDateTime(p.LastEditedTime, conversionCulture)));
+                p => new DatabasePage(this, p));
             return;
         }
 
@@ -110,17 +107,20 @@ public class Database : IDataStoreObject
         {
             _pages.TryGetValue(updatedPage.Id, out var existingPage);
 
-            var lastEditTime = Convert.ToDateTime(updatedPage.LastEditedTime, conversionCulture);
-
             if (existingPage is null)
             {
-                existingPage = new DatabasePage(this, updatedPage, lastEditTime);
+                existingPage = new DatabasePage(this, updatedPage);
                 _pages[updatedPage.Id] = existingPage;
             }
             else
             {
-                existingPage.Update(updatedPage, lastEditTime);
+                existingPage.Update(updatedPage);
             }
         }
+    }
+
+    private DateTime ParseDateTime(string argLastEditedTime)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -8,7 +8,7 @@ using Util.Extensions;
 namespace NotionGraphDatabase.Integration.Tests;
 
 [TestFixture]
-public class TestBase
+public abstract class TestBase
 {
     protected IServiceProvider serviceProvider;
     protected IGraphDatabase notionDatabase;

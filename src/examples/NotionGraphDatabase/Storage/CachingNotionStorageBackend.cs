@@ -4,7 +4,6 @@ using NotionApi.Extensions;
 using NotionApi.Rest.Request.Database;
 using NotionApi.Rest.Request.Parameter;
 using NotionApi.Rest.Response.Page;
-using NotionGraphDatabase.Interface;
 using NotionGraphDatabase.Storage.DataModel;
 
 namespace NotionGraphDatabase.Storage;
@@ -12,20 +11,17 @@ namespace NotionGraphDatabase.Storage;
 public class CachingNotionStorageBackend : IStorageBackend
 {
     private readonly INotionClient _notionClient;
-    private readonly IConfigurationProvider _configurationProvider;
     private readonly ILogger<CachingNotionStorageBackend> _logger;
     private readonly DataStore _dataStore;
 
     public CachingNotionStorageBackend(
         INotionClient notionClient,
-        IConfigurationProvider configurationProvider,
         ILogger<CachingNotionStorageBackend> logger)
     {
         _notionClient = notionClient;
-        _configurationProvider = configurationProvider;
         _logger = logger;
 
-        _dataStore = new DataStore(configurationProvider);
+        _dataStore = new DataStore();
     }
 
     public Database GetDatabase(string databaseId, bool retrieveAllPages)
@@ -58,7 +54,7 @@ public class CachingNotionStorageBackend : IStorageBackend
 
         if (database.HasPages())
         {
-            var ts = database.GetLastKnowEditTimestamp(_configurationProvider.DateTimeConversionCulture);
+            var ts = database.GetLastKnowEditTimestamp();
 
             if (ts is not null)
             {

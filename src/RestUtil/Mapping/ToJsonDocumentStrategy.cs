@@ -16,7 +16,9 @@ public class ToJsonDocumentStrategy : BaseMappingStrategy
         var settings = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Include
+            NullValueHandling = NullValueHandling.Include,
+            DateParseHandling = DateParseHandling.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat
         };
 
         return JsonConvert.SerializeObject(value, settings);

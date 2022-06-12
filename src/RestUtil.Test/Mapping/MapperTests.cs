@@ -92,7 +92,7 @@ public class MapperTests
             result.Should().BeAssignableTo<Dictionary<string, object>>();
             var dict = (Dictionary<string, object>) result;
 
-            dict.Should().NotContainKey("Third");
+            dict.Should().ContainKey("Third");
         }
     }
 

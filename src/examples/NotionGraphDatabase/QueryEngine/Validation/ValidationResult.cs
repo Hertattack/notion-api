@@ -6,9 +6,8 @@ public class ValidationResult
 
     internal ValidationResult()
     {
-        
     }
-    
+
     internal void AddError(ValidationError validationError)
     {
     }

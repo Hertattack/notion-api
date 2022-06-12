@@ -7,7 +7,7 @@ public class QueryResult
     public IList<FieldIdentifier> PropertyNames { get; set; }
 
     private List<Row> _rows = new();
-    public IEnumerable<Row> Rows => _rows;
+    public IList<Row> Rows => _rows;
 
     public void AddRow(Row row)
     {

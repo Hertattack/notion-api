@@ -20,7 +20,7 @@ internal class FiltersValidationTests : QueryValidationTestBase
         // Assert
         validationResult.IsInvalid.Should().BeFalse();
     }
-    
+
     [Test]
     public void Validation_should_fail_on_alias_in_filter_defined_in_same_node()
     {
@@ -35,7 +35,7 @@ internal class FiltersValidationTests : QueryValidationTestBase
         // Assert
         validationResult.IsInvalid.Should().BeFalse();
     }
-    
+
     [Test]
     public void Validation_should_no_fail_on_defined_alias_in_filter()
     {

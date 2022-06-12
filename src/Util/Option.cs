@@ -24,17 +24,17 @@ public struct Option<T> : IOption
 
     public static implicit operator Option<T>(NoneOption none)
     {
-        return new(default, false);
+        return new Option<T>(default, false);
     }
 
     public static implicit operator Option<T>(T value)
     {
-        return new(value, !(value is null));
+        return new Option<T>(value, !(value is null));
     }
 
     public static Option<T> From(T optionValue)
     {
-        return new(optionValue, !(optionValue is null));
+        return new Option<T>(optionValue, !(optionValue is null));
     }
 }
 

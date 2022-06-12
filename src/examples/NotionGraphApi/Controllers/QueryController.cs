@@ -15,11 +15,11 @@ public class QueryController : ControllerBase
     private readonly ResultMapper _resultMapper;
 
 
-    public QueryController(IGraphDatabase database, ILogger<QueryController> logger)
+    public QueryController(IGraphDatabase database, ILogger<QueryController> logger, ILoggerFactory factory)
     {
         _database = database;
         _logger = logger;
-        _resultMapper = new ResultMapper();
+        _resultMapper = new ResultMapper(factory.CreateLogger<ResultMapper>());
     }
 
     [HttpPost(Name = "advanced_query")]

@@ -112,7 +112,9 @@ public class RestClient : IRestClient
         var settings = new JsonSerializerSettings
         {
             Converters = _serviceProvider.GetServices<JsonConverter>().ToList(),
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            DateParseHandling = DateParseHandling.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat
         };
 
         return JsonConvert.DeserializeObject<TResult>(jsonData, settings);

@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using NotionGraphApi;
+using NotionGraphApi.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,16 @@ DependencyInjection.Configure(builder);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(j =>
+    {
+        j.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
+        var jsonConverters = j.JsonSerializerOptions.Converters;
+        jsonConverters.Add(new FieldValueSetConverter());
+        jsonConverters.Add(new ObjectFieldValueConverter());
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -2,9 +2,9 @@
 
 public class ObjectFieldValue : FieldValue
 {
-    public object Value { get; }
+    public object? Value { get; }
 
-    public ObjectFieldValue(object value)
+    public ObjectFieldValue(object? value)
     {
         Value = value;
     }

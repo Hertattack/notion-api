@@ -1,9 +1,17 @@
-﻿using NotionGraphApi.Interface;
+﻿using Newtonsoft.Json;
+using NotionGraphApi.Interface;
 
 namespace NotionGraphApi.Mapping;
 
 public class ResultMapper
 {
+    private readonly ILogger<ResultMapper> _logger;
+
+    public ResultMapper(ILogger<ResultMapper> logger)
+    {
+        _logger = logger;
+    }
+
     public QueryResult Map(NotionGraphDatabase.Interface.Result.QueryResult internalResult)
     {
         var result = new QueryResult();

@@ -70,7 +70,12 @@ public class CytoscapeGenerator : BaseGenerator
         stringBuilder.Append($"var {variableName} = ");
         stringBuilder.Append(
             JsonConvert.SerializeObject(data, Formatting.Indented,
-                new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore}));
+                new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DateParseHandling = DateParseHandling.None,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat
+                }));
 
         File.WriteAllText(filePath, stringBuilder.ToString());
     }
