@@ -15,10 +15,7 @@ public class ListFieldValueConverter : JsonConverter<ListFieldValue>
     {
         writer.WriteStartArray();
 
-        foreach (var item in value)
-        {
-            
-        }
+        foreach (var item in value) JsonSerializer.Serialize(writer, item, item.GetType(), options);
 
         writer.WriteEndArray();
     }

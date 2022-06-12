@@ -20,6 +20,8 @@ builder.Services.AddControllers()
         var jsonConverters = j.JsonSerializerOptions.Converters;
         jsonConverters.Add(new FieldValueSetConverter());
         jsonConverters.Add(new ObjectFieldValueConverter());
+        jsonConverters.Add(new ListFieldValueConverter());
+        jsonConverters.Add(new GuardAgainstUnsupportedNotionPropertyTypes());
     });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
