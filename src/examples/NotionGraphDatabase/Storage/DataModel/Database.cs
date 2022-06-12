@@ -10,9 +10,7 @@ public class Database : IDataStoreObject
 {
     private bool _deleted = false;
 
-    private DataStore? _store;
-
-    private readonly string _databaseId;
+    private DataStore _store;
 
     private DatabaseObject? _notionRepresentation;
 
@@ -23,13 +21,17 @@ public class Database : IDataStoreObject
     public IEnumerable<PropertyDefinition> Properties =>
         _properties.AsReadOnly();
 
-    public Database(DataStore? store, string databaseId)
+    public string Title { get; }
+    public string Id { get; }
+
+    public Database(DataStore store, string databaseId, string title)
     {
         _store = store;
-        _databaseId = databaseId;
+        Id = databaseId;
+        Title = title;
     }
 
-    public IList<DatabasePage> Pages => _pages.Values.ToList();
+    public IEnumerable<DatabasePage> Pages => _pages.Values.ToList();
 
     public void UpdateDefinition(DatabaseObject notionRepresentation)
     {
@@ -71,46 +73,54 @@ public class Database : IDataStoreObject
             deletedPage.ThrowIfNull().Delete();
         }
 
-        if (_pages.Count == 0)
-        {
-            _pages = all.ToDictionary(p => p.Id, p => new DatabasePage(this, p));
-            return;
-        }
-
-        foreach (var updatedPage in all)
-        {
-            _pages.TryGetValue(updatedPage.Id, out var existingPage);
-            if (existingPage is null)
-            {
-                existingPage = new DatabasePage(this, updatedPage);
-                _pages[updatedPage.Id] = existingPage;
-            }
-            else
-            {
-                existingPage.Update(updatedPage);
-            }
-        }
+        UpdateAndInsert(all);
     }
 
     public void Delete()
     {
         _deleted = true;
-
-        _store = null;
         _notionRepresentation = null;
     }
 
-    public string GetLastKnowEditTimestamp()
+    public DateTime? GetLastKnowEditTimestamp(CultureInfo cultureInfo)
     {
         if (_pages.Count == 0)
-            return "";
+            return null;
 
-        return _pages.Max(p => Convert.ToDateTime(p.Value.LastEditTimestamp, CultureInfo.InvariantCulture))
-            .ToLongDateString();
+        return _pages.Max(p => Convert.ToDateTime(p.Value.LastEditTimestamp, cultureInfo));
     }
 
     public bool HasPages()
     {
         return _pages.Count > 0;
+    }
+
+    public void UpdateAndInsert(IEnumerable<PageObject> updatedAndNewPages)
+    {
+        var conversionCulture = _store.ConfigurationProvider.DateTimeConversionCulture;
+
+        if (_pages.Count == 0)
+        {
+            _pages = updatedAndNewPages.ToDictionary(p => p.Id,
+                p => new DatabasePage(this, p, Convert.ToDateTime(p.LastEditedTime, conversionCulture)));
+            return;
+        }
+
+        foreach (var updatedPage in updatedAndNewPages)
+        {
+            _pages.TryGetValue(updatedPage.Id, out var existingPage);
+
+            var lastEditTime = Convert.ToDateTime(updatedPage.LastEditedTime, conversionCulture);
+
+            if (existingPage is null)
+            {
+                existingPage = new DatabasePage(this, updatedPage, lastEditTime);
+                _pages[updatedPage.Id] = existingPage;
+            }
+            else
+            {
+                existingPage.Update(updatedPage, lastEditTime);
+            }
+        }
     }
 }

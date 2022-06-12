@@ -13,6 +13,6 @@ public class RequestParameter
 
     public string Name { get; }
     public ParameterType Type { get; }
-    public Type Strategy { get; set; }
+    public Type? Strategy { get; set; }
     public object Value { get; }
 }

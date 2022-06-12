@@ -13,5 +13,5 @@ public abstract class BaseMappingStrategy : IMappingStrategy
         this.mapper = mapper;
     }
 
-    public abstract Option<object> GetValue(Type type, object value);
+    public abstract Option<object?> GetValue(Type type, object? value);
 }

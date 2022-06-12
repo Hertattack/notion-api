@@ -4,6 +4,7 @@ public class ResultRow
 {
     public CompositeKey Key { get; }
     public IEnumerable<FieldIdentifier> PropertyNames => _values.Keys;
+    public string LastEditTime { get; }
 
     private Dictionary<FieldIdentifier, object?> _values = new();
 

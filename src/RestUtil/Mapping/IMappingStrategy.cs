@@ -5,5 +5,5 @@ namespace RestUtil.Mapping;
 
 public interface IMappingStrategy
 {
-    Option<object> GetValue(Type type, object value);
+    Option<object?> GetValue(Type type, object? value);
 }

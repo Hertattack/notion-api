@@ -5,4 +5,6 @@ namespace NotionGraphApi;
 public class NotionGraphApiOptions
 {
     public Metamodel Metamodel { get; set; }
+
+    public string Culture { get; set; }
 }

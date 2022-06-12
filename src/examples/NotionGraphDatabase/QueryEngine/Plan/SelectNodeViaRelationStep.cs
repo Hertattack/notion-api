@@ -2,6 +2,7 @@
 using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Storage.DataModel;
+using NotionGraphDatabase.Util;
 using Util.Extensions;
 using Database = NotionGraphDatabase.Metadata.Database;
 
@@ -39,7 +40,7 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
             .ThrowIfNull(
                 $"Property: '{propertyName}' for relational select not found on: '{previousResultContext.Alias}'");
 
-        var database = storageBackend.GetDatabase(_database.Id).ThrowIfNull();
+        var database = storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull();
         var nextResultContext = executionContext.GetNextResultContext(database.Properties, _alias);
         _resolver.SetContext(nextResultContext);
 
@@ -55,7 +56,7 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
         IntermediateResultContext previousResultContext,
         PropertyDefinition propertyDefinition)
     {
-        var id = page.Id;
+        var id = page.Id.RemoveDashes();
         var parentRecords = previousResultContext.IntermediateResultRows.Where(
             r =>
             {

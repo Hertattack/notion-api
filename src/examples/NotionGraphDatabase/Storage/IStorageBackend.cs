@@ -4,5 +4,5 @@ namespace NotionGraphDatabase.Storage;
 
 internal interface IStorageBackend
 {
-    Database? GetDatabase(string databaseId, bool fetchPages = true);
+    Database? GetDatabase(string databaseId, bool retrieveAllPages = true);
 }

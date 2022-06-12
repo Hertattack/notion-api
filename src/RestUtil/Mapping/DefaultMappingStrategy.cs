@@ -12,7 +12,7 @@ public class DefaultMappingStrategy : BaseMappingStrategy
     {
     }
 
-    public override Option<object> GetValue(Type type, object value)
+    public override Option<object?> GetValue(Type type, object? value)
     {
         if (value is null)
             return Option.None;
@@ -20,34 +20,31 @@ public class DefaultMappingStrategy : BaseMappingStrategy
         if (type == typeof(string))
             return value;
 
+        if (type == typeof(DateTime))
+            return ((DateTime) value).ToString("O");
+
         if (typeof(IEnumerable).IsAssignableFrom(type))
             return MapEnumerable(value);
 
-        if (type?.IsEnum == true)
+        if (type.IsEnum)
             return mapper.MapEnumeration(type, (Enum) value);
 
-        if (type?.IsClass == true)
-            return mapper.Map(value);
-
-        return value;
+        return type.IsClass ? mapper.Map(value) : value;
     }
 
 
     private object MapEnumerable(object valueToMap)
     {
-        var values = new List<object>();
+        var values = new List<object?>();
         foreach (var item in (IEnumerable) valueToMap)
         {
-            if (item == null)
+            if (item is null)
             {
                 values.Add("");
                 continue;
             }
 
-            if (item.GetType().IsPrimitive)
-                values.Add(item.ToString());
-            else
-                values.Add(mapper.Map(item));
+            values.Add(item.GetType().IsPrimitive ? item.ToString() : mapper.Map(item));
         }
 
         return values;

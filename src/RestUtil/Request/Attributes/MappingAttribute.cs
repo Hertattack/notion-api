@@ -19,9 +19,9 @@ public class MappingAttribute : Attribute
 
     public Option<string> Name { get; }
 
-    private Type _strategy;
+    private Type? _strategy;
 
-    public Type Strategy
+    public Type? Strategy
     {
         get => _strategy;
         set => _strategy = typeof(IMappingStrategy).IsAssignableFrom(value)

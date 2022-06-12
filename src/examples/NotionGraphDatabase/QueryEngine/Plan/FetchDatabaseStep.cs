@@ -1,6 +1,7 @@
 ﻿using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
+using NotionGraphDatabase.Util;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
@@ -15,6 +16,6 @@ internal class FetchDatabaseStep : ExecutionPlanStep
 
     public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        storageBackend.GetDatabase(_database.Id.Replace("-", ""));
+        storageBackend.GetDatabase(_database.Id.RemoveDashes());
     }
 }

@@ -1,13 +1,14 @@
-﻿using RestUtil.Request.Attributes;
+﻿using System;
+using RestUtil.Request.Attributes;
 
 namespace NotionApi.Rest.Request.Parameter;
 
 public class OnOrAfterDateTimeFilter : TimeFilter
 {
-    public OnOrAfterDateTimeFilter(string ts)
+    public OnOrAfterDateTimeFilter(DateTime dateTime)
     {
-        Value = ts;
+        Value = dateTime;
     }
 
-    [Mapping("on_or_after")] public string Value { get; set; }
+    [Mapping("on_or_after")] public DateTime Value { get; set; }
 }

@@ -27,7 +27,7 @@ public static class PropertyValueMapper
             PeoplePropertyValue peoplePropertyValue => peoplePropertyValue.People.ValueOrDefault(),
             PhoneNumberPropertyValue phoneNumberPropertyValue => phoneNumberPropertyValue.PhoneNumber.ValueOrDefault(),
             OneToManyRelationPropertyValue oneToManyRelationPropertyValue => oneToManyRelationPropertyValue.Relations
-                .Select(r => r.Id).ToList(),
+                .Select(r => r.Id.RemoveDashes()).ToList(),
             RichTextPropertyValue richTextPropertyValue => richTextPropertyValue.ToString(),
             RollupPropertyValue rollupPropertyValue => rollupPropertyValue.Rollup.ValueOrDefault()?.Type ?? "unknown",
             SelectPropertyValue selectPropertyValue => selectPropertyValue.SelectedOption.ValueOrDefault(),

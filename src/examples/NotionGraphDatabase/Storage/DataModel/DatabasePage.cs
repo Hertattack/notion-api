@@ -1,5 +1,6 @@
 ﻿using NotionApi.Rest.Response.Page;
 using NotionGraphDatabase.Storage.Mappers;
+using NotionGraphDatabase.Util;
 
 namespace NotionGraphDatabase.Storage.DataModel;
 
@@ -8,31 +9,31 @@ public class DatabasePage : Page
     private Database? _database;
     private PageObject _notionObject = null!;
 
-    public DatabasePage(Database database, PageObject pageObject)
+    public DatabasePage(Database database, PageObject pageObject, DateTime lastEditTime)
     {
         _database = database;
-        Id = pageObject.Id;
+        Id = pageObject.Id.RemoveDashes();
 
-        Update(pageObject);
+        Update(pageObject, lastEditTime);
     }
 
     public string Id { get; }
-    public string? LastEditTimestamp { get; set; }
+    public DateTime LastEditTimestamp { get; private set; }
 
     public IEnumerable<PropertyDefinition> Properties =>
         _database?.Properties ?? Array.Empty<PropertyDefinition>();
 
-    public void Update(PageObject notionObject)
+    public void Update(PageObject notionObject, DateTime lastEditTime)
     {
         if (_database is null)
             throw new StorageException("Page is deleted.");
 
-        if (notionObject.Id != Id)
+        if (notionObject.Id.RemoveDashes() != Id)
             throw new StorageException("Cannot assign a new object with a different Id.");
 
         _notionObject = notionObject;
 
-        LastEditTimestamp = _notionObject.LastEditedTime;
+        LastEditTimestamp = lastEditTime;
     }
 
     public void Delete()

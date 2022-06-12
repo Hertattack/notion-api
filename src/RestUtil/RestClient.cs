@@ -63,6 +63,9 @@ public class RestClient : IRestClient
 
         _logger.LogDebug($"Execute {restRequest.Method} request on {_implementation.BuildUri(restRequest)}",
             restRequest);
+
+        if (_logger.IsEnabled(LogLevel.Trace))
+            LogRequest(restRequest);
         var response = await _implementation.ExecuteAsync(restRequest);
 
         if (!response.IsSuccessful)
@@ -79,6 +82,29 @@ public class RestClient : IRestClient
 
         var result = DeserializeJson<TResult>(jsonData);
         return new Response<TResult>(response.StatusCode, result);
+    }
+
+    private void LogRequest(RestRequest restRequest)
+    {
+        try
+        {
+            if (restRequest.Body is not null)
+            {
+                var requestBody = JsonConvert.SerializeObject(restRequest.Body.Value);
+                _logger.LogTrace(
+                    "Trace for request to '{RequestedResource}' using method {RequestMethod}. Body: {RequestBody}",
+                    restRequest.Resource, restRequest.Method, requestBody);
+            }
+
+            if (restRequest.Parameters.Any())
+                _logger.LogTrace(
+                    "Trace for request to '{RequestedResource}' using method {RequestMethod}. Parameters: {RequestBody}",
+                    restRequest.Resource, restRequest.Method, restRequest.Parameters);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to log rest request");
+        }
     }
 
     public TResult DeserializeJson<TResult>(string jsonData)

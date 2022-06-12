@@ -1,6 +1,7 @@
 ﻿using NotionApi;
 using NotionGraphDatabase.Interface;
 using RestUtil;
+using IConfigurationProvider = NotionGraphDatabase.Interface.IConfigurationProvider;
 
 namespace NotionGraphApi;
 
@@ -15,6 +16,9 @@ public static class DependencyInjection
             o => configuration.GetSection(nameof(NotionGraphApi)).Bind(o));
         serviceCollection.Configure<NotionClientOptions>(o => configuration.GetSection(nameof(NotionClient)).Bind(o));
         serviceCollection.Configure<RestClientOptions>(o => configuration.GetSection(nameof(RestClient)).Bind(o));
+
+        serviceCollection.AddSingleton(typeof(IConfigurationProvider),
+            typeof(NotionGraphDatabaseConfigurationProvider));
 
         serviceCollection.AddTransient<IRestClient, RestClient>();
 

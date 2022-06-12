@@ -1,5 +1,6 @@
 ﻿using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
+using NotionGraphDatabase.Util;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
@@ -24,7 +25,7 @@ internal class CreateResultStep : ExecutionPlanStep
 
         foreach (var intermediateResultRow in resultContext.IntermediateResultRows)
         {
-            var resultRow = new ResultRow(new CompositeKey(intermediateResultRow.Id));
+            var resultRow = new ResultRow(new CompositeKey(intermediateResultRow.Id.RemoveDashes()));
             resultSet.AddRow(resultRow);
 
             if (mapping is not null)
@@ -53,7 +54,7 @@ internal class CreateResultStep : ExecutionPlanStep
             (intermediateResultRow, i) =>
             {
                 var newResultRow = i == 0 ? resultRow : resultRow.Duplicate();
-                newResultRow.Key.Add(intermediateResultRow.Id);
+                newResultRow.Key.Add(intermediateResultRow.Id.RemoveDashes());
 
                 if (i >= 1)
                     resultSet.AddRow(newResultRow);
