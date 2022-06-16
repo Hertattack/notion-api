@@ -5,5 +5,5 @@ namespace NotionGraphDatabase.QueryEngine.Plan;
 
 internal interface IExecutionPlanBuilder
 {
-    ExecutionPlan BuildFor(IQuery query, Metamodel metamodelStoreMetamodel);
+    IQueryPlan BuildFor(IQuery query, Metamodel metamodelStoreMetamodel);
 }

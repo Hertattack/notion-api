@@ -70,4 +70,9 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
 
         return !parentRecords.Any() ? null : new IntermediateResultRow(page, parentRecords);
     }
+
+    public override string ToString()
+    {
+        return $"{base.ToString()} via role [{_role}]";
+    }
 }

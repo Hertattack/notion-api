@@ -3,7 +3,7 @@ using NotionGraphDatabase.Storage;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
-internal abstract class ExecutionPlanStep
+internal abstract class ExecutionPlanStep : IExecutionPlanStep
 {
     public abstract void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend);
 }

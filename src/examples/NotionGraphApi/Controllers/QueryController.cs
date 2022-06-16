@@ -32,7 +32,9 @@ public class QueryController : ControllerBase
     [HttpGet(Name = "query")]
     public QueryResult Query([FromQuery(Name = "query")] string query)
     {
+        _logger.LogDebug("Processing query: {Query}", query);
         var internalResult = _database.Execute(query);
-        return _resultMapper.Map(internalResult);
+        var queryResult = _resultMapper.Map(internalResult);
+        return queryResult;
     }
 }

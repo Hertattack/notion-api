@@ -47,4 +47,9 @@ internal class SelectFromNodeStep : ExecutionPlanStep
         return _noFilters
                || _filters.All(f => f.Expression.Matches(_resolver.SetRow(row)));
     }
+
+    public override string ToString()
+    {
+        return $"Select node '{_database.Id}' ({_alias})";
+    }
 }

@@ -15,7 +15,7 @@ internal class QueryValidator : IQueryValidator
         _logger = logger;
     }
 
-    public ValidationResult Validate(IQuery query)
+    private ValidationResult Validate(IQuery query)
     {
         _logger.LogDebug("Validating query semantics");
         var validationResult = new ValidationResult();

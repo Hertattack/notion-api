@@ -18,4 +18,9 @@ internal class FetchDatabaseStep : ExecutionPlanStep
     {
         storageBackend.GetDatabase(_database.Id.RemoveDashes());
     }
+
+    public override string ToString()
+    {
+        return $"Fetch full database '{_database.Id}' ({_database.Alias})";
+    }
 }

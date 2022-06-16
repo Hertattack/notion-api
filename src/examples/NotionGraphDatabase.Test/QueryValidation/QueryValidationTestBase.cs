@@ -7,7 +7,7 @@ namespace NotionGraphDatabase.Test.QueryValidation;
 
 internal class QueryValidationTestBase : QueryInterpretationTestBase
 {
-    protected QueryValidator _queryValidator;
+    protected QueryValidator? _queryValidator;
 
     [SetUp]
     public void SetUpValidation()

@@ -5,6 +5,5 @@ namespace NotionGraphDatabase.QueryEngine.Validation;
 
 public interface IQueryValidator
 {
-    ValidationResult Validate(IQuery query);
     ValidationResult Validate(IQuery query, Metamodel metamodelStoreMetamodel);
 }

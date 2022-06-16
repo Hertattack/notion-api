@@ -76,4 +76,9 @@ internal class CreateResultStep : ExecutionPlanStep
             AddParentRows(resultSet, newResultRow, nextParentContext, intermediateResultRow.ParentRows);
         }
     }
+
+    public override string ToString()
+    {
+        return "Create result rows";
+    }
 }

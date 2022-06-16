@@ -5,7 +5,7 @@ namespace NotionGraphDatabase.Test.QueryParsing;
 
 internal class QueryParsingTestBase
 {
-    public IQueryParser _queryParser { get; set; }
+    public IQueryParser? _queryParser { get; set; }
 
     [OneTimeSetUp]
     public void OneTimeSetup()

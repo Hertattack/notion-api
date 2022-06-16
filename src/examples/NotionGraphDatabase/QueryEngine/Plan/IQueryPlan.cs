@@ -1,5 +1,11 @@
-﻿namespace NotionGraphDatabase.QueryEngine.Plan;
+﻿using NotionGraphDatabase.Metadata;
+using NotionGraphDatabase.QueryEngine.Query;
 
-public interface IQueryPlan
+namespace NotionGraphDatabase.QueryEngine.Plan;
+
+internal interface IQueryPlan
 {
+    Metamodel Metamodel { get; }
+    IEnumerable<IExecutionPlanStep> Steps { get; }
+    IQuery Query { get; }
 }
