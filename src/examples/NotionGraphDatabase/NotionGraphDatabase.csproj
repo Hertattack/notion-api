@@ -15,4 +15,8 @@
         <PackageReference Include="sly" Version="2.8.0.5" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Storage\Filter" />
+    </ItemGroup>
+
 </Project>

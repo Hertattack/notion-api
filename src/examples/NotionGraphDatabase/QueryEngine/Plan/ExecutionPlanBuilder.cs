@@ -2,6 +2,8 @@
 using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.QueryEngine.Plan.Steps;
 using NotionGraphDatabase.QueryEngine.Query;
+using NotionGraphDatabase.QueryEngine.Query.Expression;
+using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.QueryEngine.Validation;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
@@ -34,15 +36,19 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         return plan;
     }
 
-    private IQueryPlan Analyze(IQuery query, Metamodel metamodel)
+    private static IQueryPlan Analyze(IQuery query, Metamodel metamodel)
     {
         var databases = metamodel.Databases.ToDictionary(d => d.Alias);
         var plan = new ExecutionPlan(query, metamodel);
 
-        foreach (var nodeReference in query.NodeReferences)
+        var selectStepsByDatabase = query.SelectSteps.GroupBy(s => s.Step.AssociatedNode.NodeName);
+        foreach (var selectSteps in selectStepsByDatabase)
         {
-            var database = databases[nodeReference.NodeName];
-            plan.AddStep(new FetchDatabaseStep(database));
+            var database = databases[selectSteps.Key];
+            if (selectSteps.All(s => s.Step.HasFilter) && CanPushDown(selectSteps))
+                plan.AddStep(new FilteredFetchDatabaseStep(database, selectSteps));
+            else
+                plan.AddStep(new FetchDatabaseStep(database));
         }
 
         foreach (var selectStepContext in query.SelectSteps)
@@ -70,6 +76,16 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         plan.AddStep(new CreateResultStep(returnPropertyMappings));
 
         return plan;
+    }
+
+    private static bool CanPushDown(IEnumerable<ISelectStepContext> stepContexts)
+    {
+        return stepContexts.All(c => c.Step.Filter.All(CanPushDown));
+    }
+
+    private static bool CanPushDown(FilterExpression filterExpression)
+    {
+        return filterExpression.Expression is not PropertyValueCompareExpression;
     }
 
     private static ReturnMapping CreateReturnMapping(Database database, NodeReturnPropertySelection selection)

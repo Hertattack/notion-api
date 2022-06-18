@@ -9,6 +9,7 @@ public class NodeSelectStep : ISelectStep
 
     private readonly List<FilterExpression> _filter;
     public IEnumerable<FilterExpression> Filter => _filter.AsReadOnly();
+    public bool HasFilter => _filter.Any();
 
     public NodeSelectStep(
         NodeReference nodeReference,
