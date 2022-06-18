@@ -64,7 +64,7 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         }
 
         var returnPropertyMappings = query.ReturnPropertySelections
-            .Select(rps => CreateReturnMapping(databases[rps.NodeReference.Alias], rps)).ToList();
+            .Select(rps => CreateReturnMapping(databases[rps.NodeReference.NodeName], rps)).ToList();
 
         plan.AddStep(new CreateResultStep(returnPropertyMappings));
 

@@ -21,9 +21,10 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
     public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
         var relation = executionContext.Metamodel.Edges.FirstOrDefault(e =>
-                (e.From.Alias == _alias && e.Navigability.Reverse.Role == _role)
-                || (e.To.Alias == _alias && e.Navigability.Forward.Role == _role))
-            .ThrowIfNull($"Relation for role: '{_role}' not found for alias: '{_alias}'.");
+                (e.From.Alias == _database.Alias && e.Navigability.Reverse.Role == _role)
+                || (e.To.Alias == _database.Alias && e.Navigability.Forward.Role == _role))
+            .ThrowIfNull(
+                $"Relation for role: '{_role}' not found for alias: '{_alias}' (database: {_database.Alias}).");
 
         var propertyName = relation.From.Alias == _alias
             ? relation.Navigability.Reverse.Label
