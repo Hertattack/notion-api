@@ -1,7 +1,7 @@
 ﻿using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
 
-namespace NotionGraphDatabase.QueryEngine.Plan;
+namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
 internal interface IExecutionPlanStep
 {

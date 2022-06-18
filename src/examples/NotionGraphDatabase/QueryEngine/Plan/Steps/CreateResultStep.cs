@@ -2,7 +2,7 @@
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Util;
 
-namespace NotionGraphDatabase.QueryEngine.Plan;
+namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
 internal class CreateResultStep : ExecutionPlanStep
 {

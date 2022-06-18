@@ -5,7 +5,7 @@ using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Util;
 using Util.Extensions;
 
-namespace NotionGraphDatabase.QueryEngine.Plan;
+namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
 internal class SelectFromNodeStep : ExecutionPlanStep
 {

@@ -3,7 +3,7 @@ using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Util;
 
-namespace NotionGraphDatabase.QueryEngine.Plan;
+namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
 internal class FetchDatabaseStep : ExecutionPlanStep
 {

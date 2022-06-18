@@ -6,7 +6,7 @@ using NotionGraphDatabase.Util;
 using Util.Extensions;
 using Database = NotionGraphDatabase.Metadata.Database;
 
-namespace NotionGraphDatabase.QueryEngine.Plan;
+namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
 internal class SelectNodeViaRelationStep : SelectFromNodeStep
 {
