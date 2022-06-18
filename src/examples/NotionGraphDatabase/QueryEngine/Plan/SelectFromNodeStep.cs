@@ -31,7 +31,7 @@ internal class SelectFromNodeStep : ExecutionPlanStep
         if (previousResultContext is not null)
             throw new Exception("Only one select-step supported.");
 
-        var database = storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull();
+        var database = storageBackend.GetDatabase(_database.Id.RemoveDashes(), false).ThrowIfNull();
         var nextResultContext = executionContext.GetNextResultContext(database.Properties, _alias);
         _resolver.SetContext(nextResultContext);
 
