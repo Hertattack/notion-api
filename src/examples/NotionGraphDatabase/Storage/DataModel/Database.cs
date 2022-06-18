@@ -1,4 +1,9 @@
-﻿using NotionApi.Rest.Response.Database;
+﻿using Microsoft.Extensions.Logging;
+using NotionApi;
+using NotionApi.Extensions;
+using NotionApi.Rest.Request.Database;
+using NotionApi.Rest.Request.Parameter;
+using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using Util.Extensions;
@@ -7,7 +12,10 @@ namespace NotionGraphDatabase.Storage.DataModel;
 
 public class Database : IDataStoreObject
 {
-    private bool _deleted = false;
+    private readonly INotionClient _notionClient;
+    private readonly ILogger<Database> _logger;
+    private bool _deleted;
+    private bool _allCached;
 
     private DataStore _store;
 
@@ -20,24 +28,37 @@ public class Database : IDataStoreObject
     public IEnumerable<PropertyDefinition> Properties =>
         _properties.AsReadOnly();
 
-    public string Title { get; }
+    public string Title { get; internal set; } = string.Empty;
     public string Id { get; }
 
-    public Database(DataStore store, string databaseId, string title)
+    public Database(string databaseId, INotionClient notionClient, ILogger<Database> logger)
     {
-        _store = store;
+        _notionClient = notionClient;
+        _logger = logger;
         Id = databaseId;
-        Title = title;
     }
 
     public IEnumerable<DatabasePage> Pages => _pages.Values.ToList();
 
-    public void UpdateDefinition(DatabaseObject notionRepresentation)
+    public void UpdateDefinition()
     {
         if (_deleted)
             throw new StorageException("Updating deleted definition.");
 
-        _notionRepresentation = notionRepresentation;
+        var databaseRequest = new DatabaseDefinitionRequest {DatabaseId = Id};
+        var response = _notionClient.ExecuteRequest(databaseRequest).Result;
+
+        if (response.HasValue)
+        {
+            _notionRepresentation = response.Value;
+        }
+        else
+        {
+            _logger.LogError("Database: '{DatabaseId}' was not found", Id);
+            throw new StorageException($"Database: '{Id}' was not found.");
+        }
+
+        Title = _notionRepresentation.Title.ToPlainTextString();
         _properties = _notionRepresentation.Properties
             .Select(kvp => CreatePropertyDefinition(kvp.Key, kvp.Value))
             .ToList();
@@ -58,21 +79,10 @@ public class Database : IDataStoreObject
         };
     }
 
-    public void FullUpdate(IEnumerable<PageObject> allPages)
+    public IEnumerable<DatabasePage> GetAll()
     {
-        if (_deleted)
-            return;
-
-        var all = allPages.ToList();
-        var index = all.ToDictionary(p => p.Id);
-
-        foreach (var toDelete in _pages.Keys.Except(index.Keys))
-        {
-            _pages.Remove(toDelete, out var deletedPage);
-            deletedPage.ThrowIfNull().Delete();
-        }
-
-        UpdateAndInsert(all);
+        RetrievePages();
+        return Pages;
     }
 
     public void Delete()
@@ -94,7 +104,66 @@ public class Database : IDataStoreObject
         return _pages.Count > 0;
     }
 
-    public void UpdateAndInsert(IEnumerable<PageObject> updatedAndNewPages)
+    internal void RetrievePages()
+    {
+        var databaseContentsRequest = new SearchDatabaseRequest {DatabaseId = Id};
+        var fullUpdate = true;
+
+        if (_allCached && HasPages())
+        {
+            var ts = GetLastKnowEditTimestamp();
+
+            if (ts is not null)
+            {
+                fullUpdate = false;
+                databaseContentsRequest.Parameters.Filter = new DatabaseLastEditedTimestampFilter
+                {
+                    LastEditedTimeFilter = new OnOrAfterDateTimeFilter(ts.Value)
+                };
+            }
+        }
+
+        var databaseContentsResponse = _notionClient.ExecuteRequest(databaseContentsRequest).Result;
+        if (!databaseContentsResponse.HasValue)
+        {
+            _logger.LogTrace("Database: '{DatabaseId}' has no entries", Id);
+            return;
+        }
+
+        var databaseContents = databaseContentsResponse.Value;
+        var resultsFromNotionApi = databaseContents.Results.Select(no => (PageObject) no);
+        if (fullUpdate)
+        {
+            _logger.LogDebug("Performing full update from Notion for database: '{DatabaseTitle}' ({DatabaseId})",
+                Title, Id);
+            FullUpdate(resultsFromNotionApi);
+        }
+        else
+        {
+            UpdateAndInsert(resultsFromNotionApi);
+        }
+    }
+
+    private void FullUpdate(IEnumerable<PageObject> allPages)
+    {
+        if (_deleted)
+            return;
+
+        var all = allPages.ToList();
+        var index = all.ToDictionary(p => p.Id);
+
+        foreach (var toDelete in _pages.Keys.Except(index.Keys))
+        {
+            _pages.Remove(toDelete, out var deletedPage);
+            deletedPage.ThrowIfNull().Delete();
+        }
+
+        UpdateAndInsert(all);
+
+        _allCached = true;
+    }
+
+    private void UpdateAndInsert(IEnumerable<PageObject> updatedAndNewPages)
     {
         if (_pages.Count == 0)
         {
@@ -117,10 +186,5 @@ public class Database : IDataStoreObject
                 existingPage.Update(updatedPage);
             }
         }
-    }
-
-    private DateTime ParseDateTime(string argLastEditedTime)
-    {
-        throw new NotImplementedException();
     }
 }

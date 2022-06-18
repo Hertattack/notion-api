@@ -2,6 +2,7 @@
 using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Util;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
@@ -18,7 +19,7 @@ internal class FilteredFetchDatabaseStep : ExecutionPlanStep
 
     public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        storageBackend.GetDatabase(_database.Id.RemoveDashes());
+        storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull().GetAll();
     }
 
     public override string ToString()

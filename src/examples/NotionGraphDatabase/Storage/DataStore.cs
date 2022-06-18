@@ -1,22 +1,37 @@
-﻿using NotionGraphDatabase.Storage.DataModel;
+﻿using Microsoft.Extensions.Logging;
+using NotionApi;
+using NotionGraphDatabase.Storage.DataModel;
 using NotionGraphDatabase.Util;
 
 namespace NotionGraphDatabase.Storage;
 
 public class DataStore
 {
+    private readonly INotionClient _notionClient;
+    private readonly ILoggerFactory _loggerFactory;
+
     private Dictionary<string, Database> _databases = new();
 
-    public Database CreateOrRetrieveDatabase(string databaseId, string title)
+    public DataStore(INotionClient notionClient, ILoggerFactory loggerFactory)
+    {
+        _notionClient = notionClient;
+        _loggerFactory = loggerFactory;
+    }
+
+    public Database CreateOrRetrieveDatabase(string databaseId)
     {
         var unifiedGuid = databaseId.RemoveDashes();
 
-        if (_databases.ContainsKey(databaseId))
-            return _databases[databaseId];
+        lock (this)
+        {
+            if (_databases.ContainsKey(unifiedGuid))
+                return _databases[unifiedGuid];
 
-        var definition = new Database(this, databaseId, title);
-        _databases[databaseId] = definition;
+            var definition = new Database(databaseId, _notionClient, _loggerFactory.CreateLogger<Database>());
+            _databases[unifiedGuid] = definition;
 
-        return definition;
+            definition.UpdateDefinition();
+            return definition;
+        }
     }
 }
