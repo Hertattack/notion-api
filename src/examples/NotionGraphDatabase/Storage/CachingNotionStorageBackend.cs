@@ -27,7 +27,7 @@ public class CachingNotionStorageBackend : IStorageBackend
         return _dataStore.CreateOrRetrieveDatabase(databaseId);
     }
 
-    public bool CanPushDown(Filter expression)
+    public bool Supports(Filter filter)
     {
         return false;
     }

@@ -3,8 +3,8 @@ using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.QueryEngine.Query.Path;
-using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
 
@@ -15,10 +15,10 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
     {
         // Arrange
         const string queryString = "(fromNode)-[roleName]->(toNode)";
-        var result = _queryParser.Parse(queryString).As<QueryExpression>();
+        var result = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(result);
+        var query = _queryBuilder.ThrowIfNull().FromAst(result);
 
         // Assert
         var steps = query.SelectSteps.ToList();
@@ -41,10 +41,10 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
     {
         // Arrange
         const string queryString = "(fromNode{property=1})-[roleName]->(toNode{property='value'})";
-        var result = _queryParser.Parse(queryString).As<QueryExpression>();
+        var result = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(result);
+        var query = _queryBuilder.ThrowIfNull().FromAst(result);
 
         // Assert
         var steps = query.SelectSteps.ToList();
@@ -52,13 +52,13 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
 
         var selectStep = steps[0].Step.As<NodeSelectStep>();
         selectStep.Filter.Should().HaveCount(1);
-        var resolver = PropertyValueResolver.For("fromNode", "property", 1);
-        selectStep.Filter.First().Expression.As<IntCompareExpression>().Matches(resolver).Should().BeTrue();
+        var intFilterExpression = selectStep.Filter.First().Expression.As<IntCompareExpression>();
+        intFilterExpression.Value.Should().Be(1);
 
         selectStep = steps[1].Step.As<NodeSelectStep>();
         selectStep.Filter.Should().HaveCount(1);
-        resolver = PropertyValueResolver.For("toNode", "property", "value");
-        selectStep.Filter.First().Expression.As<StringCompareExpression>().Matches(resolver).Should().BeTrue();
+        var stringFilterExpression = selectStep.Filter.First().Expression.As<StringCompareExpression>();
+        stringFilterExpression.Value.Should().Be("value");
     }
 
     [Test]
@@ -67,10 +67,10 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
         // Arrange
         const string queryString =
             "(fromNode)-[roleName]->(toNode)-[nextRole]->(nextNode)-[longerPath]->(moarNode)-[finalDestination]->(finalNode)";
-        var result = _queryParser.Parse(queryString).As<QueryExpression>();
+        var result = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(result);
+        var query = _queryBuilder.ThrowIfNull().FromAst(result);
 
         // Assert
         var steps = query.SelectSteps.ToList();
@@ -112,10 +112,10 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
         // Arrange
         const string queryString =
             "(first:fromNode)-[roleName]->(t:toNode)-[nextRole]->(n:nextNode)-[longerPath]->(m:moarNode)-[finalDestination]->(f:finalNode)";
-        var result = _queryParser.Parse(queryString).As<QueryExpression>();
+        var result = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(result);
+        var query = _queryBuilder.ThrowIfNull().FromAst(result);
 
         // Assert
         var steps = query.SelectSteps.ToList();

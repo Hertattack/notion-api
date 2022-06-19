@@ -1,19 +1,19 @@
 ﻿using NotionGraphDatabase.QueryEngine.Execution;
-using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Storage.DataModel;
+using NotionGraphDatabase.Storage.Filtering;
 using NotionGraphDatabase.Util;
 using Util.Extensions;
 using Database = NotionGraphDatabase.Metadata.Database;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
-internal class SelectNodeViaRelationStep : SelectFromNodeStep
+internal class SelectNodeViaRelationStep : SelectStep
 {
     private readonly string _role;
 
     public SelectNodeViaRelationStep(string role, Database targetDatabase, string targetAlias,
-        IEnumerable<FilterExpression> filters) : base(targetDatabase, targetAlias, filters)
+        Filter filter) : base(targetDatabase, targetAlias, filter)
     {
         _role = role;
     }
@@ -48,8 +48,7 @@ internal class SelectNodeViaRelationStep : SelectFromNodeStep
         nextResultContext.AddRange(
             database.Pages
                 .Select(p => Join(p, previousResultContext, propertyDefinition))
-                .Where(r => r is not null && ApplyFilters(r, nextResultContext))!
-        );
+                .Where(r => r is not null && _filterEngine.Matches(r))!);
     }
 
     private static IntermediateResultRow? Join(

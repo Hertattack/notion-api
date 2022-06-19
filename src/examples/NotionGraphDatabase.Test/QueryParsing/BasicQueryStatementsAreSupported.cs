@@ -2,6 +2,7 @@
 using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryParsing;
 
@@ -14,7 +15,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test)";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var selectExpression = result.As<QueryExpression>().SelectExpression;
@@ -32,7 +33,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test)";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         result.As<QueryExpression>().ReturnSpecification.Should().BeAssignableTo<ReturnAllSpecification>();
@@ -45,7 +46,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test) return test.*";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var queryExpression = result.As<QueryExpression>();
@@ -65,7 +66,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test)";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var nodeClassReference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -81,7 +82,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(t:test)";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var nodeClassReference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -97,7 +98,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test) return test.property_a";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var returnSpecification = result.As<QueryExpression>().ReturnSpecification;
@@ -115,7 +116,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test) return test.'Property A'";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var returnSpecification = result.As<QueryExpression>().ReturnSpecification;
@@ -133,7 +134,7 @@ internal class BasicQueryStatementsAreSupported : QueryParsingTestBase
         const string queryString = "(test) return test.'Property A', test.property_b, test.'other prop'";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var returnSpecification = result.As<QueryExpression>().ReturnSpecification;

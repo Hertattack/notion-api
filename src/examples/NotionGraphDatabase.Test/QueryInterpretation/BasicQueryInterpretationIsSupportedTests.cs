@@ -3,6 +3,7 @@ using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Query;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
 
@@ -12,10 +13,10 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
     public void Single_consistent_select_and_return_query_is_interpreted_correctly()
     {
         // Arrange
-        var queryAst = _queryParser.Parse("(test) return test.*").As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse("(test) return test.*").As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var selectedProperties = query.ReturnPropertySelections.ToList();
@@ -31,10 +32,10 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
     public void Node_selection_can_have_an_alias()
     {
         // Arrange
-        var queryAst = _queryParser.Parse("(t:test)").As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse("(t:test)").As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         query.NodeReferences.Should().Equal(new NodeReference("test", "t"));
@@ -44,10 +45,10 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
     public void Selecting_a_node_without_return_returns_all_properties()
     {
         // Arrange
-        var queryAst = _queryParser.Parse("(t:test)").As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse("(t:test)").As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         query.ReturnPropertySelections.Should().HaveCount(1);
@@ -60,10 +61,10 @@ internal class BasicQueryInterpretationIsSupportedTests : QueryInterpretationTes
     public void Selecting_multiple_return_properties_is_supported()
     {
         // Arrange
-        var queryAst = _queryParser.Parse("(t:test) return t.A, t.'b B', t.c").As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse("(t:test) return t.A, t.'b B', t.c").As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         query.ReturnPropertySelections.Should().HaveCount(1);

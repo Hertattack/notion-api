@@ -2,6 +2,7 @@
 using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryValidation;
 
@@ -13,11 +14,11 @@ internal class FiltersValidationTests : QueryValidationTestBase
         // Arrange
         var model = new Metamodel();
         const string queryString = "(test{prop=f.prop})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
-        var query = _queryBuilder.FromAst(queryAst);
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Act
-        var validationResult = _queryValidator.Validate(query, model);
+        var validationResult = _queryValidator.ThrowIfNull().Validate(query, model);
 
         // Assert
         validationResult.IsInvalid.Should().BeFalse();
@@ -29,11 +30,11 @@ internal class FiltersValidationTests : QueryValidationTestBase
         // Arrange
         var model = new Metamodel();
         const string queryString = "(t:test{prop=t.prop})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
-        var query = _queryBuilder.FromAst(queryAst);
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Act
-        var validationResult = _queryValidator.Validate(query, model);
+        var validationResult = _queryValidator.ThrowIfNull().Validate(query, model);
 
         // Assert
         validationResult.IsInvalid.Should().BeFalse();
@@ -45,11 +46,11 @@ internal class FiltersValidationTests : QueryValidationTestBase
         // Arrange
         var model = new Metamodel();
         const string queryString = "(t:test)-[role]->(other{prop=t.prop})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
-        var query = _queryBuilder.FromAst(queryAst);
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Act
-        var validationResult = _queryValidator.Validate(query, model);
+        var validationResult = _queryValidator.ThrowIfNull().Validate(query, model);
 
         // Assert
         validationResult.IsInvalid.Should().BeFalse();

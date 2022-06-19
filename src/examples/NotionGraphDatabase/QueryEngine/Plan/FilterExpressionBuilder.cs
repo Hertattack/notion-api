@@ -3,7 +3,7 @@ using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.Storage.Filtering;
 
-namespace NotionGraphDatabase.QueryEngine.Plan.Filtering;
+namespace NotionGraphDatabase.QueryEngine.Plan;
 
 internal class FilterExpressionBuilder
 {
@@ -14,7 +14,7 @@ internal class FilterExpressionBuilder
         return expression.Expression switch
         {
             IntCompareExpression intCompareExpression =>
-                new IntValueComparisonExpression(expression.Alias, expression.PropertyName, intCompareExpression.Value),
+                new IntComparisonExpression(expression.Alias, expression.PropertyName, intCompareExpression.Value),
             StringCompareExpression stringCompareExpression =>
                 new StringComparisonExpression(expression.Alias, expression.PropertyName,
                     stringCompareExpression.Value),
@@ -43,7 +43,7 @@ internal class FilterExpressionBuilder
     }
 
 
-    public static FilterExpressionBuilder And(List<FilterExpression> expressions)
+    public static FilterExpressionBuilder And(IEnumerable<FilterExpression> expressions)
     {
         var builder = new FilterExpressionBuilder();
         foreach (var expression in expressions)

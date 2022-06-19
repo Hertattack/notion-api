@@ -67,15 +67,16 @@ internal class QueryEngineImplementation : IQueryEngine
     }
 
     private QueryResult ExecutePlan(IQueryPlan plan)
-    {   
+    {
         var context = new QueryExecutionContext(plan.Metamodel);
-        
+
         _logger.LogDebug("Executing query plan");
         foreach (var step in plan.Steps)
         {
             _logger.LogDebug("Executing step: {ExecutionPlanStep}", step.ToString());
             step.Execute(context, _storageBackend);
         }
+
         var result = new QueryResult(plan.Query, plan.Metamodel, context.ResultSet);
         return result;
     }

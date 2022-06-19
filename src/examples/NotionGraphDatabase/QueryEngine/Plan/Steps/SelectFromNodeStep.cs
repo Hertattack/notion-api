@@ -1,27 +1,16 @@
 ﻿using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.QueryEngine.Execution;
-using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.Storage;
+using NotionGraphDatabase.Storage.Filtering;
 using NotionGraphDatabase.Util;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
 
-internal class SelectFromNodeStep : ExecutionPlanStep
+internal class SelectFromNodeStep : SelectStep
 {
-    protected readonly Database _database;
-    protected readonly string _alias;
-    private readonly IList<FilterExpression> _filters;
-    private readonly bool _noFilters;
-    protected readonly PropertyValueResolver _resolver;
-
-    public SelectFromNodeStep(Database database, string alias, IEnumerable<FilterExpression> filters)
+    public SelectFromNodeStep(Database database, string alias, Filter? filter) : base(database, alias, filter)
     {
-        _database = database;
-        _alias = alias;
-        _filters = filters.ToList();
-        _noFilters = _filters.Count <= 0;
-        _resolver = new PropertyValueResolver();
     }
 
     public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
@@ -38,14 +27,8 @@ internal class SelectFromNodeStep : ExecutionPlanStep
         nextResultContext.AddRange(
             database.Pages
                 .Select(p => new IntermediateResultRow(p))
-                .Where(r => ApplyFilters(r, nextResultContext))
+                .Where(_filterEngine.Matches)
         );
-    }
-
-    protected bool ApplyFilters(IntermediateResultRow row, IntermediateResultContext context)
-    {
-        return _noFilters
-               || _filters.All(f => f.Expression.Matches(_resolver.SetRow(row)));
     }
 
     public override string ToString()

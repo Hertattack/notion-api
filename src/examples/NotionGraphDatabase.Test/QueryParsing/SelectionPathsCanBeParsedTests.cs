@@ -3,6 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryParsing;
 
@@ -15,7 +16,7 @@ internal class SelectionPathsCanBeParsedTests : QueryParsingTestBase
         const string queryString = "(fromNode)-[roleName]->(toNode)";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var selectExpression = result.As<QueryExpression>().SelectExpression.As<SelectPathExpression>();
@@ -37,7 +38,7 @@ internal class SelectionPathsCanBeParsedTests : QueryParsingTestBase
             "(fromNode)-[roleName]->(toNode)-[nextRole]->(nextNode)-[longerPath]->(moarNode)-[finalDestination]->(finalNode)";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var selectExpression = result.As<QueryExpression>().SelectExpression.As<SelectPathExpression>();

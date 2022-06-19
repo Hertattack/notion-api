@@ -1,6 +1,5 @@
 ﻿using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.QueryEngine.Execution;
-using NotionGraphDatabase.QueryEngine.Plan.Filtering;
 using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.Storage;

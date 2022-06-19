@@ -2,6 +2,7 @@
 using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Ast;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryParsing;
 
@@ -14,7 +15,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         const string queryString = "(test{property='value'})";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -35,7 +36,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         const string queryString = "(test{property=1})";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -56,7 +57,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         const string queryString = "(test{property=o.property2})";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -78,7 +79,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         const string queryString = "(t:test{property=1})";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -97,7 +98,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         const string queryString = "(test{property=1, otherproperty=2})";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
@@ -119,7 +120,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         const string queryString = "(test{property=1, otherproperty='str value'})";
 
         // Act
-        var result = _queryParser.Parse(queryString);
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
 
         // Assert
         var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();

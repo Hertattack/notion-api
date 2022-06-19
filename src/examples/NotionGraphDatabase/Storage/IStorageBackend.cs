@@ -6,5 +6,5 @@ namespace NotionGraphDatabase.Storage;
 internal interface IStorageBackend
 {
     Database? GetDatabase(string databaseId);
-    bool CanPushDown(Filter expression);
+    bool Supports(Filter filter);
 }

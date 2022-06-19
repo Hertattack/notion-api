@@ -4,6 +4,7 @@ using NotionGraphDatabase.QueryEngine.Ast;
 using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
 
@@ -14,10 +15,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
     {
         // Arrange
         const string queryString = "(test{property='value'})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var stepContexts = query.SelectSteps.ToList();
@@ -28,8 +29,7 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<StringCompareExpression>();
-        var resolver = PropertyValueResolver.For("test", "property", "value");
-        expressionFunction.Matches(resolver).Should().BeTrue();
+        expressionFunction.Value.Should().Be("value");
     }
 
     [Test]
@@ -37,10 +37,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
     {
         // Arrange
         const string queryString = "(test{property=1})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var stepContexts = query.SelectSteps.ToList();
@@ -51,8 +51,7 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        var resolver = PropertyValueResolver.For("test", "property", 1);
-        expressionFunction.Matches(resolver).Should().BeTrue();
+        expressionFunction.Value.Should().Be(1);
     }
 
     [Test]
@@ -60,10 +59,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
     {
         // Arrange
         const string queryString = "(test{property=o.property2})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var stepContexts = query.SelectSteps.ToList();
@@ -83,10 +82,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
     {
         // Arrange
         const string queryString = "(t:test{property=3421})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var stepContexts = query.SelectSteps.ToList();
@@ -100,8 +99,7 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter[0].PropertyName.Should().Be("property");
 
         var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        var resolver = PropertyValueResolver.For("t", "property", 3421);
-        expressionFunction.Matches(resolver).Should().BeTrue();
+        expressionFunction.Value.Should().Be(3421);
     }
 
     [Test]
@@ -109,10 +107,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
     {
         // Arrange
         const string queryString = "(test{property=1, otherproperty=2})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var stepContexts = query.SelectSteps.ToList();
@@ -123,13 +121,11 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
 
         filter[0].PropertyName.Should().Be("property");
         var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        var resolver = PropertyValueResolver.For("test", "property", 1);
-        expressionFunction.Matches(resolver).Should().BeTrue();
+        expressionFunction.Value.Should().Be(1);
 
         filter[1].PropertyName.Should().Be("otherproperty");
         expressionFunction = filter[1].Expression.As<IntCompareExpression>();
-        resolver = PropertyValueResolver.For("test", "otherproperty", 2);
-        expressionFunction.Matches(resolver).Should().BeTrue();
+        expressionFunction.Value.Should().Be(2);
     }
 
     [Test]
@@ -137,10 +133,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
     {
         // Arrange
         const string queryString = "(test{property=1, otherproperty='str value'})";
-        var queryAst = _queryParser.Parse(queryString).As<QueryExpression>();
+        var queryAst = _queryParser.ThrowIfNull().Parse(queryString).As<QueryExpression>();
 
         // Act
-        var query = _queryBuilder.FromAst(queryAst);
+        var query = _queryBuilder.ThrowIfNull().FromAst(queryAst);
 
         // Assert
         var stepContexts = query.SelectSteps.ToList();
@@ -151,12 +147,10 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
 
         filter[0].PropertyName.Should().Be("property");
         var firstExpressionFunction = filter[0].Expression.As<IntCompareExpression>();
-        var resolver = PropertyValueResolver.For("test", "property", 1);
-        firstExpressionFunction.Matches(resolver).Should().BeTrue();
+        firstExpressionFunction.Value.Should().Be(1);
 
         filter[1].PropertyName.Should().Be("otherproperty");
         var secondExpressionFunction = filter[1].Expression.As<StringCompareExpression>();
-        resolver = PropertyValueResolver.For("test", "otherproperty", "str value");
-        secondExpressionFunction.Matches(resolver).Should().BeTrue();
+        secondExpressionFunction.Value.Should().Be("str value");
     }
 }

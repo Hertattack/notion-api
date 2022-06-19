@@ -10,6 +10,4 @@ public abstract class ExpressionFunction
         LeftAlias = leftAlias;
         LeftPropertyName = leftPropertyName;
     }
-
-    public abstract bool Matches(IPropertyValueResolver value);
 }

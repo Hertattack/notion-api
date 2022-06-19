@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotionGraphDatabase.Metadata;
-using NotionGraphDatabase.QueryEngine.Plan.Filtering;
 using NotionGraphDatabase.QueryEngine.Plan.Steps;
 using NotionGraphDatabase.QueryEngine.Query;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.QueryEngine.Validation;
 using NotionGraphDatabase.Storage;
@@ -58,7 +56,7 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
                     expressionBuilder.Or(FilterExpressionBuilder.And(expressions));
 
                 var expression = expressionBuilder.Build();
-                if (_storageBackend.CanPushDown(expression))
+                if (_storageBackend.Supports(expression))
                 {
                     var step = new FilteredFetchDatabaseStep(database, expression);
                     plan.AddStep(step);
@@ -78,13 +76,14 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
             {
                 var role = currentStep.Role;
                 var relationalFilterStep = new SelectNodeViaRelationStep(
-                    role, database,
-                    currentStep.AssociatedNode.Alias, currentStep.Filter);
+                    role, database, currentStep.AssociatedNode.Alias,
+                    FilterExpressionBuilder.And(currentStep.Filter).Build());
                 plan.AddStep(relationalFilterStep);
             }
             else
             {
-                plan.AddStep(new SelectFromNodeStep(database, currentStep.AssociatedNode.Alias, currentStep.Filter));
+                plan.AddStep(new SelectFromNodeStep(database, currentStep.AssociatedNode.Alias,
+                    FilterExpressionBuilder.And(currentStep.Filter).Build()));
             }
         }
 
@@ -120,16 +119,6 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         }
 
         return result;
-    }
-
-    private static bool CanPushDown(IEnumerable<List<FilterExpression>> expressions)
-    {
-        return expressions.All(l => l.All(CanPushDown));
-    }
-
-    private static bool CanPushDown(FilterExpression filterExpression)
-    {
-        return filterExpression.Expression is not PropertyValueCompareExpression;
     }
 
     private static ReturnMapping CreateReturnMapping(Database database, NodeReturnPropertySelection selection)
