@@ -27,6 +27,53 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
 
         filter[0].PropertyName.Name.Should().Be("property");
         filter[0].Expression.As<StringValue>().Value.Should().Be("value");
+        filter[0].Operator.Type.Should().Be(OperatorType.EQUALS);
+    }
+
+    [Test]
+    public void Filter_with_negation_is_supported()
+    {
+        // Arrange
+        const string queryString = "(test{property!='value'})";
+
+        // Act
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
+
+        // Assert
+        var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
+        reference.Alias.Name.Should().Be("test");
+        reference.NodeIdentifier.Name.Should().Be("test");
+
+        var filter = reference.Filter.Expressions.ToList();
+        filter.Should().HaveCount(1);
+
+        filter[0].PropertyName.Name.Should().Be("property");
+        filter[0].Expression.As<StringValue>().Value.Should().Be("value");
+        filter[0].Operator.IsNegated.Should().BeTrue();
+        filter[0].Operator.Type.Should().Be(OperatorType.EQUALS);
+    }
+    
+    [Test]
+    public void Filter_with_contains_operator_is_supported()
+    {
+        // Arrange
+        const string queryString = "(test{property~='value'})";
+
+        // Act
+        var result = _queryParser.ThrowIfNull().Parse(queryString);
+
+        // Assert
+        var reference = result.As<QueryExpression>().SelectExpression.As<NodeClassReference>();
+        reference.Alias.Name.Should().Be("test");
+        reference.NodeIdentifier.Name.Should().Be("test");
+
+        var filter = reference.Filter.Expressions.ToList();
+        filter.Should().HaveCount(1);
+
+        filter[0].PropertyName.Name.Should().Be("property");
+        filter[0].Expression.As<StringValue>().Value.Should().Be("value");
+        filter[0].Operator.IsNegated.Should().BeFalse();
+        filter[0].Operator.Type.Should().Be(OperatorType.CONTAINS);
     }
 
     [Test]

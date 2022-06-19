@@ -43,6 +43,6 @@ internal class FilterBuilder : IFilterBuilder
             _ => throw new InvalidEnumArgumentException($"Could not map '{parsedOperator.Type}'")
         };
 
-        return new ComparisonOperator(type, parsedOperator.Not);
+        return new ComparisonOperator(type, parsedOperator.IsNegated);
     }
 }
