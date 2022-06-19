@@ -52,12 +52,12 @@ internal class SelectionPathInterpretationIsSupportedTests : QueryInterpretation
 
         var selectStep = steps[0].Step.As<NodeSelectStep>();
         selectStep.Filter.Should().HaveCount(1);
-        var intFilterExpression = selectStep.Filter.First().Expression.As<IntCompareExpression>();
+        var intFilterExpression = selectStep.Filter.First().Expression.As<IntegerExpression>();
         intFilterExpression.Value.Should().Be(1);
 
         selectStep = steps[1].Step.As<NodeSelectStep>();
         selectStep.Filter.Should().HaveCount(1);
-        var stringFilterExpression = selectStep.Filter.First().Expression.As<StringCompareExpression>();
+        var stringFilterExpression = selectStep.Filter.First().Expression.As<StringExpression>();
         stringFilterExpression.Value.Should().Be("value");
     }
 

@@ -11,7 +11,7 @@ public struct FieldIdentifier
         Name = name;
     }
 
-    public string ToString()
+    public override string ToString()
     {
         return $"{Alias}.'{Name}'";
     }

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Integration.Tests;
 
@@ -9,7 +10,7 @@ public class NotionInterfaceExpectationTests : TestBase
     public void Notion_interface_has_supported_date_format()
     {
         // Arrange
-        var result = notionDatabase.Execute("(source)");
+        var result = NotionDatabase.ThrowIfNull().Execute("(source)");
 
         // Act
 

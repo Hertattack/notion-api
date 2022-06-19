@@ -31,11 +31,25 @@ internal enum QueryToken
 
     [Sugar(">")] GREATER = 2000,
 
-    [Sugar("-")] MINUS = 2001,
+    [Sugar("<")] LESS = 2001,
 
-    [Sugar(".")] OBJECT_ACCESS = 2002,
+    [Sugar("-")] MINUS = 2002,
 
-    [Sugar("=")] EQUALS = 2003,
+    [Sugar(".")] OBJECT_ACCESS = 2003,
+
+    [Sugar("=")] EQUALS = 2004,
+
+    [Sugar("!")] NOT = 2005,
+
+    [Sugar("~=")] CONTAINS = 2006,
+
+    [Sugar("?=")] STARTS_WITH = 2007,
+
+    [Sugar("=?")] ENDS_WITH = 2008,
+
+    [Sugar(">=")] GREATER_OR_EQUAL = 2009,
+
+    [Sugar("<=")] LESS_OR_EQUAL = 2010,
 
     #endregion
 

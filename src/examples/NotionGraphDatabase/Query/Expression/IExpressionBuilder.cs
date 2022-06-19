@@ -2,9 +2,5 @@
 
 internal interface IExpressionBuilder
 {
-    ExpressionFunction FromAst(
-        IQuery query,
-        string alias,
-        string propertyName,
-        Parser.Ast.Expression argExpression);
+    Expression FromAst(Parser.Ast.Expression astExpression);
 }

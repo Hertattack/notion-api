@@ -2,6 +2,6 @@
 
 public class NavigationDetails
 {
-    public string Role { get; set; }
-    public string Label { get; set; }
+    public string Role { get; set; } = null!;
+    public string Label { get; set; } = null!;
 }

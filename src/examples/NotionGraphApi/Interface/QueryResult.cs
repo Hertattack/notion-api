@@ -4,7 +4,7 @@ namespace NotionGraphApi.Interface;
 
 public class QueryResult
 {
-    public IList<FieldIdentifier> PropertyNames { get; set; }
+    public IList<FieldIdentifier> PropertyNames { get; set; } = null!;
 
     private List<Row> _rows = new();
     public IList<Row> Rows => _rows;

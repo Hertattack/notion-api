@@ -5,20 +5,17 @@ namespace NotionGraphDatabase.QueryEngine.Plan;
 
 internal class PropertyValueResolver : IPropertyValueResolver
 {
-    private IntermediateResultRow _row;
-    private IEnumerable<string> _aliases;
-    private string _currentAlias;
+    private IntermediateResultRow _row = null!;
+    private string _currentAlias = null!;
 
-    public IPropertyValueResolver SetRow(IntermediateResultRow row)
+    public void SetRow(IntermediateResultRow row)
     {
         _row = row;
-        return this;
     }
 
     public void SetContext(IntermediateResultContext context)
     {
         _currentAlias = context.Alias;
-        _aliases = context.SelectedAliases();
     }
 
     public object? GetValue(string alias, string propertyName)

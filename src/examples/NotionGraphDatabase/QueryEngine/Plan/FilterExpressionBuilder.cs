@@ -2,6 +2,7 @@
 using NotionGraphDatabase.Query.Filter;
 using NotionGraphDatabase.QueryEngine.Execution.Filtering;
 using NotionGraphDatabase.Storage.Filtering;
+using NotionGraphDatabase.Storage.Filtering.Integer;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
@@ -13,17 +14,50 @@ internal class FilterExpressionBuilder
     {
         return expression.Expression switch
         {
-            IntCompareExpression intCompareExpression =>
-                new IntComparisonExpression(expression.Alias, expression.PropertyName, intCompareExpression.Value),
-            StringCompareExpression stringCompareExpression =>
-                new StringComparisonExpression(expression.Alias, expression.PropertyName,
-                    stringCompareExpression.Value),
-            PropertyValueCompareExpression propertyCompareExpression =>
-                new PropertyComparisonExpression(
-                    expression.Alias, expression.PropertyName,
-                    propertyCompareExpression.RightAlias, propertyCompareExpression.RightPropertyName),
+            IntegerExpression intCompareExpression =>
+                CreateIntegerFilter(expression, intCompareExpression),
+            StringExpression stringCompareExpression =>
+                CreateStringFilter(expression, stringCompareExpression),
+            PropertyIdentifier propertyCompareExpression =>
+                CreatePropertyFilter(expression, propertyCompareExpression),
             _ => throw new Exception($"Unsupported filter expression: '{expression.GetType().FullName}'")
         };
+    }
+
+    private static PropertyComparisonExpression CreatePropertyFilter(FilterExpression expression,
+        PropertyIdentifier propertyCompareExpression)
+    {
+        return new PropertyComparisonExpression(
+            expression.Alias, expression.PropertyName,
+            propertyCompareExpression.Alias, propertyCompareExpression.PropertyName);
+    }
+
+    private static StringEqualsExpression CreateStringFilter(FilterExpression expression,
+        StringExpression stringExpression)
+    {
+        return new StringEqualsExpression(expression.Alias, expression.PropertyName,
+            stringExpression.Value);
+    }
+
+    private static Filter CreateIntegerFilter(
+        FilterExpression expression,
+        IntegerExpression integerExpression)
+    {
+        var alias = expression.Alias;
+        if (expression.Operator.Type == ComparisonType.EQUALS)
+            return expression.Operator.IsNegated
+                ? new IntEqualsFilterExpression(alias, expression.PropertyName, integerExpression.Value)
+                : new IntNotEqualsFilterExpression(alias, expression.PropertyName,
+                    integerExpression.Value);
+
+        if (expression.Operator.IsNegated)
+            throw new Exception($"Operator {expression.Operator.Type} cannot be negated");
+
+        if (expression.Operator.Type == ComparisonType.GREATER_THAN)
+            return new IntGreaterThanFilterExpression(alias, expression.PropertyName,
+                integerExpression.Value);
+
+        throw new Exception($"Cannot map filter expression from query: '{integerExpression}'");
     }
 
     public Filter Build()

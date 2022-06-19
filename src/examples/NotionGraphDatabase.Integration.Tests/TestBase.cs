@@ -10,18 +10,18 @@ namespace NotionGraphDatabase.Integration.Tests;
 [TestFixture]
 public abstract class TestBase
 {
-    protected IServiceProvider serviceProvider;
-    protected IGraphDatabase notionDatabase;
+    private IServiceProvider? _serviceProvider;
+    protected IGraphDatabase? NotionDatabase;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        serviceProvider = DependencyInjectionSetup.CreateServiceProvider();
+        _serviceProvider = DependencyInjectionSetup.CreateServiceProvider();
     }
 
     [SetUp]
     public void Setup()
     {
-        notionDatabase = serviceProvider.GetService<IGraphDatabase>().ThrowIfNull();
+        NotionDatabase = _serviceProvider.ThrowIfNull().GetService<IGraphDatabase>().ThrowIfNull();
     }
 }

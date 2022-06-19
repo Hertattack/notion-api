@@ -143,24 +143,94 @@ internal class QueryParser
         return new FilterExpressionList(filterExpressions.Expressions.Prepend(filterExpression));
     }
 
-    [Production("filterExpression: propertyIdentifier EQUALS expression")]
+    [Production("filterExpression: propertyIdentifier operator expression")]
     public QueryPredicate FilterExpression(
         PropertyName propertyName,
-        Token<QueryToken> discardEquals,
+        Operator operatorType,
         Ast.Expression expression)
     {
-        return new FilterExpression(propertyName, expression);
+        return new FilterExpression(propertyName, operatorType, expression);
     }
 
-    [Production("filterExpression: identifier OBJECT_ACCESS propertyIdentifier EQUALS expression")]
+    [Production("filterExpression: propertyIdentifier NOT operator expression")]
+    public QueryPredicate FilterExpression(
+        PropertyName propertyName,
+        Token<QueryToken> notToken,
+        Operator operatorType,
+        Ast.Expression expression)
+    {
+        return new FilterExpression(propertyName, operatorType.Negate, expression);
+    }
+
+    [Production("operator: EQUALS")]
+    public QueryPredicate EqualsOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.EQUALS);
+    }
+
+    [Production("operator: CONTAINS")]
+    public QueryPredicate ContainsOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.CONTAINS);
+    }
+
+    [Production("operator: STARTS_WITH")]
+    public QueryPredicate StartsWithOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.STARTS_WITH);
+    }
+
+    [Production("operator: ENDS_WITH")]
+    public QueryPredicate EndsWithOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.ENDS_WITH);
+    }
+
+    [Production("operator: GREATER")]
+    public QueryPredicate GreaterOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.GREATER_THAN);
+    }
+
+    [Production("operator: LESS")]
+    public QueryPredicate LessOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.LESS_THAN);
+    }
+    
+    [Production("operator: GREATER_OR_EQUAL")]
+    public QueryPredicate GreaterOrEqualOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.GREATER_OR_EQUAL);
+    }
+
+    [Production("operator: LESS_OR_EQUAL")]
+    public QueryPredicate LessOrEqualOperator(Token<QueryToken> operatorToken)
+    {
+        return new Operator(OperatorType.LESS_OR_EQUAL);
+    }
+
+    [Production("filterExpression: identifier OBJECT_ACCESS propertyIdentifier operator expression")]
     public QueryPredicate FilterExpression(
         Identifier nodeIdentifier,
         Token<QueryToken> discardObjectAccess,
         PropertyName propertyName,
-        Token<QueryToken> discardEquals,
+        Operator operatorType,
         Ast.Expression expression)
     {
-        return new FilterExpression(nodeIdentifier, propertyName, expression);
+        return new FilterExpression(nodeIdentifier, propertyName, operatorType, expression);
+    }
+
+    [Production("filterExpression: identifier OBJECT_ACCESS propertyIdentifier NOT operator expression")]
+    public QueryPredicate FilterExpression(
+        Identifier nodeIdentifier,
+        Token<QueryToken> discardObjectAccess,
+        PropertyName propertyName,
+        Token<QueryToken> notToken,
+        Operator operatorType,
+        Ast.Expression expression)
+    {
+        return new FilterExpression(nodeIdentifier, propertyName, operatorType.Negate, expression);
     }
 
     [Production("expression: INT")]

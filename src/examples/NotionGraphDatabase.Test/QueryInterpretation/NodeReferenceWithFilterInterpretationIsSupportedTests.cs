@@ -5,6 +5,7 @@ using NotionGraphDatabase.Query.Parser.Ast;
 using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;
 using Util.Extensions;
+using PropertyIdentifier = NotionGraphDatabase.Query.Expression.PropertyIdentifier;
 
 namespace NotionGraphDatabase.Test.QueryInterpretation;
 
@@ -28,7 +29,7 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter.Should().HaveCount(1);
         filter[0].PropertyName.Should().Be("property");
 
-        var expressionFunction = filter[0].Expression.As<StringCompareExpression>();
+        var expressionFunction = filter[0].Expression.As<StringExpression>();
         expressionFunction.Value.Should().Be("value");
     }
 
@@ -50,7 +51,7 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter.Should().HaveCount(1);
         filter[0].PropertyName.Should().Be("property");
 
-        var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
+        var expressionFunction = filter[0].Expression.As<IntegerExpression>();
         expressionFunction.Value.Should().Be(1);
     }
 
@@ -72,9 +73,9 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter.Should().HaveCount(1);
         filter[0].PropertyName.Should().Be("property");
 
-        var expressionFunction = filter[0].Expression.As<PropertyValueCompareExpression>();
-        expressionFunction.RightAlias.Should().Be("o");
-        expressionFunction.RightPropertyName.Should().Be("property2");
+        var expressionFunction = filter[0].Expression.As<PropertyIdentifier>();
+        expressionFunction.Alias.Should().Be("o");
+        expressionFunction.PropertyName.Should().Be("property2");
     }
 
     [Test]
@@ -98,7 +99,7 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter.Should().HaveCount(1);
         filter[0].PropertyName.Should().Be("property");
 
-        var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
+        var expressionFunction = filter[0].Expression.As<IntegerExpression>();
         expressionFunction.Value.Should().Be(3421);
     }
 
@@ -120,11 +121,11 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter.Should().HaveCount(2);
 
         filter[0].PropertyName.Should().Be("property");
-        var expressionFunction = filter[0].Expression.As<IntCompareExpression>();
+        var expressionFunction = filter[0].Expression.As<IntegerExpression>();
         expressionFunction.Value.Should().Be(1);
 
         filter[1].PropertyName.Should().Be("otherproperty");
-        expressionFunction = filter[1].Expression.As<IntCompareExpression>();
+        expressionFunction = filter[1].Expression.As<IntegerExpression>();
         expressionFunction.Value.Should().Be(2);
     }
 
@@ -146,11 +147,11 @@ internal class NodeReferenceWithFilterInterpretationIsSupportedTests : QueryInte
         filter.Should().HaveCount(2);
 
         filter[0].PropertyName.Should().Be("property");
-        var firstExpressionFunction = filter[0].Expression.As<IntCompareExpression>();
+        var firstExpressionFunction = filter[0].Expression.As<IntegerExpression>();
         firstExpressionFunction.Value.Should().Be(1);
 
         filter[1].PropertyName.Should().Be("otherproperty");
-        var secondExpressionFunction = filter[1].Expression.As<StringCompareExpression>();
+        var secondExpressionFunction = filter[1].Expression.As<StringExpression>();
         secondExpressionFunction.Value.Should().Be("str value");
     }
 }

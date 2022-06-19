@@ -16,7 +16,8 @@ internal class NotionQueryParser : IQueryParser
         var queryParser = builder.BuildParser(parser, ParserType.LL_RECURSIVE_DESCENT, "query");
 
         if (queryParser.IsError)
-            throw new Exception($"Could not build query parser. Errors: {queryParser.Errors.Select(e => e.Message)}");
+            throw new Exception(
+                $"Could not build query parser. Errors: {queryParser.Errors.Select(e => e.ToString())}");
 
         _queryParser = queryParser.Result;
     }

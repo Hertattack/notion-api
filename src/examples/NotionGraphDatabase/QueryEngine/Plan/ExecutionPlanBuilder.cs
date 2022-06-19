@@ -5,6 +5,7 @@ using NotionGraphDatabase.Query.Filter;
 using NotionGraphDatabase.QueryEngine.Plan.Steps;
 using NotionGraphDatabase.QueryEngine.Validation;
 using NotionGraphDatabase.Storage;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
@@ -74,7 +75,7 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
 
             if (selectStepContext.PreviousStepContext is not null)
             {
-                var role = currentStep.Role;
+                var role = currentStep.Role.ThrowIfNull();
                 var relationalFilterStep = new SelectNodeViaRelationStep(
                     role, database, currentStep.AssociatedNode.Alias,
                     FilterExpressionBuilder.And(currentStep.Filter).Build());

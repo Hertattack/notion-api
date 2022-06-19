@@ -1,6 +1,7 @@
 ﻿using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.QueryEngine.Execution.Filtering;
 using NotionGraphDatabase.Storage.Filtering;
+using NotionGraphDatabase.Storage.Filtering.Integer;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Filtering;
@@ -34,9 +35,9 @@ internal class FilterEngine
         {
             EmptyFilterExpression =>
                 true,
-            IntComparisonExpression intValueComparisonExpression =>
+            IntEqualsFilterExpression intValueComparisonExpression =>
                 IntComparer.Compare(_resolver, intValueComparisonExpression),
-            StringComparisonExpression stringComparisonExpression =>
+            StringEqualsExpression stringComparisonExpression =>
                 StringComparer.Compare(_resolver, stringComparisonExpression),
             PropertyComparisonExpression propertyComparisonExpression =>
                 PropertyComparer.Compare(_resolver, propertyComparisonExpression),
@@ -45,17 +46,17 @@ internal class FilterEngine
     }
 
 
-    private bool CompareValue(IntermediateResultRow row, IntComparisonExpression comparisonExpression)
+    private bool CompareValue(IntermediateResultRow row, IntEqualsFilterExpression equalsFilterExpression)
     {
-        var value = _resolver.GetValue(comparisonExpression.NodeAlias,
-            comparisonExpression.PropertyName);
+        var value = _resolver.GetValue(equalsFilterExpression.NodeAlias,
+            equalsFilterExpression.PropertyName);
 
         return value switch
         {
             null =>
                 false,
             int intValue =>
-                intValue == comparisonExpression.Value,
+                intValue == equalsFilterExpression.Value,
             _ => false
         };
     }

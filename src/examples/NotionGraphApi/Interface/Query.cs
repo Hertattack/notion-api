@@ -2,5 +2,5 @@
 
 public class Query
 {
-    public string QueryText { get; set; }
+    public string QueryText { get; set; } = null!;
 }

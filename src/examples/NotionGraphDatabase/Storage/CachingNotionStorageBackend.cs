@@ -23,6 +23,6 @@ public class CachingNotionStorageBackend : IStorageBackend
 
     public bool Supports(Filter filter)
     {
-        return filter is StringComparisonExpression;
+        return filter is StringEqualsExpression;
     }
 }

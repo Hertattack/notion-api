@@ -1,19 +1,20 @@
 ﻿using NotionGraphDatabase.Storage.Filtering;
+using NotionGraphDatabase.Storage.Filtering.Integer;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Filtering;
 
 internal static class IntComparer
 {
-    public static bool Compare(PropertyValueResolver resolver, IntComparisonExpression comparisonExpression)
+    public static bool Compare(PropertyValueResolver resolver, IntEqualsFilterExpression equalsFilterExpression)
     {
-        var value = resolver.GetValue(comparisonExpression.NodeAlias, comparisonExpression.PropertyName);
+        var value = resolver.GetValue(equalsFilterExpression.NodeAlias, equalsFilterExpression.PropertyName);
 
         return value switch
         {
             null =>
                 false,
             int intValue =>
-                intValue == comparisonExpression.Value,
+                intValue == equalsFilterExpression.Value,
             _ => false
         };
     }

@@ -18,8 +18,6 @@ public class Database : IDataStoreObject
     private bool _deleted;
     private bool _allCached;
 
-    private DataStore _store;
-
     private DatabaseObject? _notionRepresentation;
 
     private Dictionary<string, DatabasePage> _pages = new();
@@ -111,7 +109,7 @@ public class Database : IDataStoreObject
 
     private DatabaseFilter? MapToNotionFilter(Filter filter)
     {
-        if (filter is not StringComparisonExpression stringComparisonExpression)
+        if (filter is not StringEqualsExpression stringComparisonExpression)
             return null;
 
         var property = Properties.FirstOrDefault(p => p.Name == stringComparisonExpression.PropertyName);

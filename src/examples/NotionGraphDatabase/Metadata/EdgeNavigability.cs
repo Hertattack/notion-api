@@ -2,6 +2,6 @@
 
 public class EdgeNavigability
 {
-    public NavigationDetails Forward { get; set; }
-    public NavigationDetails Reverse { get; set; }
+    public NavigationDetails Forward { get; set; } = null!;
+    public NavigationDetails Reverse { get; set; } = null!;
 }

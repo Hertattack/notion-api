@@ -2,6 +2,7 @@ using System.Linq;
 using FluentAssertions;
 using NotionGraphDatabase.QueryEngine.Execution;
 using NUnit.Framework;
+using Util.Extensions;
 
 namespace NotionGraphDatabase.Integration.Tests;
 
@@ -11,7 +12,7 @@ public class Tests : TestBase
     public void Select_all_properties_from_single_database()
     {
         // Act
-        var result = notionDatabase.Execute("(source)");
+        var result = NotionDatabase.ThrowIfNull().Execute("(source)");
 
         // Assert
         result.ResultSet.Rows.Should().HaveCount(4);
@@ -21,7 +22,7 @@ public class Tests : TestBase
     public void Select_specific_property_from_single_database()
     {
         // Act
-        var result = notionDatabase.Execute("(source) return source.Name");
+        var result = NotionDatabase.ThrowIfNull().Execute("(source) return source.Name");
 
         // Assert
         result.ResultSet.Rows.Should().HaveCount(4);
@@ -35,7 +36,7 @@ public class Tests : TestBase
     public void Select_specific_properties_from_single_database()
     {
         // Act
-        var result = notionDatabase.Execute("(s:source) return s.Name, s.'Last Edited'");
+        var result = NotionDatabase.ThrowIfNull().Execute("(s:source) return s.Name, s.'Last Edited'");
 
         // Assert
         result.ResultSet.Rows.Should().HaveCount(4);
@@ -49,7 +50,7 @@ public class Tests : TestBase
     public void Single_node_can_be_filtered()
     {
         // Act
-        var result = notionDatabase.Execute("(source{source.Name = 'C'})");
+        var result = NotionDatabase.ThrowIfNull().Execute("(source{source.Name = 'C'})");
 
         // Assert
         result.ResultSet.Rows.Should().HaveCount(1);
@@ -59,7 +60,7 @@ public class Tests : TestBase
     public void A_path_of_nodes_can_be_selected()
     {
         // Act
-        var result = notionDatabase.Execute("(source)-[Target]->(target)");
+        var result = NotionDatabase.ThrowIfNull().Execute("(source)-[Target]->(target)");
 
         // Assert
         result.ResultSet.Rows.Should().HaveCount(5);
@@ -69,7 +70,7 @@ public class Tests : TestBase
     public void A_path_of_nodes_can_be_selected_and_specific_properties_returned()
     {
         // Act
-        var result = notionDatabase.Execute("(s:source)-[Target]->(target) return s.'Property A'");
+        var result = NotionDatabase.ThrowIfNull().Execute("(s:source)-[Target]->(target) return s.'Property A'");
 
         // Assert
         result.ResultSet.Rows.Should().HaveCount(5);

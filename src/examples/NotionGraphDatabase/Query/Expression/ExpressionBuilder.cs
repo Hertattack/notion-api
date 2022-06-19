@@ -4,23 +4,18 @@ namespace NotionGraphDatabase.Query.Expression;
 
 internal class ExpressionBuilder : IExpressionBuilder
 {
-    public ExpressionFunction FromAst(IQuery query,
-        string alias,
-        string propertyName,
-        Parser.Ast.Expression expression)
+    public Expression FromAst(Parser.Ast.Expression expression)
     {
         return expression switch
         {
             StringValue stringValue =>
-                new StringCompareExpression(alias, propertyName, stringValue.Value),
+                new StringExpression(stringValue.Value),
 
             IntValue intValue =>
-                new IntCompareExpression(alias, propertyName, intValue.Value),
+                new IntegerExpression(intValue.Value),
 
-            PropertyIdentifier propertyIdentifier =>
-                new PropertyValueCompareExpression(
-                    alias,
-                    propertyName,
+            Parser.Ast.PropertyIdentifier propertyIdentifier =>
+                new PropertyIdentifier(
                     propertyIdentifier.NodeNameOrAlias.Name,
                     propertyIdentifier.PropertyName.Name),
 
