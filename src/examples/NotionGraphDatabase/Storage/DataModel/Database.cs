@@ -7,6 +7,7 @@ using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using Util.Extensions;
+using DatabaseFilter = NotionGraphDatabase.Storage.Filtering.DatabaseFilter;
 
 namespace NotionGraphDatabase.Storage.DataModel;
 
@@ -83,6 +84,29 @@ public class Database : IDataStoreObject
     {
         RetrievePages();
         return Pages;
+    }
+
+    public IEnumerable<DatabasePage> GetFiltered(DatabaseFilter filter)
+    {
+        var databaseContentsRequest = new SearchDatabaseRequest {DatabaseId = Id};
+
+        databaseContentsRequest.Parameters.Filter = MapToNotionFilter(filter);
+
+        var databaseContentsResponse = _notionClient.ExecuteRequest(databaseContentsRequest).Result;
+        if (!databaseContentsResponse.HasValue)
+        {
+            _logger.LogTrace("Database: '{DatabaseId}' has no entries", Id);
+            return Array.Empty<DatabasePage>();
+        }
+
+        var databaseContents = databaseContentsResponse.Value;
+        var resultsFromNotionApi = databaseContents.Results.Select(no => (PageObject) no);
+        return UpdateAndInsert(resultsFromNotionApi);
+    }
+
+    private NotionApi.Rest.Request.Parameter.DatabaseFilter MapToNotionFilter(DatabaseFilter filter)
+    {
+        return null;
     }
 
     public void Delete()
@@ -163,16 +187,18 @@ public class Database : IDataStoreObject
         _allCached = true;
     }
 
-    private void UpdateAndInsert(IEnumerable<PageObject> updatedAndNewPages)
+    private IEnumerable<DatabasePage> UpdateAndInsert(IEnumerable<PageObject> updatedAndNewPages)
     {
+        var input = updatedAndNewPages.ToList();
         if (_pages.Count == 0)
         {
-            _pages = updatedAndNewPages.ToDictionary(p => p.Id,
+            _pages = input.ToDictionary(p => p.Id,
                 p => new DatabasePage(this, p));
-            return;
+            return _pages.Values;
         }
 
-        foreach (var updatedPage in updatedAndNewPages)
+        var result = new List<DatabasePage>();
+        foreach (var updatedPage in input)
         {
             _pages.TryGetValue(updatedPage.Id, out var existingPage);
 
@@ -185,6 +211,15 @@ public class Database : IDataStoreObject
             {
                 existingPage.Update(updatedPage);
             }
+
+            result.Add(existingPage);
         }
+
+        return result;
+    }
+
+    public PropertyDefinition GetProperty(string propertyName)
+    {
+        return _properties.First(p => p.Name == propertyName);
     }
 }

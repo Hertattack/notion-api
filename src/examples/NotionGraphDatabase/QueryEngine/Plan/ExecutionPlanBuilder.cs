@@ -41,14 +41,23 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         var databases = metamodel.Databases.ToDictionary(d => d.Alias);
         var plan = new ExecutionPlan(query, metamodel);
 
-        var selectStepsByDatabase = query.SelectSteps.GroupBy(s => s.Step.AssociatedNode.NodeName);
-        foreach (var selectSteps in selectStepsByDatabase)
+        var filtersPerDatabase = AggregateFiltersByDatabase(query);
+        foreach (var filterExpressionsPerDatabase in filtersPerDatabase)
         {
-            var database = databases[selectSteps.Key];
-            if (selectSteps.All(s => s.Step.HasFilter) && CanPushDown(selectSteps))
-                plan.AddStep(new FilteredFetchDatabaseStep(database, selectSteps));
+            var database = databases[filterExpressionsPerDatabase.Key];
+            if (CanPushDown(filterExpressionsPerDatabase.Value))
+            {
+                var step = new FilteredFetchDatabaseStep(database);
+
+                foreach (var expressions in filterExpressionsPerDatabase.Value)
+                    step.AddOrCondition(expressions);
+
+                plan.AddStep(step);
+            }
             else
+            {
                 plan.AddStep(new FetchDatabaseStep(database));
+            }
         }
 
         foreach (var selectStepContext in query.SelectSteps)
@@ -78,9 +87,32 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         return plan;
     }
 
-    private static bool CanPushDown(IEnumerable<ISelectStepContext> stepContexts)
+    private static Dictionary<string, List<List<FilterExpression>>> AggregateFiltersByDatabase(IQuery query)
     {
-        return stepContexts.All(c => c.Step.Filter.All(CanPushDown));
+        var result = new Dictionary<string, List<List<FilterExpression>>>();
+        foreach (var stepContext in query.SelectSteps.Where(s => s.Step.HasFilter))
+        {
+            var aliases = stepContext.Path
+                .ToDictionary(p => p.Step.AssociatedNode.Alias, p => p.Step.AssociatedNode.NodeName);
+
+            foreach (var groupedFilters in stepContext.Step.Filter.GroupBy(f => f.Alias))
+            {
+                var nodeName = aliases[groupedFilters.Key];
+                var filterExpressions = groupedFilters.ToList();
+
+                if (result.ContainsKey(nodeName))
+                    result[nodeName].Add(filterExpressions);
+                else
+                    result[nodeName] = new List<List<FilterExpression>> {filterExpressions};
+            }
+        }
+
+        return result;
+    }
+
+    private static bool CanPushDown(IEnumerable<List<FilterExpression>> expressions)
+    {
+        return expressions.All(l => l.All(CanPushDown));
     }
 
     private static bool CanPushDown(FilterExpression filterExpression)

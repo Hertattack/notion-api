@@ -3,6 +3,7 @@
 public class StringCompareExpression : ExpressionFunction
 {
     private readonly string _valueToCompare;
+    public string Value => _valueToCompare;
 
     public StringCompareExpression(string leftAlias, string leftPropertyName, string valueToCompare)
         : base(leftAlias, leftPropertyName)
