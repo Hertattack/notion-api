@@ -2,22 +2,22 @@
 
 public class IntCompareExpression : ExpressionFunction
 {
-    private readonly int _valueToCompare;
+    public int Value { get; }
 
     public IntCompareExpression(string leftAlias, string leftPropertyName, int valueToCompare)
         : base(leftAlias, leftPropertyName)
     {
-        _valueToCompare = valueToCompare;
+        Value = valueToCompare;
     }
 
     public override bool Matches(IPropertyValueResolver resolver)
     {
         var value = resolver.GetValue(LeftAlias, LeftPropertyName);
-        return value is int && value.Equals(_valueToCompare);
+        return value is int && value.Equals(Value);
     }
 
     public override string ToString()
     {
-        return $"Integer Value Comparison filter: {LeftAlias}.{LeftPropertyName}={_valueToCompare}";
+        return $"Integer Value Comparison filter: {LeftAlias}.{LeftPropertyName}={Value}";
     }
 }

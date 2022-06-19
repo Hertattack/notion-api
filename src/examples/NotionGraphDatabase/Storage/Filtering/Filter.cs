@@ -1,6 +1,5 @@
 ﻿namespace NotionGraphDatabase.Storage.Filtering;
 
-public abstract class DatabaseFilterCondition
+public abstract class Filter
 {
-    
 }

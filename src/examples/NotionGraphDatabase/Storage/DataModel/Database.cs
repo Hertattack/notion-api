@@ -6,8 +6,8 @@ using NotionApi.Rest.Request.Parameter;
 using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
+using NotionGraphDatabase.Storage.Filtering;
 using Util.Extensions;
-using DatabaseFilter = NotionGraphDatabase.Storage.Filtering.DatabaseFilter;
 
 namespace NotionGraphDatabase.Storage.DataModel;
 
@@ -86,11 +86,16 @@ public class Database : IDataStoreObject
         return Pages;
     }
 
-    public IEnumerable<DatabasePage> GetFiltered(DatabaseFilter filter)
+    public IEnumerable<DatabasePage> GetFiltered(Filter filter)
     {
-        var databaseContentsRequest = new SearchDatabaseRequest {DatabaseId = Id};
-
-        databaseContentsRequest.Parameters.Filter = MapToNotionFilter(filter);
+        var databaseContentsRequest = new SearchDatabaseRequest
+        {
+            DatabaseId = Id,
+            Parameters =
+            {
+                Filter = MapToNotionFilter(filter)
+            }
+        };
 
         var databaseContentsResponse = _notionClient.ExecuteRequest(databaseContentsRequest).Result;
         if (!databaseContentsResponse.HasValue)
@@ -104,7 +109,7 @@ public class Database : IDataStoreObject
         return UpdateAndInsert(resultsFromNotionApi);
     }
 
-    private NotionApi.Rest.Request.Parameter.DatabaseFilter MapToNotionFilter(DatabaseFilter filter)
+    private DatabaseFilter MapToNotionFilter(Filter filter)
     {
         return null;
     }

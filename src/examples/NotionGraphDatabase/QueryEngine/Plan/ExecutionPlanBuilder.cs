@@ -1,23 +1,28 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotionGraphDatabase.Metadata;
+using NotionGraphDatabase.QueryEngine.Plan.Filtering;
 using NotionGraphDatabase.QueryEngine.Plan.Steps;
 using NotionGraphDatabase.QueryEngine.Query;
 using NotionGraphDatabase.QueryEngine.Query.Expression;
 using NotionGraphDatabase.QueryEngine.Query.Filter;
 using NotionGraphDatabase.QueryEngine.Validation;
+using NotionGraphDatabase.Storage;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
 internal class ExecutionPlanBuilder : IExecutionPlanBuilder
 {
     private readonly IQueryValidator _queryValidator;
+    private readonly IStorageBackend _storageBackend;
     private readonly ILogger<ExecutionPlanBuilder> _logger;
 
     public ExecutionPlanBuilder(
         IQueryValidator queryValidator,
+        IStorageBackend storageBackend,
         ILogger<ExecutionPlanBuilder> logger)
     {
         _queryValidator = queryValidator;
+        _storageBackend = storageBackend;
         _logger = logger;
     }
 
@@ -36,7 +41,7 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         return plan;
     }
 
-    private static IQueryPlan Analyze(IQuery query, Metamodel metamodel)
+    private IQueryPlan Analyze(IQuery query, Metamodel metamodel)
     {
         var databases = metamodel.Databases.ToDictionary(d => d.Alias);
         var plan = new ExecutionPlan(query, metamodel);
@@ -45,19 +50,23 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
         foreach (var filterExpressionsPerDatabase in filtersPerDatabase)
         {
             var database = databases[filterExpressionsPerDatabase.Key];
-            if (CanPushDown(filterExpressionsPerDatabase.Value))
-            {
-                var step = new FilteredFetchDatabaseStep(database);
 
+            if (filtersPerDatabase.Count > 0)
+            {
+                var expressionBuilder = new FilterExpressionBuilder();
                 foreach (var expressions in filterExpressionsPerDatabase.Value)
-                    step.AddOrCondition(expressions);
+                    expressionBuilder.Or(FilterExpressionBuilder.And(expressions));
 
-                plan.AddStep(step);
+                var expression = expressionBuilder.Build();
+                if (_storageBackend.CanPushDown(expression))
+                {
+                    var step = new FilteredFetchDatabaseStep(database, expression);
+                    plan.AddStep(step);
+                    continue;
+                }
             }
-            else
-            {
-                plan.AddStep(new FetchDatabaseStep(database));
-            }
+
+            plan.AddStep(new FetchDatabaseStep(database));
         }
 
         foreach (var selectStepContext in query.SelectSteps)
@@ -90,8 +99,11 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
     private static Dictionary<string, List<List<FilterExpression>>> AggregateFiltersByDatabase(IQuery query)
     {
         var result = new Dictionary<string, List<List<FilterExpression>>>();
-        foreach (var stepContext in query.SelectSteps.Where(s => s.Step.HasFilter))
+        foreach (var stepContext in query.SelectSteps)
         {
+            var stepNodeName = stepContext.Step.AssociatedNode.NodeName;
+            if (!result.ContainsKey(stepNodeName)) result[stepNodeName] = new List<List<FilterExpression>>();
+
             var aliases = stepContext.Path
                 .ToDictionary(p => p.Step.AssociatedNode.Alias, p => p.Step.AssociatedNode.NodeName);
 
@@ -100,7 +112,7 @@ internal class ExecutionPlanBuilder : IExecutionPlanBuilder
                 var nodeName = aliases[groupedFilters.Key];
                 var filterExpressions = groupedFilters.ToList();
 
-                if (result.ContainsKey(nodeName))
+                if (nodeName == stepNodeName || result.ContainsKey(nodeName))
                     result[nodeName].Add(filterExpressions);
                 else
                     result[nodeName] = new List<List<FilterExpression>> {filterExpressions};

@@ -2,23 +2,22 @@
 
 public class StringCompareExpression : ExpressionFunction
 {
-    private readonly string _valueToCompare;
-    public string Value => _valueToCompare;
+    public string Value { get; }
 
     public StringCompareExpression(string leftAlias, string leftPropertyName, string valueToCompare)
         : base(leftAlias, leftPropertyName)
     {
-        _valueToCompare = valueToCompare;
+        Value = valueToCompare;
     }
 
     public override bool Matches(IPropertyValueResolver resolver)
     {
         var value = resolver.GetValue(LeftAlias, LeftPropertyName);
-        return value is string s && s.Equals(_valueToCompare);
+        return value is string s && s.Equals(Value);
     }
 
     public override string ToString()
     {
-        return $"String Value Comparison filter: {LeftAlias}.{LeftPropertyName}={_valueToCompare}";
+        return $"String Value Comparison filter: {LeftAlias}.{LeftPropertyName}={Value}";
     }
 }
