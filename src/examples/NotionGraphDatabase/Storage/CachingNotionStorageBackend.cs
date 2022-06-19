@@ -7,19 +7,13 @@ namespace NotionGraphDatabase.Storage;
 
 public class CachingNotionStorageBackend : IStorageBackend
 {
-    private readonly INotionClient _notionClient;
-    private readonly ILogger<CachingNotionStorageBackend> _logger;
     private readonly DataStore _dataStore;
 
     public CachingNotionStorageBackend(
         INotionClient notionClient,
-        ILogger<CachingNotionStorageBackend> logger,
         ILoggerFactory loggerFactory)
     {
-        _notionClient = notionClient;
-        _logger = logger;
-
-        _dataStore = new DataStore(_notionClient, loggerFactory);
+        _dataStore = new DataStore(notionClient, loggerFactory);
     }
 
     public Database GetDatabase(string databaseId)
@@ -29,6 +23,6 @@ public class CachingNotionStorageBackend : IStorageBackend
 
     public bool Supports(Filter filter)
     {
-        return false;
+        return filter is StringComparisonExpression;
     }
 }

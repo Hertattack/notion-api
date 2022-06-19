@@ -109,9 +109,19 @@ public class Database : IDataStoreObject
         return UpdateAndInsert(resultsFromNotionApi);
     }
 
-    private DatabaseFilter MapToNotionFilter(Filter filter)
+    private DatabaseFilter? MapToNotionFilter(Filter filter)
     {
-        return null;
+        if (filter is not StringComparisonExpression stringComparisonExpression)
+            return null;
+
+        var property = Properties.FirstOrDefault(p => p.Name == stringComparisonExpression.PropertyName);
+        if (property is null)
+            return null;
+
+        _logger.LogDebug("Applying Rich Text Filter to property with type: {PropertyType}", property.Type);
+
+        return new RichTextPropertyFilter
+            {PropertyName = property.Name, Filter = new TextFilter {EqualTo = stringComparisonExpression.Value}};
     }
 
     public void Delete()
