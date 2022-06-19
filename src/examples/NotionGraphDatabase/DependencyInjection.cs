@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NotionGraphDatabase.Interface;
+using NotionGraphDatabase.Query;
+using NotionGraphDatabase.Query.Expression;
+using NotionGraphDatabase.Query.Filter;
+using NotionGraphDatabase.Query.Path;
 using NotionGraphDatabase.QueryEngine;
 using NotionGraphDatabase.QueryEngine.Plan;
-using NotionGraphDatabase.QueryEngine.Query;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
-using NotionGraphDatabase.QueryEngine.Query.Filter;
-using NotionGraphDatabase.QueryEngine.Query.Path;
 using NotionGraphDatabase.QueryEngine.Validation;
 using NotionGraphDatabase.Storage;
 

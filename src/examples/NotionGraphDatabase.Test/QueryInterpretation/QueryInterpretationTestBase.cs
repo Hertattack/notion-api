@@ -1,7 +1,7 @@
-﻿using NotionGraphDatabase.QueryEngine.Query;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
-using NotionGraphDatabase.QueryEngine.Query.Filter;
-using NotionGraphDatabase.QueryEngine.Query.Path;
+﻿using NotionGraphDatabase.Query;
+using NotionGraphDatabase.Query.Expression;
+using NotionGraphDatabase.Query.Filter;
+using NotionGraphDatabase.Query.Path;
 using NotionGraphDatabase.Test.QueryParsing;
 using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;

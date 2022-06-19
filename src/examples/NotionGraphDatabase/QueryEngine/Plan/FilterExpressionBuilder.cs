@@ -1,6 +1,6 @@
-﻿using NotionGraphDatabase.QueryEngine.Execution.Filtering;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
-using NotionGraphDatabase.QueryEngine.Query.Filter;
+﻿using NotionGraphDatabase.Query.Expression;
+using NotionGraphDatabase.Query.Filter;
+using NotionGraphDatabase.QueryEngine.Execution.Filtering;
 using NotionGraphDatabase.Storage.Filtering;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;

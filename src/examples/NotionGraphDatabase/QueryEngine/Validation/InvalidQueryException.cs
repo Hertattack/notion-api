@@ -1,6 +1,4 @@
-﻿using NotionGraphDatabase.QueryEngine.Validation;
-
-namespace NotionGraphDatabase.QueryEngine;
+﻿namespace NotionGraphDatabase.QueryEngine.Validation;
 
 public class InvalidQueryException : Exception
 {

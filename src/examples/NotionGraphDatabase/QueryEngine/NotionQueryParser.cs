@@ -1,5 +1,5 @@
-﻿using NotionGraphDatabase.QueryEngine.Ast;
-using NotionGraphDatabase.QueryEngine.Parser;
+﻿using NotionGraphDatabase.Query.Parser;
+using NotionGraphDatabase.Query.Parser.Ast;
 using sly.parser;
 using sly.parser.generator;
 

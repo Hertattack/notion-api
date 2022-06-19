@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using FluentAssertions;
-using NotionGraphDatabase.QueryEngine.Ast;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
+using NotionGraphDatabase.Query.Expression;
+using NotionGraphDatabase.Query.Parser.Ast;
 using NotionGraphDatabase.Test.Util;
 using NUnit.Framework;
 using Util.Extensions;

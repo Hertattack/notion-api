@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotionGraphDatabase.Metadata;
-using NotionGraphDatabase.QueryEngine.Query;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
-using NotionGraphDatabase.QueryEngine.Query.Path;
+using NotionGraphDatabase.Query;
+using NotionGraphDatabase.Query.Expression;
+using NotionGraphDatabase.Query.Path;
 
 namespace NotionGraphDatabase.QueryEngine.Validation;
 

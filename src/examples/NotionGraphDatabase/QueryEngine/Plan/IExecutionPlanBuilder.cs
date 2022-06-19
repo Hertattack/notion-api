@@ -1,5 +1,5 @@
 ﻿using NotionGraphDatabase.Metadata;
-using NotionGraphDatabase.QueryEngine.Query;
+using NotionGraphDatabase.Query;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 

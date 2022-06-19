@@ -1,5 +1,5 @@
 ﻿using System;
-using NotionGraphDatabase.QueryEngine.Query.Expression;
+using NotionGraphDatabase.Query.Expression;
 
 namespace NotionGraphDatabase.Test.Util;
 

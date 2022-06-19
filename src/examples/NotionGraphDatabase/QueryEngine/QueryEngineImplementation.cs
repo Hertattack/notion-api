@@ -2,10 +2,10 @@
 using NotionGraphDatabase.Interface;
 using NotionGraphDatabase.Interface.Result;
 using NotionGraphDatabase.Metadata;
-using NotionGraphDatabase.QueryEngine.Ast;
+using NotionGraphDatabase.Query;
+using NotionGraphDatabase.Query.Parser.Ast;
 using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.QueryEngine.Plan;
-using NotionGraphDatabase.QueryEngine.Query;
 using NotionGraphDatabase.Storage;
 
 namespace NotionGraphDatabase.QueryEngine;

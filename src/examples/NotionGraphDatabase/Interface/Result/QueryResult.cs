@@ -1,6 +1,6 @@
 ﻿using NotionGraphDatabase.Metadata;
+using NotionGraphDatabase.Query;
 using NotionGraphDatabase.QueryEngine.Execution;
-using NotionGraphDatabase.QueryEngine.Query;
 
 namespace NotionGraphDatabase.Interface.Result;
 
