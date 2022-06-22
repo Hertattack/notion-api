@@ -2,6 +2,7 @@
 using NotionApi;
 using NotionGraphDatabase.Storage.DataModel;
 using NotionGraphDatabase.Storage.Filtering;
+using NotionGraphDatabase.Storage.Filtering.String;
 
 namespace NotionGraphDatabase.Storage;
 
@@ -23,6 +24,6 @@ public class CachingNotionStorageBackend : IStorageBackend
 
     public bool Supports(Filter filter)
     {
-        return filter is StringEqualsExpression;
+        return filter is StringValueFilterExpression;
     }
 }

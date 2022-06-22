@@ -7,6 +7,7 @@ using NotionApi.Rest.Response.Database;
 using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using NotionGraphDatabase.Storage.Filtering;
+using NotionGraphDatabase.Storage.Filtering.String;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.Storage.DataModel;
@@ -107,19 +108,42 @@ public class Database : IDataStoreObject
         return UpdateAndInsert(resultsFromNotionApi);
     }
 
-    private DatabaseFilter? MapToNotionFilter(Filter filter)
+    private DatabaseFilter MapToNotionFilter(Filter filter)
     {
-        if (filter is not StringEqualsExpression stringComparisonExpression)
-            return null;
+        if (filter is not PropertyFilterExpression propertyFilterExpression)
+            throw new NotImplementedException(
+                $"Unsupported filter type: {filter.GetType().FullName} - cannot map to Notion filter");
 
-        var property = Properties.FirstOrDefault(p => p.Name == stringComparisonExpression.PropertyName);
+        var property = Properties.FirstOrDefault(p => p.Name == propertyFilterExpression.PropertyName);
         if (property is null)
-            return null;
+            throw new UndefinedPropertyException(
+                $"Cannot create filter for property: '{propertyFilterExpression.PropertyName}' - not found in database.");
 
         _logger.LogDebug("Applying Rich Text Filter to property with type: {PropertyType}", property.Type);
 
-        return new RichTextPropertyFilter
-            {PropertyName = property.Name, Filter = new TextFilter {EqualTo = stringComparisonExpression.Value}};
+        return filter switch
+        {
+            StringEqualsExpression valueExpression => new RichTextPropertyFilter
+            {
+                PropertyName = property.Name, Filter = new TextFilter {EqualTo = valueExpression.Value}
+            },
+            StringNotEqualsFilterExpression valueExpression => new RichTextPropertyFilter
+            {
+                PropertyName = property.Name,
+                Filter = new TextFilter {DoesNotEqual = valueExpression.Value}
+            },
+            StringContainsFilterExpression valueExpression => new RichTextPropertyFilter
+            {
+                PropertyName = property.Name,
+                Filter = new TextFilter {Contains = valueExpression.Value}
+            },
+            StringDoesNotContainFilterExpression valueExpression => new RichTextPropertyFilter
+            {
+                PropertyName = property.Name,
+                Filter = new TextFilter {DoesNotContain = valueExpression.Value}
+            },
+            _ => throw new NotImplementedException($"Unimplemented filter type: {filter.GetType().FullName}")
+        };
     }
 
     public void Delete()

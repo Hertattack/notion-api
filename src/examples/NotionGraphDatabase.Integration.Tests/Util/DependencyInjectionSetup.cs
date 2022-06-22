@@ -47,11 +47,14 @@ public class DependencyInjectionSetup
                 .AddConfiguration(configuration.GetSection("Logging"));
         });
 
-        serviceCollection.AddTransient<IRestClient, RestClient>();
+
+        serviceCollection.AddTransient<RestClient>();
+        serviceCollection.AddTransient<IRestClient, ProxyRestClient>();
 
         ServiceConfigurator.Configure(serviceCollection);
 
-        serviceCollection.AddTransient<INotionClient, NotionClient>();
+        serviceCollection.AddTransient<NotionClient>();
+        serviceCollection.AddTransient<INotionClient, ProxyNotionClient>();
 
         serviceCollection.Configure<Metamodel>(
             o => configuration.GetSection("Model").Bind(o));

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using NotionGraphDatabase.Integration.Tests.Util;
+using NUnit.Framework;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.Integration.Tests;

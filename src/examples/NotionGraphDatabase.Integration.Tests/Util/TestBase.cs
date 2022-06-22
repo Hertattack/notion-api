@@ -1,17 +1,18 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using NotionGraphDatabase.Integration.Tests.Util;
 using NotionGraphDatabase.Interface;
 using NUnit.Framework;
 using Util.Extensions;
 
-namespace NotionGraphDatabase.Integration.Tests;
+namespace NotionGraphDatabase.Integration.Tests.Util;
 
 [TestFixture]
 public abstract class TestBase
 {
     private IServiceProvider? _serviceProvider;
     protected IGraphDatabase? NotionDatabase;
+    protected ProxyRestClient? _proxyRestClient;
+    protected ProxyNotionClient? _proxyNotionClient;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -23,5 +24,7 @@ public abstract class TestBase
     public void Setup()
     {
         NotionDatabase = _serviceProvider.ThrowIfNull().GetService<IGraphDatabase>().ThrowIfNull();
+        _proxyRestClient = ProxyRestClient.LastCreated;
+        _proxyNotionClient = ProxyNotionClient.LastCreated;
     }
 }

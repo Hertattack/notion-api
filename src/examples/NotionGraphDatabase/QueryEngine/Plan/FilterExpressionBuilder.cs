@@ -3,6 +3,7 @@ using NotionGraphDatabase.Query.Filter;
 using NotionGraphDatabase.QueryEngine.Execution.Filtering;
 using NotionGraphDatabase.Storage.Filtering;
 using NotionGraphDatabase.Storage.Filtering.Integer;
+using NotionGraphDatabase.Storage.Filtering.String;
 
 namespace NotionGraphDatabase.QueryEngine.Plan;
 
@@ -32,11 +33,21 @@ internal class FilterExpressionBuilder
             propertyCompareExpression.Alias, propertyCompareExpression.PropertyName);
     }
 
-    private static StringEqualsExpression CreateStringFilter(FilterExpression expression,
+    private static StringValueFilterExpression CreateStringFilter(
+        FilterExpression expression,
         StringExpression stringExpression)
     {
-        return new StringEqualsExpression(expression.Alias, expression.PropertyName,
-            stringExpression.Value);
+        var alias = expression.Alias;
+        return expression.Operator.Type switch
+        {
+            ComparisonType.EQUALS => expression.Operator.IsNegated
+                ? new StringNotEqualsFilterExpression(alias, expression.PropertyName, stringExpression.Value)
+                : new StringEqualsExpression(alias, expression.PropertyName, stringExpression.Value),
+            ComparisonType.CONTAINS => expression.Operator.IsNegated
+                ? new StringDoesNotContainFilterExpression(alias, expression.PropertyName, stringExpression.Value)
+                : new StringContainsFilterExpression(alias, expression.PropertyName, stringExpression.Value),
+            _ => throw new Exception($"Cannot map filter expression from query: '{stringExpression}'")
+        };
     }
 
     private static Filter CreateIntegerFilter(
@@ -46,8 +57,8 @@ internal class FilterExpressionBuilder
         var alias = expression.Alias;
         if (expression.Operator.Type == ComparisonType.EQUALS)
             return expression.Operator.IsNegated
-                ? new IntEqualsFilterExpression(alias, expression.PropertyName, integerExpression.Value)
-                : new IntNotEqualsFilterExpression(alias, expression.PropertyName,
+                ? new IntNotEqualsFilterExpression(alias, expression.PropertyName, integerExpression.Value)
+                : new IntEqualsFilterExpression(alias, expression.PropertyName,
                     integerExpression.Value);
 
         if (expression.Operator.IsNegated)

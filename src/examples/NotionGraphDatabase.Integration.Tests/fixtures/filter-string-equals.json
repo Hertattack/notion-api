@@ -1,0 +1,9 @@
+﻿{
+  "filter": {
+    "property": "FilterTestProperty",
+    "rich_text": {
+      "equals": "a"
+    }
+  },
+  "page_size": 100
+}

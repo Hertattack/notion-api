@@ -2,6 +2,7 @@
 using NotionGraphDatabase.QueryEngine.Execution.Filtering;
 using NotionGraphDatabase.Storage.Filtering;
 using NotionGraphDatabase.Storage.Filtering.Integer;
+using NotionGraphDatabase.Storage.Filtering.String;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Filtering;
@@ -35,10 +36,10 @@ internal class FilterEngine
         {
             EmptyFilterExpression =>
                 true,
-            IntEqualsFilterExpression intValueComparisonExpression =>
-                IntComparer.Compare(_resolver, intValueComparisonExpression),
-            StringEqualsExpression stringComparisonExpression =>
-                StringComparer.Compare(_resolver, stringComparisonExpression),
+            IntValueFilterExpression intValueFilterExpression =>
+                IntComparer.Compare(_resolver, intValueFilterExpression),
+            StringValueFilterExpression stringValueFilterExpression =>
+                StringComparer.Compare(_resolver, stringValueFilterExpression),
             PropertyComparisonExpression propertyComparisonExpression =>
                 PropertyComparer.Compare(_resolver, propertyComparisonExpression),
             _ => throw new Exception($"Unsupported filter expression: '{currentFilter.GetType().FullName}'")

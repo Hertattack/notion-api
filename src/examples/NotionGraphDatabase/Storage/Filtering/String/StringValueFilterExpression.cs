@@ -1,4 +1,4 @@
-﻿namespace NotionGraphDatabase.Storage.Filtering;
+﻿namespace NotionGraphDatabase.Storage.Filtering.String;
 
 public class StringValueFilterExpression : PropertyFilterExpression
 {

@@ -1,21 +1,26 @@
-﻿using NotionGraphDatabase.Storage.Filtering;
-using NotionGraphDatabase.Storage.Filtering.Integer;
+﻿using NotionGraphDatabase.Storage.Filtering.Integer;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Filtering;
 
 internal static class IntComparer
 {
-    public static bool Compare(PropertyValueResolver resolver, IntEqualsFilterExpression equalsFilterExpression)
+    public static bool Compare(PropertyValueResolver resolver, IntValueFilterExpression filterExpression)
     {
-        var value = resolver.GetValue(equalsFilterExpression.NodeAlias, equalsFilterExpression.PropertyName);
+        var value = resolver.GetValue(filterExpression.NodeAlias, filterExpression.PropertyName);
 
-        return value switch
+        return filterExpression switch
         {
-            null =>
-                false,
-            int intValue =>
-                intValue == equalsFilterExpression.Value,
-            _ => false
+            IntEqualsFilterExpression => value switch
+            {
+                int intValue => intValue == filterExpression.Value,
+                _ => false
+            },
+            IntNotEqualsFilterExpression => value switch
+            {
+                int intValue => intValue != filterExpression.Value,
+                _ => false
+            },
+            _ => throw new UnsupportedFilterExpressionException(filterExpression)
         };
     }
 }

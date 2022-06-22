@@ -1,5 +1,6 @@
 using System.Linq;
 using FluentAssertions;
+using NotionGraphDatabase.Integration.Tests.Util;
 using NotionGraphDatabase.QueryEngine.Execution;
 using NUnit.Framework;
 using Util.Extensions;

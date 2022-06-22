@@ -1,0 +1,9 @@
+﻿{
+  "filter": {
+    "property": "FilterTestProperty",
+    "rich_text": {
+      "contains": "a"
+    }
+  },
+  "page_size": 100
+}
