@@ -9,6 +9,18 @@ tags-[book]->books
 RETURN b.*, tb.*
 ```
 
+The following operators can be used:
+
+* `>` greater than
+* `>=` greater or equal
+* `<` less than
+* `<=` less or equal
+* `=` equals
+* `!` not
+* `~=` contains
+* `?=` starts with
+* `=?` ends with
+
 ```json
 {
     "Metadata" : {
