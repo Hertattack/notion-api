@@ -1,13 +1,21 @@
 import React, {useState} from "react";
 import {QueryInput} from "./QueryInput";
+import {useLocalStorage} from "../util/storage";
+
+const maxItemsInHistory = 50;
 
 export const FreeQuery : React.FC = () => {
-    const [previousQueries, setPreviousQueries] = useState<string[]>([]);
+    const [previousQueries, setPreviousQueries] = useLocalStorage<string[]>('queryHistory',[]);
     const [queryResult, setQueryResult] = useState({});
 
     function performQuery(queryText : string) {
-        if(!previousQueries.some(pq=>pq == queryText)){
-            setPreviousQueries([...previousQueries, queryText]);
+        if(!previousQueries.some(pq=>pq === queryText)){
+            let length = previousQueries.length;
+
+            if(length > maxItemsInHistory)
+                setPreviousQueries([...previousQueries.slice(length - maxItemsInHistory), queryText]);
+            else
+                setPreviousQueries([...previousQueries, queryText]);
         }
 
         let uri = `https://localhost:7136/Query?query=${encodeURIComponent(queryText)}`;
