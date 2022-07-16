@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 interface QueryInputProps {
     executeQueryCallback : (queryText : string) => void,
@@ -11,12 +11,16 @@ export const QueryInput : React.FC<QueryInputProps> = (props) => {
 
     const queryTextInputRef = useRef<HTMLInputElement | null>(null);
 
+    useEffect(()=>{
+        queryTextInputRef.current?.focus();
+    },[]);
+
     function handleClick() {
-        if(queryText.trim() == '')
+        if(queryText.trim() === '')
             return;
 
         const {queryHistory} = props;
-        if(selectedHistoryEntryIndex && queryHistory[selectedHistoryEntryIndex] != queryText)
+        if(selectedHistoryEntryIndex && queryHistory[selectedHistoryEntryIndex] !== queryText)
             setHistoryEntryIndex(null);
 
         props.executeQueryCallback(queryText);
@@ -26,13 +30,13 @@ export const QueryInput : React.FC<QueryInputProps> = (props) => {
         const {queryHistory} = props;
         let updatedHistoryEntryIndex = (selectedHistoryEntryIndex ? selectedHistoryEntryIndex : 0);
 
-        if(e.key == 'ArrowUp'){
+        if(e.key === 'ArrowUp'){
             updatedHistoryEntryIndex--;
-        }else if(e.key == 'ArrowDown'){
+        }else if(e.key === 'ArrowDown'){
             updatedHistoryEntryIndex++;
         }
 
-        if(updatedHistoryEntryIndex != selectedHistoryEntryIndex
+        if(updatedHistoryEntryIndex !== selectedHistoryEntryIndex
             && updatedHistoryEntryIndex >= 0 && updatedHistoryEntryIndex < queryHistory.length){
             setHistoryEntryIndex(updatedHistoryEntryIndex);
             setQueryText(queryHistory[updatedHistoryEntryIndex]);
