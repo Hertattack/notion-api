@@ -1,33 +1,14 @@
-import React, {useState} from "react";
+import React from "react";
 import {QueryInput} from "./QueryInput";
-import {useLocalStorage} from "../util/storage";
-
-const maxItemsInHistory = 50;
+import { useAppSelector } from "../app/hooks";
 
 export const FreeQuery : React.FC = () => {
-    const [previousQueries, setPreviousQueries] = useLocalStorage<string[]>('queryHistory',[]);
-    const [queryResult, setQueryResult] = useState({});
+    const { previousQueries } = useAppSelector( state => state.queryHistory )
+    const { queryResult } = useAppSelector( state=>state.queryExecution )
 
-    function performQuery(queryText : string) {
-        if(!previousQueries.some(pq=>pq === queryText)){
-            let length = previousQueries.length;
-
-            if(length > maxItemsInHistory)
-                setPreviousQueries([...previousQueries.slice(length - maxItemsInHistory), queryText]);
-            else
-                setPreviousQueries([...previousQueries, queryText]);
-        }
-
-        let uri = `https://localhost:7136/Query?query=${encodeURIComponent(queryText)}`;
-
-        fetch(uri)
-            .then(r => r.json())
-            .then(d => setQueryResult(d))
-            .catch( e => alert(e));
-    }
-
-    return <div>
-        <QueryInput executeQueryCallback={performQuery} queryHistory={previousQueries}/>
+    return (
+    <div>
+        <QueryInput/>
         <br/>
         <div>
             <ol>
@@ -37,12 +18,14 @@ export const FreeQuery : React.FC = () => {
             </ol>
         </div>
         <div id={"queryResult"}>
-        <pre>
-            <code>
-            {JSON.stringify(queryResult,null, 2)}
-            </code>
-        </pre>
+            {queryResult !== null ?
+            <pre>
+                <code>
+                {JSON.stringify(queryResult,null, 2)}
+                </code>
+            </pre>
+                : <p>Nothing</p>}
         </div>
-  </div>
+    </div> )
 };
 

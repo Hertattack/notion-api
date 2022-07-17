@@ -1,15 +1,15 @@
 import React, {useEffect, useRef, useState} from "react";
+import {useAppDispatch, useAppSelector} from "../app/hooks";
+import {executeQuery} from "../features/querying/queryExecution-slice";
+import {addQueryToHistory} from "../features/querying/queryHistory-slice";
 
-interface QueryInputProps {
-    executeQueryCallback : (queryText : string) => void,
-    queryHistory : string[],
-}
-
-export const QueryInput : React.FC<QueryInputProps> = (props) => {
+export const QueryInput : React.FC = () => {
     const [queryText, setQueryText] = useState('');
     const  [selectedHistoryEntryIndex, setHistoryEntryIndex] = useState<number | null>(null);
-
     const queryTextInputRef = useRef<HTMLInputElement | null>(null);
+
+    const queryHistory = useAppSelector( state => state.queryHistory.previousQueries );
+    const dispatch = useAppDispatch();
 
     useEffect(()=>{
         queryTextInputRef.current?.focus();
@@ -19,15 +19,14 @@ export const QueryInput : React.FC<QueryInputProps> = (props) => {
         if(queryText.trim() === '')
             return;
 
-        const {queryHistory} = props;
         if(selectedHistoryEntryIndex && queryHistory[selectedHistoryEntryIndex] !== queryText)
             setHistoryEntryIndex(null);
 
-        props.executeQueryCallback(queryText);
+        dispatch(addQueryToHistory(queryText));
+        dispatch(executeQuery(queryText));
     }
 
     function searchHistory(e: React.KeyboardEvent<HTMLInputElement>) {
-        const {queryHistory} = props;
         let updatedHistoryEntryIndex = (selectedHistoryEntryIndex ? selectedHistoryEntryIndex : 0);
 
         if(e.key === 'ArrowUp'){
