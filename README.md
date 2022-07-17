@@ -11,5 +11,32 @@ the [Notion Visualizer](src/examples/NotionVisualizer/README.md) example's readm
 Since I like programming I went a bit overboard and did not take the shortest path to the solution but created some
 libraries and a [Notion API Client](src/NotionApi/README.md) that I can expand as the API gets more functionality.
 
+The components relate to each other in the following way
 
+```mermaid
+C4Container
+
+title Context diagram for the Notion API visualization components
+
+Boundary(visualizationSystem, "Notion Visualization System", "System") {
+    Boundary(graphApiBoundary, "Notion Graph API", "System") {
+        Component(graphDatabase, "Notion Graph Database")
+        Component(notionApi, "Notion API Client")
+        Component(restClient, "Rest Client")
+        Component(util, "Utilities")
+    }
+}
+
+Boundary(frontend, "Notion Explorer", "System") {
+    Component(explorerFrontend, "Notion Explorer Frontend")
+}
+
+System_Ext(notion, "Notion API")
+
+Rel(restClient, util, "Uses")
+Rel(notionApi, restClient, "Uses")
+Rel(graphDatabase, notionApi, "Uses")
+
+Rel(graphApiBoundary, notion, "Uses")
+```
 
