@@ -10,7 +10,7 @@ public class IntermediateResultRow
     public IEnumerable<IntermediateResultRow> ParentRows => _parentRecords.AsReadOnly();
 
     public IEnumerable<string> PropertyNames =>
-        _databasePage.Properties.Select(p => p.Name);
+        _databasePage.Properties.Select(p => p.Name).Prepend("Id");
 
     public string Id => _databasePage.Id;
 
@@ -26,7 +26,7 @@ public class IntermediateResultRow
         _parentRecords = parentRecords.ToList();
     }
 
-    public object? this[string propertyName] => _databasePage[propertyName];
+    public object? this[string propertyName] => propertyName == "Id" ? _databasePage.Id : _databasePage[propertyName];
 
     public IntermediateResultRow GetParentByAlias(string alias)
     {

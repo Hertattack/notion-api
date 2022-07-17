@@ -52,7 +52,7 @@ internal class NodeReferenceWithFilterIsSupportedTests : QueryParsingTestBase
         filter[0].Operator.IsNegated.Should().BeTrue();
         filter[0].Operator.Type.Should().Be(OperatorType.EQUALS);
     }
-    
+
     [Test]
     public void Filter_with_contains_operator_is_supported()
     {

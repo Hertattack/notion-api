@@ -197,7 +197,7 @@ internal class QueryParser
     {
         return new Operator(OperatorType.LESS_THAN);
     }
-    
+
     [Production("operator: GREATER_OR_EQUAL")]
     public QueryPredicate GreaterOrEqualOperator(Token<QueryToken> operatorToken)
     {

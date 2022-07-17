@@ -15,7 +15,7 @@ public class ObjectExtensionTests
         {
             // Arrange
             string x = null;
-            
+
             // Act + Assert
             var thrownException = Try<ArgumentNullException>(() => x.ThrowIfNull());
 
@@ -23,7 +23,7 @@ public class ObjectExtensionTests
             thrownException.HasValue.Should().BeTrue();
         }
     }
-    
+
     protected Option<TExpectedException> Try<TExpectedException>(Action action) where TExpectedException : Exception
     {
         try

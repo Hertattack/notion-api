@@ -4,7 +4,7 @@ public class ResultRow
 {
     public CompositeKey Key { get; }
     public IEnumerable<FieldIdentifier> PropertyNames => _values.Keys;
-    
+
     private Dictionary<FieldIdentifier, object?> _values = new();
 
     public ResultRow(CompositeKey key)
