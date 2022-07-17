@@ -31,10 +31,14 @@ const queryExecutionSlice = createSlice({
             state.error = null;
             state.loading = "succeeded";
         });
-        builder.addCase(executeQuery.rejected, (state, action) => {
+        builder.addCase(executeQuery.rejected, (state) => {
            state.queryResult = null;
-           console.log(typeof action.payload);
            state.loading = "failed";
+        });
+        builder.addCase(executeQuery.pending, (state)=> {
+            state.error = null;
+            state.queryResult = null;
+            state.loading = "pending";
         });
     }
 });
