@@ -15,10 +15,10 @@ public class FieldValueSetConverter : JsonConverter<FieldValueSet>
     {
         writer.WriteStartObject();
 
-        writer.WritePropertyName("Alias");
+        writer.WritePropertyName("alias");
         writer.WriteStringValue(value.Alias);
 
-        writer.WritePropertyName("Values");
+        writer.WritePropertyName("values");
         writer.WriteStartObject();
 
         foreach (var fieldValueEntry in value.FieldValues)
