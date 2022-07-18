@@ -1,10 +1,12 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import notionApi from "../../notion-api";
 import {Metamodel} from "../../notion-api/interface/Metamodel";
+import {DatabaseDefinition} from "../../notion-api/interface/DatabaseDefinition";
 
 interface LoadMetamodelState {
     loaded: boolean,
-    metamodel: Metamodel | null
+    metamodel: Metamodel | null,
+    databaseDefinitions: { [databaseAlias: string] : DatabaseDefinition }
 }
 
 const emptyModel : Metamodel = {
@@ -14,7 +16,8 @@ const emptyModel : Metamodel = {
 
 const initialState : LoadMetamodelState = {
     loaded: false,
-    metamodel: emptyModel
+    metamodel: emptyModel,
+    databaseDefinitions: {}
 }
 
 export const loadMetamodel = createAsyncThunk(
@@ -26,7 +29,14 @@ export const loadMetamodel = createAsyncThunk(
 const metamodelSlice = createSlice({
     name: 'metamodel',
     initialState,
-    reducers: {},
+    reducers: {
+        updateWithDatabaseDefinition(state, action: PayloadAction<DatabaseDefinition>){
+            state.databaseDefinitions[action.payload.id] = action.payload;
+        },
+        errorUpdatingDatabaseDefinition(state, action: PayloadAction<string>){
+            console.log(`Could not update database definition for database: ${action.payload}`)
+        }
+    },
     extraReducers: builder => {
         builder.addCase(loadMetamodel.fulfilled, (state, action) =>{
             state.loaded = true;
@@ -43,4 +53,6 @@ const metamodelSlice = createSlice({
     }
 });
 
+
+export const { errorUpdatingDatabaseDefinition, updateWithDatabaseDefinition } = metamodelSlice.actions;
 export default metamodelSlice.reducer;

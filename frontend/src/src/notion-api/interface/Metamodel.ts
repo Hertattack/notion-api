@@ -1,5 +1,5 @@
 
-export interface DatabaseDefinition{
+export interface DatabaseReference {
     id: string,
     alias: string
 }
@@ -26,6 +26,6 @@ export interface EdgeDefinition {
 }
 
 export interface Metamodel {
-    databases: DatabaseDefinition[],
+    databases: DatabaseReference[],
     edges: EdgeDefinition[]
 }

@@ -49,8 +49,13 @@ export const QueryInput : React.FC = () => {
         setQueryText(event.target.value);
     }
 
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        handleClick();
+    }
+
     return (
-      <form>
+      <form onSubmit={handleSubmit}>
           <input
               ref={queryTextInputRef}
               type={"text"}
