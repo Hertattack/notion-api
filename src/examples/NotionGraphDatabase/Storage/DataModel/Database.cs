@@ -1,13 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotionApi;
-using NotionApi.Extensions;
 using NotionApi.Rest.Request.Database;
 using NotionApi.Rest.Request.Parameter;
-using NotionApi.Rest.Response.Database;
-using NotionApi.Rest.Response.Database.Properties;
 using NotionApi.Rest.Response.Page;
 using NotionGraphDatabase.Storage.Filtering;
 using NotionGraphDatabase.Storage.Filtering.String;
+using NotionGraphDatabase.Util;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.Storage.DataModel;
@@ -19,65 +17,19 @@ public class Database : IDataStoreObject
     private bool _deleted;
     private bool _allCached;
 
-    private DatabaseObject? _notionRepresentation;
-
     private Dictionary<string, DatabasePage> _pages = new();
 
-    private List<PropertyDefinition> _properties = new();
+    public DatabaseDefinition Definition { get; private set; }
 
-    public IEnumerable<PropertyDefinition> Properties =>
-        _properties.AsReadOnly();
-
-    public string Title { get; internal set; } = string.Empty;
-    public string Id { get; }
-
-    public Database(string databaseId, INotionClient notionClient, ILogger<Database> logger)
+    public Database(DatabaseDefinition databaseDefinition, INotionClient notionClient, ILogger<Database> logger)
     {
         _notionClient = notionClient;
         _logger = logger;
-        Id = databaseId;
+        Definition = databaseDefinition;
     }
 
     public IEnumerable<DatabasePage> Pages => _pages.Values.ToList();
 
-    public void UpdateDefinition()
-    {
-        if (_deleted)
-            throw new StorageException("Updating deleted definition.");
-
-        var databaseRequest = new DatabaseDefinitionRequest {DatabaseId = Id};
-        var response = _notionClient.ExecuteRequest(databaseRequest).Result;
-
-        if (response.HasValue)
-        {
-            _notionRepresentation = response.Value;
-        }
-        else
-        {
-            _logger.LogError("Database: '{DatabaseId}' was not found", Id);
-            throw new StorageException($"Database: '{Id}' was not found.");
-        }
-
-        Title = _notionRepresentation.Title.ToPlainTextString();
-        _properties = _notionRepresentation.Properties
-            .Select(kvp => CreatePropertyDefinition(kvp.Key, kvp.Value))
-            .ToList();
-    }
-
-    private static PropertyDefinition CreatePropertyDefinition(string propertyName,
-        NotionPropertyConfiguration configuration)
-    {
-        return configuration switch
-        {
-            FormulaPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
-            NumberPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
-            RelationPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
-            RollupPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
-            SelectPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
-            MultiSelectPropertyConfiguration => new PropertyDefinition(propertyName, configuration.Type),
-            _ => new PropertyDefinition(propertyName, configuration.Type)
-        };
-    }
 
     public IEnumerable<DatabasePage> GetAll()
     {
@@ -89,7 +41,7 @@ public class Database : IDataStoreObject
     {
         var databaseContentsRequest = new SearchDatabaseRequest
         {
-            DatabaseId = Id,
+            DatabaseId = Definition.Id.RemoveDashes(),
             Parameters =
             {
                 Filter = MapToNotionFilter(filter)
@@ -99,7 +51,7 @@ public class Database : IDataStoreObject
         var databaseContentsResponse = _notionClient.ExecuteRequest(databaseContentsRequest).Result;
         if (!databaseContentsResponse.HasValue)
         {
-            _logger.LogTrace("Database: '{DatabaseId}' has no entries", Id);
+            _logger.LogTrace("Database: '{DatabaseId}' has no entries", Definition.Id);
             return Array.Empty<DatabasePage>();
         }
 
@@ -114,7 +66,7 @@ public class Database : IDataStoreObject
             throw new NotImplementedException(
                 $"Unsupported filter type: {filter.GetType().FullName} - cannot map to Notion filter");
 
-        var property = Properties.FirstOrDefault(p => p.Name == propertyFilterExpression.PropertyName);
+        var property = Definition.Properties.FirstOrDefault(p => p.Name == propertyFilterExpression.PropertyName);
         if (property is null)
             throw new UndefinedPropertyException(
                 $"Cannot create filter for property: '{propertyFilterExpression.PropertyName}' - not found in database.");
@@ -149,7 +101,6 @@ public class Database : IDataStoreObject
     public void Delete()
     {
         _deleted = true;
-        _notionRepresentation = null;
     }
 
     public DateTime? GetLastKnowEditTimestamp()
@@ -167,7 +118,7 @@ public class Database : IDataStoreObject
 
     internal void RetrievePages()
     {
-        var databaseContentsRequest = new SearchDatabaseRequest {DatabaseId = Id};
+        var databaseContentsRequest = new SearchDatabaseRequest {DatabaseId = Definition.Id.RemoveDashes()};
         var fullUpdate = true;
 
         if (_allCached && HasPages())
@@ -187,7 +138,7 @@ public class Database : IDataStoreObject
         var databaseContentsResponse = _notionClient.ExecuteRequest(databaseContentsRequest).Result;
         if (!databaseContentsResponse.HasValue)
         {
-            _logger.LogTrace("Database: '{DatabaseId}' has no entries", Id);
+            _logger.LogTrace("Database: '{DatabaseId}' has no entries", Definition.Id);
             return;
         }
 
@@ -196,7 +147,7 @@ public class Database : IDataStoreObject
         if (fullUpdate)
         {
             _logger.LogDebug("Performing full update from Notion for database: '{DatabaseTitle}' ({DatabaseId})",
-                Title, Id);
+                Definition.Title, Definition.Id);
             FullUpdate(resultsFromNotionApi);
         }
         else
@@ -255,8 +206,12 @@ public class Database : IDataStoreObject
         return result;
     }
 
-    public PropertyDefinition GetProperty(string propertyName)
+    internal void UpdateDefinition(DatabaseDefinition databaseDefinition)
     {
-        return _properties.First(p => p.Name == propertyName);
+        if (databaseDefinition.Id != Definition.Id)
+            throw new Exception(
+                $"Database definition cannot be updated because id's differ: {databaseDefinition.Id} != {Definition.Id}");
+
+        Definition = databaseDefinition;
     }
 }

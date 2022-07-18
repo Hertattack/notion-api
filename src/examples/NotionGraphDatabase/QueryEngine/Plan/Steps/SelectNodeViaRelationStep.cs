@@ -41,8 +41,8 @@ internal class SelectNodeViaRelationStep : SelectStep
             .ThrowIfNull(
                 $"Property: '{propertyName}' for relational select not found on: '{previousResultContext.Alias}'");
 
-        var database = storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull();
-        var nextResultContext = executionContext.GetNextResultContext(database.Properties, _alias);
+        var database = storageBackend.GetDatabase(_database.Id).ThrowIfNull();
+        var nextResultContext = executionContext.GetNextResultContext(database.Definition.Properties, _alias);
         _resolver.SetContext(nextResultContext);
 
         nextResultContext.AddRange(

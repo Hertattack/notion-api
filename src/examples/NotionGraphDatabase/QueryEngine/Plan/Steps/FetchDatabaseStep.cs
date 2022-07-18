@@ -17,7 +17,7 @@ internal class FetchDatabaseStep : ExecutionPlanStep
 
     public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull().GetAll();
+        storageBackend.GetDatabase(_database.Id).ThrowIfNull().GetAll();
     }
 
     public override string ToString()

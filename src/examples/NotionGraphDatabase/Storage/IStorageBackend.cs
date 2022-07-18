@@ -3,8 +3,9 @@ using NotionGraphDatabase.Storage.Filtering;
 
 namespace NotionGraphDatabase.Storage;
 
-internal interface IStorageBackend
+public interface IStorageBackend
 {
     Database? GetDatabase(string databaseId);
     bool Supports(Filter filter);
+    DatabaseDefinition GetDatabaseDefinition(string databaseId);
 }

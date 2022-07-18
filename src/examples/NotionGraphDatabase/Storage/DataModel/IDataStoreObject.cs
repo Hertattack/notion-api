@@ -2,4 +2,5 @@
 
 public interface IDataStoreObject
 {
+    DatabaseDefinition Definition { get; }
 }

@@ -2,7 +2,6 @@
 using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Storage.Filtering;
-using NotionGraphDatabase.Util;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
@@ -20,8 +19,8 @@ internal class SelectFromNodeStep : SelectStep
         if (previousResultContext is not null)
             throw new Exception("Only one select-step supported.");
 
-        var database = storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull();
-        var nextResultContext = executionContext.GetNextResultContext(database.Properties, _alias);
+        var database = storageBackend.GetDatabase(_database.Id).ThrowIfNull();
+        var nextResultContext = executionContext.GetNextResultContext(database.Definition.Properties, _alias);
         _resolver.SetContext(nextResultContext);
 
         nextResultContext.AddRange(

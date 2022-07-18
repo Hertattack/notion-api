@@ -20,7 +20,7 @@ internal class FilteredFetchDatabaseStep : ExecutionPlanStep
 
     public override void Execute(QueryExecutionContext executionContext, IStorageBackend storageBackend)
     {
-        var database = storageBackend.GetDatabase(_database.Id.RemoveDashes()).ThrowIfNull();
+        var database = storageBackend.GetDatabase(_database.Id).ThrowIfNull();
         database.GetFiltered(_filterExpression);
     }
 

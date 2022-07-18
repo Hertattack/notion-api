@@ -22,7 +22,7 @@ public class DatabasePage : Page
     public DateTime LastEditTimestamp { get; private set; }
 
     public IEnumerable<PropertyDefinition> Properties =>
-        _database?.Properties ?? Array.Empty<PropertyDefinition>();
+        _database?.Definition.Properties ?? Array.Empty<PropertyDefinition>();
 
     public void Update(PageObject notionObject)
     {
