@@ -1,7 +1,7 @@
 import React from "react";
 import {QueryInput} from "./QueryInput";
 import { useAppSelector } from "../app/hooks";
-import { EChartsOptions, ReactECharts } from "./echarts";
+import { EChartsOptions, ReactECharts } from "./echarts/ECharts";
 import {DatabaseReference, EdgeDefinition, Metamodel} from "../notion-api/interface/Metamodel";
 import FieldIdentifier from "../notion-api/interface/FieldIdentifier";
 import {DatabaseDefinition} from "../notion-api/interface/DatabaseDefinition";

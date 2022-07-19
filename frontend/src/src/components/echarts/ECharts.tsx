@@ -4,6 +4,8 @@ import { init, getInstanceByDom } from "echarts";
 import type { CSSProperties } from "react";
 import type { EChartsOption, ECharts, SetOptionOpts } from "echarts";
 
+export type EChartsOptions = ReactEChartsProps["option"];
+
 export interface ReactEChartsProps {
     option: EChartsOption;
     style?: CSSProperties;
