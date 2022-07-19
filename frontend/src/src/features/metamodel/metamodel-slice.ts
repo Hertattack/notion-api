@@ -3,10 +3,12 @@ import notionApi from "../../notion-api";
 import {Metamodel} from "../../notion-api/interface/Metamodel";
 import {DatabaseDefinition} from "../../notion-api/interface/DatabaseDefinition";
 
-interface LoadMetamodelState {
+export interface DatabaseDefinitions { [databaseAlias: string] : DatabaseDefinition }
+
+export interface LoadMetamodelState {
     loaded: boolean,
     metamodel: Metamodel | null,
-    databaseDefinitions: { [databaseAlias: string] : DatabaseDefinition }
+    databaseDefinitions: DatabaseDefinitions
 }
 
 const emptyModel : Metamodel = {

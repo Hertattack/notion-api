@@ -8,7 +8,7 @@ metamodelLoadedListenerMiddleware.startListening({
     actionCreator: loadMetamodel.fulfilled,
     effect: async (action, listenerApi) => {
         // Can cancel other running instances
-        listenerApi.cancelActiveListeners()
+        listenerApi.cancelActiveListeners();
 
         await Promise.all(action.payload.databases.map(async d => {
            try{

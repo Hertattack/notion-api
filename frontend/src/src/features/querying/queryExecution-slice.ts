@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import notionApi from "../../notion-api";
 import {QueryResult} from "../../notion-api/query";
 import RequestError from "../../notion-api/RequestError";
