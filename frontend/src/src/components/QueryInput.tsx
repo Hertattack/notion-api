@@ -5,7 +5,7 @@ import {addQueryToHistory} from "../features/querying/queryHistory-slice";
 
 export const QueryInput : React.FC = () => {
     const [queryText, setQueryText] = useState('');
-    const  [selectedHistoryEntryIndex, setHistoryEntryIndex] = useState<number | null>(null);
+    const [selectedHistoryEntryIndex, setHistoryEntryIndex] = useState<number | null>(null);
     const queryTextInputRef = useRef<HTMLInputElement | null>(null);
 
     const queryHistory = useAppSelector( state => state.queryHistory.previousQueries );
@@ -33,20 +33,20 @@ export const QueryInput : React.FC = () => {
             updatedHistoryEntryIndex--;
         }else if(e.key === 'ArrowDown'){
             updatedHistoryEntryIndex++;
+        }else{
+            return;
         }
 
         if(updatedHistoryEntryIndex !== selectedHistoryEntryIndex
             && updatedHistoryEntryIndex >= 0 && updatedHistoryEntryIndex < queryHistory.length){
             setHistoryEntryIndex(updatedHistoryEntryIndex);
             setQueryText(queryHistory[updatedHistoryEntryIndex]);
-
-            if(queryTextInputRef.current)
-                queryTextInputRef.current.value = queryText;
         }
     }
 
     function handleChange(event : React.ChangeEvent<HTMLInputElement>) {
         setQueryText(event.target.value);
+        setHistoryEntryIndex(null);
     }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {

@@ -25,7 +25,7 @@ export const FreeQuery : React.FC = () => {
                     force: {
                         edgeLength : 500
                     },
-                    nodes: Object.getOwnPropertyNames(nodes).map( id => { let node = nodes[id]; return {
+                    nodes: nodes.map( node => { return {
                         name: node.label,
                         symbolSize: 10,
                         category: node.category,
@@ -71,7 +71,7 @@ export const FreeQuery : React.FC = () => {
         </div>
         { loading === 'pending' ? <div><p><b>query is being executed</b></p></div> : '' }
         <div id={"queryResult"}>
-            <div style={{width: "800px", height: "500px"}}><ReactECharts option={options}/></div>
+            <div style={{width: "1400px", height: "1000px"}}><ReactECharts option={options}/></div>
             { queryResult !== null
                 ? <div>
                     <br/>

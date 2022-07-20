@@ -18,12 +18,13 @@ export interface Node {
 }
 
 interface Edge {
-    source: string,
-    target: string
+    source: number,
+    target: number
 }
 
 interface DataStore {
-    nodes: {[nodeId: string]: Node},
+    nodeIndex: {[nodeId: string]: number}
+    nodes: Node[],
     categories: Category[],
     edges: Edge[]
 }
@@ -34,7 +35,8 @@ export interface DataStoreState {
 
 const initialState: DataStoreState = {
     data: {
-        nodes: {},
+        nodeIndex: {},
+        nodes: [],
         categories: [],
         edges: []
     }
@@ -47,7 +49,7 @@ const dataStoreSlice = createSlice({
    initialState,
    reducers: {
     updateDataStore: (state, action: PayloadAction<DataStoreUpdatePayload>)=>{
-        let {nodes,categories, edges} = state.data;
+        let {nodeIndex, nodes,categories, edges} = state.data;
         const {queryResult, metamodel, databaseDefinitions} = action.payload;
 
         const categoryMapping = updateCategories(metamodel.databases, categories);
@@ -59,7 +61,7 @@ const dataStoreSlice = createSlice({
 
         let nodeIds: string[] = [];
         let updatedNodes: {[nodeId: string]: Node} = {}
-        let potentialRelations: Edge[]  = [];
+        let potentialRelations: {sourceId: string, targetId: string}[]  = [];
         queryResult.rows.forEach( r => {
             databaseAliases.forEach( d => {
                 let valueSet = r.fieldValueSets[d].values;
@@ -78,24 +80,29 @@ const dataStoreSlice = createSlice({
 
                 nodeIds.push(pageId);
 
-                relationsPerDatabaseAlias[d].forEach( r => {
-                    let fieldValue = valueSet[r.id] as string[];
-                    if(fieldValue){
-                        fieldValue.forEach( v => potentialRelations.push({source: pageId, target: v}));
-                    }
-                });
+                if(relationsPerDatabaseAlias[d]!==undefined) {
+                    relationsPerDatabaseAlias[d].forEach(r => {
+                        let fieldValue = valueSet[r.id] as string[];
+                        if (fieldValue !== undefined) {
+                            fieldValue.forEach(v => potentialRelations.push({sourceId: pageId, targetId: v}));
+                        }
+                    });
+                }
             });
         });
 
-        nodeIds.forEach(id => nodes[id] = updatedNodes[id]);
+        updateAndInsertNodes(nodeIds, updatedNodes, nodes, nodeIndex);
         potentialRelations.filter((r, i, self) =>
-                !self.some( (v,vi) => v.source === r.source && v.target === r.target && i > vi) )
+                !self.some( (v,vi) => v.sourceId === r.sourceId && v.targetId === r.targetId && i > vi) )
             .forEach( r =>{
-                if(!nodes[r.source] || !nodes[r.target])
+                let sourceIndex = nodeIndex[r.sourceId];
+                let targetIndex = nodeIndex[r.targetId];
+
+                if(sourceIndex === undefined || targetIndex === undefined)
                     return;
 
-                if(!edges.some( e=>e.target === r.target && r.source === e.source))
-                    edges.push(r);
+                if(!edges.some( e=>e.target === targetIndex && e.source === sourceIndex))
+                    edges.push({ source: sourceIndex, target: targetIndex });
             });
     }
    }
@@ -128,32 +135,32 @@ function updateCategories(databases: DatabaseReference[], categories: Category[]
     return categoryMapping;
 }
 
-function getRelationFieldsPerAlias(metamodel: Metamodel) : { [databaseAlias: string]: [{id: string, databaseAlias: string}] } {
+function getRelationFieldsPerAlias(metamodel: Metamodel) : { [p: string]: [{ id: string; databaseAlias: string }] } {
     let relationFieldsPerAlias: { [databaseAlias: string]: [{id: string, databaseAlias: string}]}= {};
 
     metamodel.edges.forEach( e => {
-        let sourceAlias = e.from.alias;
-        let targetAlias = e.to.alias;
-        let sourceFieldLabel = e.navigability.forward?.label;
-        let targetFieldLabel = e.navigability.reverse?.label;
+        let fromAlias = e.from.alias;
+        let toAlias = e.to.alias;
+        let forwardFieldLabel = e.navigability.forward?.label;
+        let reverseFieldLabel = e.navigability.reverse?.label;
 
-        if(sourceAlias && sourceFieldLabel){
-            let fieldsForAlias = relationFieldsPerAlias[sourceAlias];
+        if(fromAlias && forwardFieldLabel){
+            let fieldsForAlias = relationFieldsPerAlias[fromAlias];
             if(!fieldsForAlias){
-                fieldsForAlias = [{id: sourceFieldLabel, databaseAlias: sourceAlias}]
-                relationFieldsPerAlias[sourceAlias] = fieldsForAlias;
-            }else if(!fieldsForAlias.some( f=>f.id === sourceFieldLabel )){
-                fieldsForAlias.push({id: sourceFieldLabel, databaseAlias: sourceAlias});
+                fieldsForAlias = [{id: forwardFieldLabel, databaseAlias: toAlias}]
+                relationFieldsPerAlias[fromAlias] = fieldsForAlias;
+            }else if(!fieldsForAlias.some( f=>f.id === forwardFieldLabel )){
+                fieldsForAlias.push({id: forwardFieldLabel, databaseAlias: toAlias});
             }
         }
 
-        if(targetAlias && targetFieldLabel){
-            let fieldsForAlias = relationFieldsPerAlias[targetAlias];
+        if(toAlias && reverseFieldLabel){
+            let fieldsForAlias = relationFieldsPerAlias[toAlias];
             if(!fieldsForAlias){
-                fieldsForAlias = [{id: targetFieldLabel, databaseAlias: targetAlias}]
-                relationFieldsPerAlias[sourceAlias] = fieldsForAlias;
-            }else if(!fieldsForAlias.some(f=>f.id === targetFieldLabel)){
-                fieldsForAlias.push({id: targetFieldLabel, databaseAlias: targetAlias});
+                fieldsForAlias = [{id: reverseFieldLabel, databaseAlias: fromAlias}]
+                relationFieldsPerAlias[toAlias] = fieldsForAlias;
+            }else if(!fieldsForAlias.some(f=>f.id === reverseFieldLabel)){
+                fieldsForAlias.push({id: reverseFieldLabel, databaseAlias: fromAlias});
             }
         }
     });
@@ -167,4 +174,19 @@ function mapToDefinitionsByAlias(metamodel: Metamodel, databaseDefinitions: Data
     metamodel.databases.forEach( d => result[d.alias] = databaseDefinitions[d.id]);
 
     return result;
+}
+
+function updateAndInsertNodes(nodeIds: string[], updatedNodes: { [p: string]: Node }, nodes: Node[], nodeIndex: {[id: string]: number }) {
+    let nextNodeIndex = nodes.length;
+    nodeIds.forEach( id => {
+        let existingNodeIndex = nodeIndex[id];
+
+        if(existingNodeIndex!==undefined){
+            nodes[existingNodeIndex] = updatedNodes[id];
+        }else{
+            nodes.push(updatedNodes[id]);
+            nodeIndex[id] = nextNodeIndex;
+            nextNodeIndex++;
+        }
+    });
 }
