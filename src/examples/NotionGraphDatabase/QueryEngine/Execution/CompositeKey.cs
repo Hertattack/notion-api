@@ -2,29 +2,29 @@
 
 public class CompositeKey
 {
-    private List<string> _keys;
+    private List<DatabasePageId> _keys;
 
-    public CompositeKey(string firstKey)
+    public CompositeKey(string alias, string id)
     {
-        _keys = new List<string> {firstKey};
+        _keys = new List<DatabasePageId> {new(alias, id)};
     }
 
-    private CompositeKey(IEnumerable<string> keys)
+    private CompositeKey(IEnumerable<DatabasePageId> keys)
     {
         _keys = keys.ToList();
     }
 
-    public bool Matches(string id)
+    public bool Matches(DatabasePageId key)
     {
-        return _keys.Contains(id);
+        return _keys.Contains(key);
     }
 
-    public void Add(string id)
+    public void Add(DatabasePageId key)
     {
-        if (_keys.Contains(id))
-            throw new Exception($"Id '{id}' already included in composite key.");
+        if (_keys.Contains(key))
+            throw new Exception($"Id '{key.Id}' for alias '{key.Alias}' already included in composite key.");
 
-        _keys.Add(id);
+        _keys.Add(key);
     }
 
     public CompositeKey Duplicate()

@@ -5,11 +5,11 @@ public class ResultSet
     private List<ResultRow> _resultRows = new();
     public IEnumerable<ResultRow> Rows => _resultRows.AsReadOnly();
 
-    public IEnumerable<ResultRow> this[string id]
+    public IEnumerable<ResultRow> this[DatabasePageId key]
     {
         get
         {
-            var resultRows = _resultRows.Where(r => r.Key.Matches(id)).ToList();
+            var resultRows = _resultRows.Where(r => r.Key.Matches(key)).ToList();
 
             if (resultRows.Any()) return resultRows;
 

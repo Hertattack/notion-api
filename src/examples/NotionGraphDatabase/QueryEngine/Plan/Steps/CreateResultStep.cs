@@ -25,7 +25,8 @@ internal class CreateResultStep : ExecutionPlanStep
 
         foreach (var intermediateResultRow in resultContext.IntermediateResultRows)
         {
-            var resultRow = new ResultRow(new CompositeKey(intermediateResultRow.Id.RemoveDashes()));
+            var resultRow =
+                new ResultRow(new CompositeKey(resultContext.Alias, intermediateResultRow.Id.RemoveDashes()));
             resultSet.AddRow(resultRow);
 
             if (mapping is not null)
@@ -50,13 +51,15 @@ internal class CreateResultStep : ExecutionPlanStep
 
         var mapping = _mappings.ContainsKey(parentContext.Alias) ? _mappings[parentContext.Alias] : null;
 
-        var denormalizedSet = parentRows.Select(
+        var parentRowsList = parentRows.ToList();
+        var lastIndex = parentRowsList.Count - 1;
+        var denormalizedSet = parentRowsList.Select(
             (intermediateResultRow, i) =>
             {
-                var newResultRow = i == 0 ? resultRow : resultRow.Duplicate();
-                newResultRow.Key.Add(intermediateResultRow.Id.RemoveDashes());
+                var newResultRow = i == lastIndex ? resultRow : resultRow.Duplicate();
+                newResultRow.Key.Add(new DatabasePageId(parentContext.Alias, intermediateResultRow.Id.RemoveDashes()));
 
-                if (i >= 1)
+                if (i != lastIndex)
                     resultSet.AddRow(newResultRow);
 
                 return (newResultRow, intermediateResultRow);
