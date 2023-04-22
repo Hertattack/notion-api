@@ -1,7 +1,7 @@
 import React from "react";
 import { QueryInput } from "./QueryInput";
 import { useAppSelector } from "@/store/hooks";
-import { D3Graph } from "../d3js/D3Graph";
+import { D3Graph } from "@/components/d3js";
 
 export const FreeQuery : React.FC = () => {
     const { previousQueries } = useAppSelector( state => state.queryHistory );
@@ -17,6 +17,7 @@ export const FreeQuery : React.FC = () => {
     <div>
         <QueryInput/>
         <br/>
+        {previousQueries.length > 0 ?
         <div>
             <ol>
                 {previousQueries.map((pq)=>(
@@ -24,7 +25,8 @@ export const FreeQuery : React.FC = () => {
                 ))}
             </ol>
         </div>
-        { loading === 'failed' ?
+            :""
+        }{ loading === 'failed' ?
             <div><p><b>Query has failed, message: {error !== null ? error.message : "No error message given"}</b></p>
             <p>{error != null ? error.data ?? "" : ""}</p>
             </div>

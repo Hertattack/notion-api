@@ -1,18 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+import {initialState} from "@/features/querying/queryHistory-storage";
 const maxItemsInHistory = 50;
-
-interface QueryHistoryState {
-    previousQueries: string[]
-}
-
-const localStorageKey = 'QueryHistory';
-let storedValue = typeof window !== 'undefined' ? localStorage.getItem(localStorageKey) : undefined;
-let defaultValue = storedValue ? JSON.parse(storedValue) as string[] : [];
-
-const initialState : QueryHistoryState = {
-    previousQueries: defaultValue
-}
 
 const queryHistorySlice = createSlice({
     name: 'query-history',
@@ -26,9 +14,6 @@ const queryHistorySlice = createSlice({
                     state.previousQueries = state.previousQueries.slice(length - maxItemsInHistory);
 
                 state.previousQueries.push(action.payload);
-
-                if(typeof window !== 'undefined')
-                    localStorage.setItem(localStorageKey, JSON.stringify(state.previousQueries));
             }
         }
     }

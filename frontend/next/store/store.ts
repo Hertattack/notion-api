@@ -8,17 +8,18 @@ import dataStoreLoadListenerMiddleware from "../middleware/datastore-load";
 import { createWrapper } from "next-redux-wrapper";
 
 export const makeStore = ()=> configureStore({
-   reducer: {
-       queryExecution: queryExecutionReducer,
-       queryHistory: queryHistoryReducer,
-       metamodel: loadMetamodelReducer,
-       dataStore: dataStoreReducer
-   },
-   middleware: (getDefaultMiddleware) =>
+    reducer: {
+        queryExecution: queryExecutionReducer,
+        queryHistory: queryHistoryReducer,
+        metamodel: loadMetamodelReducer,
+        dataStore: dataStoreReducer
+    },
+    middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .prepend(dataStoreLoadListenerMiddleware.middleware)
             .prepend(metamodelLoadedListenerMiddleware.middleware),
 });
+
 
 
 export type AppStore = ReturnType<typeof makeStore>;
