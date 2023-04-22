@@ -1,7 +1,7 @@
 import {createListenerMiddleware} from "@reduxjs/toolkit";
 import {executeQuery} from "../features/querying/queryExecution-slice";
 import {updateDataStore} from "../features/datastore/datastore-slice";
-import {RootState} from "../app/store";
+import {RootState} from ".././root/store";
 import SuccessQueryExecutionResult from "../notion-api/interface/SuccessQueryExecutionResult";
 
 const dataStoreLoadListenerMiddleware = createListenerMiddleware();

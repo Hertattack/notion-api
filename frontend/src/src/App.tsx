@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import './App.css';
 import {FreeQuery} from "./components/FreeQuery";
 import { Provider } from 'react-redux';
-import { store } from './app/store';
+import { store } from '././root/store';
 import {loadMetamodel} from "./features/metamodel/metamodel-slice";
 
 const App : React.FC = () => {

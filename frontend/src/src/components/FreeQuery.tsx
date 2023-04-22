@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {QueryInput} from "./QueryInput";
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from ".././root/hooks";
 import {D3Graph, GraphOptions} from "./d3js/D3Graph";
 
 export const FreeQuery : React.FC = () => {

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../app/hooks";
+import {useAppDispatch, useAppSelector} from ".././root/hooks";
 import {executeQuery} from "../features/querying/queryExecution-slice";
 import {addQueryToHistory} from "../features/querying/queryHistory-slice";
 
