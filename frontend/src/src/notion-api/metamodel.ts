@@ -1,7 +1,7 @@
 import {AxiosInstance} from "axios";
-import RequestError from "./RequestError";
 import {Metamodel} from "./interface/Metamodel";
 import {DatabaseDefinition} from "./interface/DatabaseDefinition";
+import RequestError from "./interface/RequestError";
 
 export default class MetamodelApi {
     private client: AxiosInstance;

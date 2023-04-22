@@ -1,11 +1,12 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import notionApi from "../../notion-api";
 import {QueryResult} from "../../notion-api/query";
-import RequestError from "../../notion-api/RequestError";
+import SuccessQueryExecutionResult from "../../notion-api/interface/SuccessQueryExecutionResult";
+import FailedQueryExecutionResult from "../../notion-api/interface/FailedQueryExecutionResult";
 
 interface QueryExecutionState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed',
-    error: RequestError | string | null,
+    error: FailedQueryExecutionResult | null,
     queryResult: QueryResult | null
 }
 
@@ -27,13 +28,20 @@ const queryExecutionSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder.addCase(executeQuery.fulfilled, (state, action) =>{
-            state.queryResult = action.payload;
-            state.error = null;
-            state.loading = "succeeded";
+            if(action.payload instanceof SuccessQueryExecutionResult){
+                state.queryResult = (action.payload as SuccessQueryExecutionResult).result;
+                state.error = null;
+                state.loading = "succeeded";
+            }else{
+                state.queryResult = null;
+                state.loading = "failed";
+                state.error = (action.payload as FailedQueryExecutionResult);
+            }
         });
-        builder.addCase(executeQuery.rejected, (state) => {
-           state.queryResult = null;
-           state.loading = "failed";
+        builder.addCase(executeQuery.rejected, (state, action) => {
+            state.queryResult = null;
+            state.loading = "failed";
+            state.error = new FailedQueryExecutionResult("Unknown error, this should not happen", action.error, "");
         });
         builder.addCase(executeQuery.pending, (state)=> {
             state.error = null;

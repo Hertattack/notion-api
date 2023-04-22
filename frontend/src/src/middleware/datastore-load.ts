@@ -2,6 +2,7 @@ import {createListenerMiddleware} from "@reduxjs/toolkit";
 import {executeQuery} from "../features/querying/queryExecution-slice";
 import {updateDataStore} from "../features/datastore/datastore-slice";
 import {RootState} from "../app/store";
+import SuccessQueryExecutionResult from "../notion-api/interface/SuccessQueryExecutionResult";
 
 const dataStoreLoadListenerMiddleware = createListenerMiddleware();
 
@@ -13,7 +14,10 @@ dataStoreLoadListenerMiddleware.startListening({
         if(metamodel === null || !metamodel.databases.some(d=>databaseDefinitions[d.id]))
             return;
 
-        listenerApi.dispatch(updateDataStore({ queryResult: action.payload, metamodel, databaseDefinitions }))
+        if(action.payload instanceof SuccessQueryExecutionResult){
+            const executionResult = action.payload as SuccessQueryExecutionResult;
+            listenerApi.dispatch(updateDataStore({ queryResult: executionResult.result, metamodel, databaseDefinitions }))
+        }
     }
 });
 
