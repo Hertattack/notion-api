@@ -1,24 +1,17 @@
-import {Badge, Tab, TabContainer, Tabs} from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
+import {FreeQuery} from "@/components/query/FreeQuery";
 
 export default function Home() {
   return (
-    <div>
-      <h1>Hello World</h1>
-        <Badge bg="secondary">
-            New
-        </Badge>
-        <TabContainer>
-            <Tabs defaultActiveKey={"1"}>
-                <Tab eventKey={"1"} title={"One"}>
-                    <h2>Hi</h2>
-                    <p>moar</p>
-                </Tab>
-                <Tab eventKey={"2"} title={"Two"}>
-                    <h2>Two</h2>
-                    <p>moar</p>
-                </Tab>
-            </Tabs>
-        </TabContainer>
-    </div>
+    <Container className="root">
+        <Row>
+            <Col sm={9} className="with-border">
+                <FreeQuery/>
+            </Col>
+            <Col className="with-border">
+                <p>This should be a sidebar</p>
+            </Col>
+        </Row>
+    </Container>
   )
 }
