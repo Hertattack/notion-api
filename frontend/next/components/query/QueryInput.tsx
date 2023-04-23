@@ -1,12 +1,14 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import {executeQuery} from "../../features/querying/queryExecution-slice";
-import {addQueryToHistory, selectQueryFromHistory} from "../../features/querying/queryHistory-slice";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {executeQuery} from "@/features/querying/queryExecution-slice";
+import {
+    addQueryToHistory,
+    firstQueryIndex,
+    noSelection,
+    selectQueryFromHistory
+} from "@/features/querying/queryHistory-slice";
 
 export const QueryInput : React.FC = () => {
-    const firstQueryIndex = 0;
-    const noSelection = -1;
-
     const [queryText, setQueryText] = useState('');
     const [selectedHistoryEntryIndex, setHistoryEntryIndex] = useState<number | null>(-1);
     const queryTextInputRef = useRef<HTMLInputElement | null>(null);
