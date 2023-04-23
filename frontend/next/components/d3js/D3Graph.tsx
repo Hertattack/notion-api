@@ -6,7 +6,8 @@ import Node from './Node';
 export interface GraphOptions {
     width: number,
     height: number,
-    nodes: Node[],
+    nodes?: Node[],
+    nodeFunction?: () => Node[]
 }
 
 export const D3Graph : React.FC<GraphOptions> = (options)=>{
@@ -19,18 +20,18 @@ export const D3Graph : React.FC<GraphOptions> = (options)=>{
 
 
 function setup(svgElement: SVGSVGElement, rootGroupElement: SVGSVGElement, options: GraphOptions){
-    const {nodes, width, height} = options;;
+    const {nodes, nodeFunction , width, height} = options;
+    const calculatedNodes = nodeFunction !== undefined ? nodeFunction() : (nodes !== undefined ? nodes : []);
 
-    d3.forceSimulation(nodes)
+    d3.forceSimulation(calculatedNodes)
         .force('charge', d3.forceManyBody())
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .on('tick', () => { ticked(svgElement, nodes); });
+        .on('tick', () => { ticked(svgElement, calculatedNodes); });
 
 }
 
 function ticked(current: SVGSVGElement, nodes: Node[]) {
-
-    let u = d3.select(current)
+    d3.select(current)
         .selectAll('circle')
         .data(nodes)
         .join('circle')

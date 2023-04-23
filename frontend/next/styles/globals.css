@@ -7,10 +7,6 @@
     padding: 5px;
 }
 
-.root {
-    margin: 10px;
-}
-
 .execute-query.btn {
     background-color: darkgreen;
     color: white;
@@ -43,4 +39,15 @@
     background-color: lightgrey;
     color: inherit;
     border: 1px solid darkgrey;
+}
+
+.query-history-tab {
+    margin-top: 10px;
+}
+
+.edge-definition {
+}
+
+.raw-data-view {
+    padding: 10px;
 }

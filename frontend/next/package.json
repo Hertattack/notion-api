@@ -1,5 +1,5 @@
 {
-  "name": "Notion Explorer",
+  "name": "NotionExplorer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -24,10 +24,14 @@
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-bootstrap": "^2.7.4",
+    "react-bootstrap-icons": "^1.10.3",
     "react-dom": "18.2.0",
     "react-redux": "^8.0.5",
     "redux-persist": "^6.0.0",
     "tailwindcss": "3.3.1",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.0"
   }
 }

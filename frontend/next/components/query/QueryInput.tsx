@@ -100,18 +100,4 @@ export const QueryInput : React.FC = () => {
             </InputGroup>
         </Form>
     );
-    /*
-        <form onSubmit={handleSubmit}>
-          <input
-              ref={queryTextInputRef}
-              type={"text"}
-              size={100}
-              id={"queryString"}
-              value={queryText}
-              onChange={handleChange}
-              />
-          <button type={"button"} onClick={handleClick}>Execute</button>
-      </form>
-
-     */
 }
