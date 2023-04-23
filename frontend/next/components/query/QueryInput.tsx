@@ -7,7 +7,7 @@ import {
     noSelection,
     selectQueryFromHistory
 } from "@/features/querying/queryHistory-slice";
-import {Button, Form, FormText, InputGroup} from "react-bootstrap";
+import {Button, Form, InputGroup} from "react-bootstrap";
 
 export const QueryInput : React.FC = () => {
     const [queryText, setQueryText] = useState('');
