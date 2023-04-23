@@ -7,6 +7,7 @@ import {
     noSelection,
     selectQueryFromHistory
 } from "@/features/querying/queryHistory-slice";
+import {Button, Form, FormText, InputGroup} from "react-bootstrap";
 
 export const QueryInput : React.FC = () => {
     const [queryText, setQueryText] = useState('');
@@ -37,7 +38,7 @@ export const QueryInput : React.FC = () => {
         dispatch(executeQuery(queryText));
     }
 
-    function searchHistory(e: React.KeyboardEvent<HTMLInputElement>) {
+    function searchHistory(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const historyCount = queryHistory.previousQueries.length;
         if(historyCount == 0)
             return;
@@ -83,7 +84,24 @@ export const QueryInput : React.FC = () => {
     }
 
     return (
-      <form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
+            <InputGroup className="mb-3">
+                <Form.Control
+                    ref={queryTextInputRef}
+                    id="queryString"
+                    value={queryText}
+                    onChange={handleChange}
+                    onKeyUp={e=>searchHistory(e)}
+                    placeholder="Query Text"
+                    aria-label="Recipient's username"
+                    aria-describedby="basic-addon2"
+                />
+                <Button onClick={handleClick} variant="outline-secondary" className="execute-query">Execute</Button>
+            </InputGroup>
+        </Form>
+    );
+    /*
+        <form onSubmit={handleSubmit}>
           <input
               ref={queryTextInputRef}
               type={"text"}
@@ -91,8 +109,9 @@ export const QueryInput : React.FC = () => {
               id={"queryString"}
               value={queryText}
               onChange={handleChange}
-              onKeyUp={e=>searchHistory(e)}/>
+              />
           <button type={"button"} onClick={handleClick}>Execute</button>
       </form>
-    );
+
+     */
 }

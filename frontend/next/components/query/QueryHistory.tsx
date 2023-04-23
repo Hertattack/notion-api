@@ -25,11 +25,11 @@ export const QueryHistory : React.FC = ()=> {
     }
 
     return (
-        <div>
-            <Button onClick={deleteSelectedItem}>Delete Selected</Button><Button onClick={clearHistory}>Clear History</Button>
+        <div className="query-history">
+            <Button onClick={deleteSelectedItem} className="delete-selected">Delete Selected</Button> <Button onClick={clearHistory} className="clear-history">Clear History</Button>
             {previousQueries.length > 0 ?
                 <div>
-                    <ListGroup>
+                    <ListGroup className="history-list">
                         {previousQueries.map((pq, i)=>(
                             <ListGroupItem onClick={()=>changeSelectedIndex(i)} active={i==selectedIndex} key={`${i}.${pq}`}>{pq}</ListGroupItem>
                         ))}

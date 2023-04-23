@@ -3,9 +3,44 @@
 @tailwind utilities;
 
 .with-border {
-    border: 2px solid red;
+    border: none;
+    padding: 5px;
 }
 
 .root {
     margin: 10px;
+}
+
+.execute-query.btn {
+    background-color: darkgreen;
+    color: white;
+    font-weight: bolder;
+}
+
+.execute-query.btn:hover {
+    background-color: darkseagreen;
+    color: black;
+}
+
+.query-history button.clear-history {
+    background-color: firebrick;
+    font-weight: bolder;
+}
+
+.query-history button.delete-selected {
+    font-weight: bolder;
+}
+
+.history-list {
+    padding: 5px;
+}
+
+.history-list .list-group-item {
+    margin: 2px;
+}
+
+.history-list .list-group-item.active {
+    background-color: lightgrey;
+    color: inherit;
+    border: 1px solid darkgrey;
 }
