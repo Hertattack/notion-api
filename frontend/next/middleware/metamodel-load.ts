@@ -1,5 +1,5 @@
 import {createListenerMiddleware} from "@reduxjs/toolkit";
-import {loadMetamodel, errorUpdatingDatabaseDefinition, updateWithDatabaseDefinition} from "../features/metamodel/metamodel-slice";
+import {loadMetamodel, errorUpdatingDatabaseDefinition, updateWithDatabaseDefinition} from "@/features/metamodel/metamodel-slice";
 import notionApi from "../notion-api";
 
 const metamodelLoadedListenerMiddleware = createListenerMiddleware()

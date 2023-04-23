@@ -8,7 +8,7 @@ export const QueryInput : React.FC = () => {
     const [selectedHistoryEntryIndex, setHistoryEntryIndex] = useState<number | null>(null);
     const queryTextInputRef = useRef<HTMLInputElement | null>(null);
 
-    const queryHistory = useAppSelector( state => state.queryHistory.previousQueries );
+    const queryHistory = useAppSelector( state => state.queryHistory );
     const dispatch = useAppDispatch();
 
     useEffect(()=>{
@@ -19,7 +19,7 @@ export const QueryInput : React.FC = () => {
         if(queryText.trim() === '')
             return;
 
-        if(selectedHistoryEntryIndex && queryHistory[selectedHistoryEntryIndex] !== queryText)
+        if(selectedHistoryEntryIndex && queryHistory.previousQueries[selectedHistoryEntryIndex] !== queryText)
             setHistoryEntryIndex(null);
 
         dispatch(addQueryToHistory(queryText));
@@ -38,9 +38,9 @@ export const QueryInput : React.FC = () => {
         }
 
         if(updatedHistoryEntryIndex !== selectedHistoryEntryIndex
-            && updatedHistoryEntryIndex >= 0 && updatedHistoryEntryIndex < queryHistory.length){
+            && updatedHistoryEntryIndex >= 0 && updatedHistoryEntryIndex < queryHistory.previousQueries.length){
             setHistoryEntryIndex(updatedHistoryEntryIndex);
-            setQueryText(queryHistory[updatedHistoryEntryIndex]);
+            setQueryText(queryHistory.previousQueries[updatedHistoryEntryIndex]);
         }
     }
 

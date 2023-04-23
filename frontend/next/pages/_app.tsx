@@ -5,10 +5,13 @@ import {wrapper} from "@/store/store";
 import {useEffect} from "react";
 import {loadMetamodel} from "@/features/metamodel/metamodel-slice";
 import {Provider} from "react-redux";
+import {PersistGate} from "redux-persist/integration/react";
+import {persistStore} from "redux-persist";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { pageProps } = props;
+  const persistor = persistStore(store);
 
   useEffect(()=>{
     store.dispatch(loadMetamodel());
@@ -16,7 +19,9 @@ function App({ Component, ...rest }: AppProps) {
 
   return (
       <Provider store={store}>
-        <Component {...pageProps} />
+          <PersistGate loading={null} persistor={persistor}>
+              <Component {...pageProps} />
+          </PersistGate>
       </Provider>
   )
 }

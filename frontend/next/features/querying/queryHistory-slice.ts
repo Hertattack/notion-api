@@ -1,9 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {initialState} from "@/features/querying/queryHistory-storage";
 const maxItemsInHistory = 50;
 
+export interface QueryHistoryState {
+    previousQueries: string[]
+}
+
+export const initialState : QueryHistoryState = {
+    previousQueries: []
+}
+
 const queryHistorySlice = createSlice({
-    name: 'query-history',
+    name: 'query/history',
     initialState,
     reducers: {
         addQueryToHistory: function (state, action: PayloadAction<string>) {

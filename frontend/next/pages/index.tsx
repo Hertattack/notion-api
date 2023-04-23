@@ -1,5 +1,6 @@
 import { Col, Container, Row } from "react-bootstrap";
 import {FreeQuery} from "@/components/query/FreeQuery";
+import {QueryHistory} from "@/components/query/QueryHistory";
 
 export default function Home() {
   return (
@@ -9,7 +10,7 @@ export default function Home() {
                 <FreeQuery/>
             </Col>
             <Col className="with-border">
-                <p>This should be a sidebar</p>
+                <QueryHistory/>
             </Col>
         </Row>
     </Container>
