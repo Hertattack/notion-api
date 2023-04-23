@@ -90,7 +90,7 @@ function CreateAccordionItem(metamodel: Metamodel, databaseDefinitions: Database
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="relateions">
-                        <Accordion.Header title="Relations">Relations</Accordion.Header>
+                        <Accordion.Header title="Relations">Relations <div className="relation-code"><code>{"(from)<-[ fromRole | toRole ]->(to)"}</code></div></Accordion.Header>
                         <Accordion.Body>
                             <ListGroup>
                                 {edges.map((e)=>CreateEdgeItem(reference.alias, e))}
