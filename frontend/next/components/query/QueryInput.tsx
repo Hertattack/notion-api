@@ -38,6 +38,14 @@ export const QueryInput : React.FC = () => {
         dispatch(executeQuery(queryText));
     }
 
+    function handleAnalyzeClick(){
+        if(queryText.trim() === '')
+            return;
+
+        dispatch(addQueryToHistory(queryText));
+        dispatch();
+    }
+
     function searchHistory(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const historyCount = queryHistory.previousQueries.length;
         if(historyCount == 0)
@@ -96,6 +104,7 @@ export const QueryInput : React.FC = () => {
                     aria-label="Recipient's username"
                     aria-describedby="basic-addon2"
                 />
+                <Button onClick={handleAnalyzeClick} variant="outline-secondary" className="analyze-query">Analyze</Button>
                 <Button onClick={handleClick} variant="outline-secondary" className="execute-query">Execute</Button>
             </InputGroup>
         </Form>

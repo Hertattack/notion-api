@@ -82,6 +82,11 @@ internal class CreateResultStep : ExecutionPlanStep
 
     public override string ToString()
     {
-        return "Create result rows";
+        var fields = _mappings.Values.Select(m => m.ToString());
+
+        if (_mappings.All(m => m.Value.AllSelected))
+            return $"Create result rows returning all fields from: {string.Join(", ", fields)}";
+
+        return "Create result rows using field selection: " + string.Join(", ", fields);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using NotionGraphDatabase.Interface;
+using NotionGraphDatabase.Interface.Analysis;
 using NotionGraphDatabase.Interface.Result;
 using NotionGraphDatabase.QueryEngine;
+using NotionGraphDatabase.QueryEngine.Plan;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Storage.DataModel;
 
@@ -27,5 +29,10 @@ public class GraphDatabase : IGraphDatabase
     public DatabaseDefinition GetDatabaseDefinition(string databaseId)
     {
         return _storageBackend.GetDatabaseDefinition(databaseId);
+    }
+
+    public QueryAnalysis AnalyzeQuery(string queryText)
+    {
+        return _queryEngine.AnalyzeQuery(queryText);
     }
 }

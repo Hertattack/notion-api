@@ -27,6 +27,13 @@ export default class QueryApi {
         this.client = axiosInstance;
     }
 
+    public async AnalyzeQuery(queryText: string) {
+        return await this.client.post("Query/analyze", { QueryText: queryText})
+            .then(
+
+            )
+    }
+
     public async ExecuteQuery(queryText: string){
         return await this.client.get("Query/",{ params: { query: queryText} })
             .then(

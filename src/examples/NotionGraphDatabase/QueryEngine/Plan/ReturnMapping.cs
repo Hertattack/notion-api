@@ -24,4 +24,12 @@ internal class ReturnMapping
         AllSelected = false;
         _propertyNames = propertyNames.ToHashSet();
     }
+
+    public override string ToString()
+    {
+        if (AllSelected)
+            return $"[{Alias}].*";
+
+        return string.Join(", ", _propertyNames.Select(p => $"[{Alias}].[{p}]"));
+    }
 }

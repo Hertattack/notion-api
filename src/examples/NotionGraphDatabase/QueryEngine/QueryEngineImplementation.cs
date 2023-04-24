@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotionGraphDatabase.Interface;
+using NotionGraphDatabase.Interface.Analysis;
 using NotionGraphDatabase.Interface.Result;
-using NotionGraphDatabase.Metadata;
 using NotionGraphDatabase.Query;
 using NotionGraphDatabase.Query.Parser.Ast;
 using NotionGraphDatabase.QueryEngine.Execution;
@@ -64,6 +64,18 @@ internal class QueryEngineImplementation : IQueryEngine
 
         _logger.LogDebug("Query finished");
         return queryResult;
+    }
+
+    public QueryAnalysis AnalyzeQuery(string queryText)
+    {
+        _logger.LogDebug("Analyzing query: {Query}", queryText);
+
+        var query = Parse(queryText);
+        var plan = _executionPlanBuilder.BuildFor(query, _metamodelStore.Metamodel);
+        
+        _logger.LogDebug("Query finished");
+
+        return plan.ToAnalysis();
     }
 
     private QueryResult ExecutePlan(IQueryPlan plan)

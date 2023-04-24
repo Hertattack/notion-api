@@ -17,10 +17,17 @@ const initialState : QueryExecutionState = {
 }
 
 export const executeQuery = createAsyncThunk(
-    'notion/query',
+    'notion/query/execute',
     async (queryText: string)=>{
         return await notionApi.query.ExecuteQuery(queryText);
     });
+
+export const analyzeQuery = createAsyncThunk(
+    'notion/query/analyze',
+    async (queryText: string) =>{
+        return await notionApi.query.AnalyzeQuery(queryText);
+    }
+);
 
 const queryExecutionSlice = createSlice({
     name: 'query-execution',

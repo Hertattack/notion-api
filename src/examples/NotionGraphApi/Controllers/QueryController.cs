@@ -37,4 +37,11 @@ public class QueryController : ControllerBase
         var queryResult = _resultMapper.Map(internalResult);
         return queryResult;
     }
+
+    [HttpPost(Name = "analyze")]
+    public QueryPlan AnalyzeQuery([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] Query query)
+    {
+        var internalResult = _database.AnalyzeQuery(query.QueryText);
+        return _resultMapper.Map(internalResult);
+    }
 }
