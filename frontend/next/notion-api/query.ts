@@ -1,7 +1,9 @@
 import axios, {AxiosError, AxiosInstance} from "axios";
 import FieldIdentifier from "./interface/FieldIdentifier";
-import SuccessQueryExecutionResult from "./interface/SuccessQueryExecutionResult";
-import FailedQueryExecutionResult from "./interface/FailedQueryExecutionResult";
+import SuccessQueryExecutionResult from "./status/SuccessQueryExecutionResult";
+import FailedQueryExecutionResult from "./status/FailedQueryExecutionResult";
+import FailedQueryAnalysisResult from "@/notion-api/status/FailedQueryAnalysisResult";
+import {QueryPlan} from "@/notion-api/interface/QueryPlan";
 
 export interface FieldValueSet {
     alias: string,
@@ -28,9 +30,22 @@ export default class QueryApi {
     }
 
     public async AnalyzeQuery(queryText: string) {
-        return await this.client.post("Query/analyze", { QueryText: queryText})
+        return await this.client.post("QueryAnalysis/", { QueryText: queryText})
             .then(
+                response => {
+                    if(response.status < 200 || response.status >= 300)
+                        return new FailedQueryAnalysisResult(`Failed to analyze query. Status code: ${response.status}.`, response.data, "");
 
+                    return new SuccessQueryExecutionResult(response.data as QueryPlan);
+                },
+                error => {
+                    if(axios.isAxiosError(error)) {
+                        const axiosError = <AxiosError>error;
+
+                        return new FailedQueryAnalysisResult('Some error occurred while analyzing the query.', axiosError.response !== undefined ? axiosError.response.data : "", axiosError.stack ?? "");
+                    }
+                    return new FailedQueryAnalysisResult("Unexpected error occurred", error.message, error.stack)
+                }
             )
     }
 
@@ -49,7 +64,7 @@ export default class QueryApi {
 
                         return new FailedQueryExecutionResult('Some error occurred while executing the query.', axiosError.response !== undefined ? axiosError.response.data : "", axiosError.stack ?? "");
                     }
-                    return new FailedQueryExecutionResult("Unexpected error occurred", error.message, error.stack)
+                    return new FailedQueryExecutionResult("Unexpected error occurred", error.message, error.stack);
                 });
     }
 }

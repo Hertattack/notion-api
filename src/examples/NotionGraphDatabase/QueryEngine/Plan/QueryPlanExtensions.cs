@@ -8,15 +8,15 @@ internal static class QueryPlanExtensions
     public static QueryAnalysis ToAnalysis(this IQueryPlan plan)
     {
         var steps = plan.Steps.Select(MapStep);
-        var analysis = new QueryAnalysis(plan.Query);
+        var analysis = new QueryAnalysis(plan.Query, steps);
 
         return analysis;
     }
 
     private static StepDescription MapStep(IExecutionPlanStep planStep, int order)
     {
-        var step = new StepDescription(planStep.ToString() ?? throw new Exception("Unimplemented step description."));
-
+        var step = new StepDescription(order, planStep.ToString() ?? throw new Exception("Unimplemented step description."));
+        
         return step;
     }
 }

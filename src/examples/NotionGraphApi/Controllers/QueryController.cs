@@ -13,6 +13,7 @@ public class QueryController : ControllerBase
     private readonly IGraphDatabase _database;
     private readonly ILogger<QueryController> _logger;
     private readonly ResultMapper _resultMapper;
+    private readonly QueryAnalysisMapper _analysisMapper;
 
 
     public QueryController(IGraphDatabase database, ILogger<QueryController> logger, ILoggerFactory factory)
@@ -20,6 +21,7 @@ public class QueryController : ControllerBase
         _database = database;
         _logger = logger;
         _resultMapper = new ResultMapper(factory.CreateLogger<ResultMapper>());
+        _analysisMapper = new QueryAnalysisMapper();
     }
 
     [HttpPost(Name = "advanced_query")]
@@ -36,12 +38,5 @@ public class QueryController : ControllerBase
         var internalResult = _database.Execute(query);
         var queryResult = _resultMapper.Map(internalResult);
         return queryResult;
-    }
-
-    [HttpPost(Name = "analyze")]
-    public QueryPlan AnalyzeQuery([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] Query query)
-    {
-        var internalResult = _database.AnalyzeQuery(query.QueryText);
-        return _resultMapper.Map(internalResult);
     }
 }

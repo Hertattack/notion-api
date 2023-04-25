@@ -1,8 +1,8 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import notionApi from "../../notion-api";
 import {QueryResult} from "../../notion-api/query";
-import SuccessQueryExecutionResult from "../../notion-api/interface/SuccessQueryExecutionResult";
-import FailedQueryExecutionResult from "../../notion-api/interface/FailedQueryExecutionResult";
+import SuccessQueryExecutionResult from "../../notion-api/status/SuccessQueryExecutionResult";
+import FailedQueryExecutionResult from "../../notion-api/status/FailedQueryExecutionResult";
 
 interface QueryExecutionState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed',

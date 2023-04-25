@@ -16,7 +16,8 @@ builder.Services.AddControllers()
     .AddJsonOptions(j =>
     {
         j.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-
+        j.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        j.JsonSerializerOptions.MaxDepth = 100;
         var jsonConverters = j.JsonSerializerOptions.Converters;
         jsonConverters.Add(new FieldValueSetConverter());
         jsonConverters.Add(new ObjectFieldValueConverter());
