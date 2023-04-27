@@ -55,3 +55,19 @@
 .relation-code {
     margin-left: 10px;
 }
+
+.query-plan-view {
+    margin: 10px;
+}
+
+.query-visualization-output-selection * {
+    padding: 5px;
+}
+
+.query-visualization-database-references * {
+    padding: 5px;
+}
+
+.query-visualization-select-steps {
+    padding: 5px;
+}

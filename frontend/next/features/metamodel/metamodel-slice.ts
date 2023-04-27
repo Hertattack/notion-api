@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import notionApi from "../../notion-api";
-import {Metamodel} from "../../notion-api/interface/Metamodel";
-import {DatabaseDefinition} from "../../notion-api/interface/DatabaseDefinition";
+import {DatabaseDefinition} from "@/notion-api/model/DatabaseDefinition";
+import Metamodel from "@/notion-api/model/metadata/Metamodel";
 
 export interface DatabaseDefinitions { [databaseAlias: string] : DatabaseDefinition }
 
@@ -11,7 +11,7 @@ export interface LoadMetamodelState {
     databaseDefinitions: DatabaseDefinitions
 }
 
-const emptyModel : Metamodel = {
+export const emptyModel : Metamodel = {
     databases: [],
     edges: []
 }

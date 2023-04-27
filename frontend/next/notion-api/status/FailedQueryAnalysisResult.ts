@@ -1,6 +1,6 @@
-import QueryExecutionResult from "./QueryExecutionResult";
+import QueryApiResult from "./QueryApiResult";
 
-export default class FailedQueryAnalysisResult extends QueryExecutionResult {
+export default class FailedQueryAnalysisResult extends QueryApiResult {
     public message: string;
     public data: any;
 

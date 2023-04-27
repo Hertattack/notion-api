@@ -1,11 +1,9 @@
-import QueryExecutionResult from "./QueryExecutionResult";
+import QueryApiResult from "./QueryApiResult";
 import {QueryResult} from "../query";
-import {QueryPlan} from "@/notion-api/interface/QueryPlan";
+export default class SuccessQueryExecutionResult extends QueryApiResult {
+    public result: QueryResult;
 
-export default class SuccessQueryExecutionResult extends QueryExecutionResult {
-    public result: QueryPlan;
-
-    constructor(result: QueryPlan) {
+    constructor(result: QueryResult) {
         super();
         this.result = result;
     }

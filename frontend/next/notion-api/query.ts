@@ -1,27 +1,9 @@
 import axios, {AxiosError, AxiosInstance} from "axios";
-import FieldIdentifier from "./interface/FieldIdentifier";
 import SuccessQueryExecutionResult from "./status/SuccessQueryExecutionResult";
 import FailedQueryExecutionResult from "./status/FailedQueryExecutionResult";
 import FailedQueryAnalysisResult from "@/notion-api/status/FailedQueryAnalysisResult";
-import {QueryPlan} from "@/notion-api/interface/QueryPlan";
-
-export interface FieldValueSet {
-    alias: string,
-    values: {
-        [propertyName: string]: any
-    }
-}
-
-export interface Row {
-    fieldValueSets : {
-        [databaseAlias: string]: FieldValueSet
-    }
-}
-
-export interface QueryResult {
-    propertyNames: FieldIdentifier[],
-    rows : Row[]
-}
+import {QueryPlan} from "@/notion-api/model/analysis/QueryPlan";
+import QueryResult from "@/notion-api/model/QueryResult";
 
 export default class QueryApi {
     private client: AxiosInstance;

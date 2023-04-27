@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {QueryResult} from "../../notion-api/query";
-import {DatabaseReference, Metamodel} from "../../notion-api/interface/Metamodel";
+import {DatabaseReference, Metamodel} from "@/notion-api/model/metadata/Metamodel";
 import {DatabaseDefinitions} from "../metamodel/metamodel-slice";
-import FieldIdentifier from "../../notion-api/interface/FieldIdentifier";
-import {DatabaseDefinition} from "../../notion-api/interface/DatabaseDefinition";
+import FieldIdentifier from "@/notion-api/model/FieldIdentifier";
+import {DatabaseDefinition} from "@/notion-api/model/DatabaseDefinition";
 
 interface Category {
     id: string,

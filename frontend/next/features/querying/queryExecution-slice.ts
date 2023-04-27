@@ -1,8 +1,8 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import notionApi from "../../notion-api";
-import {QueryResult} from "../../notion-api/query";
 import SuccessQueryExecutionResult from "../../notion-api/status/SuccessQueryExecutionResult";
 import FailedQueryExecutionResult from "../../notion-api/status/FailedQueryExecutionResult";
+import QueryResult from "@/notion-api/model/QueryResult";
 
 interface QueryExecutionState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed',
@@ -21,13 +21,6 @@ export const executeQuery = createAsyncThunk(
     async (queryText: string)=>{
         return await notionApi.query.ExecuteQuery(queryText);
     });
-
-export const analyzeQuery = createAsyncThunk(
-    'notion/query/analyze',
-    async (queryText: string) =>{
-        return await notionApi.query.AnalyzeQuery(queryText);
-    }
-);
 
 const queryExecutionSlice = createSlice({
     name: 'query-execution',

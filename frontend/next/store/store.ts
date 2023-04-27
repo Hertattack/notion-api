@@ -1,18 +1,22 @@
 import {Action, combineReducers, configureStore, ThunkAction} from "@reduxjs/toolkit";
+
 import queryExecutionReducer from "../features/querying/queryExecution-slice";
+import queryAnalysisReducer from "@/features/querying/queryAnalysis-slice";
 import queryHistoryReducer from "../features/querying/queryHistory-slice";
 import loadMetamodelReducer from "../features/metamodel/metamodel-slice";
-import metamodelLoadedListenerMiddleware from "../middleware/metamodel-load";
 import dataStoreReducer from "../features/datastore/datastore-slice";
+
+import metamodelLoadedListenerMiddleware from "../middleware/metamodel-load";
 import dataStoreLoadListenerMiddleware from "../middleware/datastore-load";
+
 import { createWrapper } from "next-redux-wrapper";
 import storage from 'redux-persist/lib/storage'
-import {persistReducer} from "redux-persist"; // defaults to localStorage for web
-
+import {persistReducer} from "redux-persist";
 
 export const makeStore = ()=> {
     const reducers = combineReducers( {
         queryExecution: queryExecutionReducer,
+        queryAnalysis: queryAnalysisReducer,
         queryHistory: queryHistoryReducer,
         metamodel: loadMetamodelReducer,
         dataStore: dataStoreReducer

@@ -8,6 +8,7 @@ import {
     selectQueryFromHistory
 } from "@/features/querying/queryHistory-slice";
 import {Button, Form, InputGroup} from "react-bootstrap";
+import {analyzeQuery} from "@/features/querying/queryAnalysis-slice";
 
 export const QueryInput : React.FC = () => {
     const [queryText, setQueryText] = useState('');
@@ -43,7 +44,7 @@ export const QueryInput : React.FC = () => {
             return;
 
         dispatch(addQueryToHistory(queryText));
-        dispatch();
+        dispatch(analyzeQuery(queryText));
     }
 
     function searchHistory(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {

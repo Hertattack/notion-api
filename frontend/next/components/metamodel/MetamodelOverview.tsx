@@ -1,9 +1,8 @@
 import React from "react";
 import {useAppSelector} from "@/store/hooks";
-import {DatabaseReference, EdgeDefinition, Metamodel} from "@/notion-api/interface/Metamodel";
 import {DatabaseDefinitions} from "@/features/metamodel/metamodel-slice";
 import {Accordion, Col, ListGroup, ListGroupItem, Row} from "react-bootstrap";
-import {PropertyDefinition} from "@/notion-api/interface/DatabaseDefinition";
+import {PropertyDefinition} from "@/notion-api/model/DatabaseDefinition";
 import {
     ArrowDownUp, ArrowLeft,
     ArrowLeftRight,
@@ -11,6 +10,9 @@ import {
     ArrowRight,
     ArrowRightSquareFill, QuestionOctagonFill
 } from "react-bootstrap-icons";
+import EdgeDefinition from "@/notion-api/model/metadata/EdgeDefinition";
+import Metamodel from "@/notion-api/model/metadata/Metamodel";
+import DatabaseReference from "@/notion-api/model/metadata/DatabaseReference";
 
 export const MetamodelOverview : React.FC = ()=>{
     const metamodel = useAppSelector(state => state.metamodel);
@@ -106,7 +108,9 @@ function CreateAccordionItem(metamodel: Metamodel, databaseDefinitions: Database
 function GenerateOverview(metamodel: Metamodel, databaseDefinitions: DatabaseDefinitions) : JSX.Element {
     return (
         <Accordion defaultActiveKey="0">
-            {metamodel.databases.map( (db, index) => CreateAccordionItem(metamodel, databaseDefinitions, db, index))}
+            { metamodel.databases != null
+                ? metamodel.databases.map( (db, index) => CreateAccordionItem(metamodel, databaseDefinitions, db, index))
+            : "" }
         </Accordion>
     )
 }

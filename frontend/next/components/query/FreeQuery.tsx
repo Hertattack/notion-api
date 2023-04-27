@@ -5,6 +5,7 @@ import { D3Graph } from "@/components/d3js";
 import {Alert, Col, Row, Tab, Tabs} from "react-bootstrap";
 import D3Node from "@/components/d3js/Node";
 import {TableView} from "@/components/query/TableView";
+import {QueryAnalysisVisualizer} from "@/components/query/analysis/QueryAnalysisVisualizer";
 
 export const FreeQuery : React.FC = () => {
     const { nodes} = useAppSelector( state=>state.dataStore.data );
@@ -62,12 +63,15 @@ export const FreeQuery : React.FC = () => {
                     <Tab eventKey="tabular-data-view" title="Show data as table" className="table-data-view">
                         { queryResult !== null ? <TableView data={queryResult}/> : "No data"}
                     </Tab>
-                   <Tab eventKey="raw-data-view" title="Show raw response data" className="raw-data-view">
-                       { queryResult !== null ? <pre><code>{JSON.stringify(queryResult,null, 2)}</code></pre> : "No data"}
-                   </Tab>
-                   <Tab title="Graph" eventKey="graph-view">
-                       <D3Graph width={1000} height={1000} nodeFunction={d3NodeFunction}/>
-                   </Tab>
+                    <Tab title="Query Plan" eventKey="query-plan-view" className="query-plan-view">
+                        <QueryAnalysisVisualizer/>
+                    </Tab>
+                    <Tab eventKey="raw-data-view" title="Show raw response data" className="raw-data-view">
+                        { queryResult !== null ? <pre><code>{JSON.stringify(queryResult,null, 2)}</code></pre> : "No data"}
+                    </Tab>
+                    <Tab title="Graph" eventKey="graph-view">
+                        <D3Graph width={1000} height={1000} nodeFunction={d3NodeFunction}/>
+                    </Tab>
                 </Tabs>
             </Col>
         </Row>

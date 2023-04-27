@@ -1,7 +1,9 @@
-import {FieldValueSet, QueryResult, Row} from "@/notion-api/query";
 import {Table} from "react-bootstrap";
 import React from "react";
-import FieldIdentifier from "@/notion-api/interface/FieldIdentifier";
+import FieldIdentifier from "@/notion-api/model/FieldIdentifier";
+import Row from "@/notion-api/model/Row";
+import FieldValueSet from "@/notion-api/model/FieldValueSet";
+import QueryResult from "@/notion-api/model/QueryResult";
 
 export interface TableViewProperties {
     data: QueryResult
