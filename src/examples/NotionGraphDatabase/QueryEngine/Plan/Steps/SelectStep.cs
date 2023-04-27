@@ -18,4 +18,11 @@ internal abstract class SelectStep : ExecutionPlanStep
         _resolver = new PropertyValueResolver();
         _filterEngine = new FilterEngine(_resolver, filter);
     }
+
+    public override string ToString()
+    {
+        var description = $"Select from '{_database.Id}' ({_database.Alias}) as '{_alias}'";
+
+        return _filterEngine.HasFilter ? $"{description} where {_filterEngine.GetFilterDescription()}" : description;
+    }
 }

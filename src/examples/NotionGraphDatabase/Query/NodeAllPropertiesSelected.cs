@@ -1,6 +1,6 @@
 ﻿namespace NotionGraphDatabase.Query;
 
-internal class NodeAllPropertiesSelected : NodePropertySelection
+public class NodeAllPropertiesSelected : NodePropertySelection
 {
     public NodeAllPropertiesSelected(NodeReference referencedNode) : base(referencedNode)
     {

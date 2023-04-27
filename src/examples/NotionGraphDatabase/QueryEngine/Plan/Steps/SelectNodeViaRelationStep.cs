@@ -73,6 +73,6 @@ internal class SelectNodeViaRelationStep : SelectStep
 
     public override string ToString()
     {
-        return $"{base.ToString()} via role [{_role}]";
+        return $"{base.ToString()} via role [{_role}] of previous selections";
     }
 }

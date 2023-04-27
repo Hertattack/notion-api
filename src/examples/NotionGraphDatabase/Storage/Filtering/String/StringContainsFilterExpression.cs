@@ -6,4 +6,9 @@ public class StringContainsFilterExpression : StringValueFilterExpression
         : base(nodeAlias, propertyName, value)
     {
     }
+
+    public override string ToString()
+    {
+        return $"String Value filter, contains value: '{Value}'";
+    }
 }

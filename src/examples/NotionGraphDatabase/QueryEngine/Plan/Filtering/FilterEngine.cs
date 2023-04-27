@@ -11,18 +11,27 @@ internal class FilterEngine
 {
     private readonly PropertyValueResolver _resolver;
     private readonly Filter? _filter;
-    private readonly bool _hasFilter;
+    public bool HasFilter { get; }
 
     public FilterEngine(PropertyValueResolver resolver, Filter? filter)
     {
         _resolver = resolver;
         _filter = filter;
-        _hasFilter = _filter is not null;
+        HasFilter = _filter is not null && _filter is not EmptyFilterExpression;
     }
+
+    public string GetFilterDescription()
+    {
+        if (_filter is EmptyFilterExpression)
+            return "none";
+
+        return _filter?.ToString() ?? "none";
+    }
+
 
     public bool Matches(IntermediateResultRow row)
     {
-        if (!_hasFilter)
+        if (!HasFilter)
             return true;
 
         _resolver.SetRow(row);

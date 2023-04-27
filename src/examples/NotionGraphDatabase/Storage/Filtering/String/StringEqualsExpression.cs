@@ -6,4 +6,9 @@ public class StringEqualsExpression : StringValueFilterExpression
         : base(nodeAlias, propertyName, value)
     {
     }
+    
+    public override string ToString()
+    {
+        return $"String Value equals filter on value: '{Value}'";
+    }
 }

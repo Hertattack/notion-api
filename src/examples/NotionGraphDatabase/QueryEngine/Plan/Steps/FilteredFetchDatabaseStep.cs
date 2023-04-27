@@ -2,7 +2,6 @@
 using NotionGraphDatabase.QueryEngine.Execution;
 using NotionGraphDatabase.Storage;
 using NotionGraphDatabase.Storage.Filtering;
-using NotionGraphDatabase.Util;
 using Util.Extensions;
 
 namespace NotionGraphDatabase.QueryEngine.Plan.Steps;
@@ -26,6 +25,7 @@ internal class FilteredFetchDatabaseStep : ExecutionPlanStep
 
     public override string ToString()
     {
-        return $"Fetch database with filter '{_database.Id}' ({_database.Alias})";
+        return
+            $"Fetch database with filter '{_database.Id}' ({_database.Alias}). Using filter expressions: {_filterExpression}";
     }
 }

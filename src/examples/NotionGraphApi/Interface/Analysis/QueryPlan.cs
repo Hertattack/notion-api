@@ -1,14 +1,15 @@
 ﻿using NotionGraphDatabase.Interface.Analysis;
-using NotionGraphDatabase.Query;
 
 namespace NotionGraphApi.Interface.Analysis;
 
 public class QueryPlan
 {
-    public IQuery Query { get; }
+    public QuerySpecification QuerySpecification { get; }
+    public List<StepDescription> PlanSteps { get; }
 
-    public QueryPlan(IQuery query, List<StepDescription> stepDescriptions)
+    public QueryPlan(QuerySpecification querySpecification, List<StepDescription> planSteps)
     {
-        Query = query;
+        QuerySpecification = querySpecification;
+        PlanSteps = planSteps;
     }
 }
