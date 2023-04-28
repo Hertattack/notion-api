@@ -4,6 +4,7 @@ import FailedQueryExecutionResult from "./status/FailedQueryExecutionResult";
 import FailedQueryAnalysisResult from "@/notion-api/status/FailedQueryAnalysisResult";
 import {QueryPlan} from "@/notion-api/model/analysis/QueryPlan";
 import QueryResult from "@/notion-api/model/QueryResult";
+import SuccessQueryAnalysisResult from "@/notion-api/status/SuccessQueryAnalysisResult";
 
 export default class QueryApi {
     private client: AxiosInstance;
@@ -18,7 +19,7 @@ export default class QueryApi {
                     if(response.status < 200 || response.status >= 300)
                         return new FailedQueryAnalysisResult(`Failed to analyze query. Status code: ${response.status}.`, response.data, "");
 
-                    return new SuccessQueryExecutionResult(response.data as QueryPlan);
+                    return new SuccessQueryAnalysisResult(response.data as QueryPlan);
                 },
                 error => {
                     if(axios.isAxiosError(error)) {

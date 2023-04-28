@@ -1,8 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import notionApi from "@/notion-api";
-import SuccessQueryExecutionResult from "@/notion-api/status/SuccessQueryExecutionResult";
 import FailedQueryExecutionResult from "@/notion-api/status/FailedQueryExecutionResult";
 import {QueryPlan} from "@/notion-api/model/analysis/QueryPlan";
+import SuccessQueryAnalysisResult from "@/notion-api/status/SuccessQueryAnalysisResult";
 
 interface QueryAnalysisState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed',
@@ -29,8 +29,8 @@ const queryAnalysisSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder.addCase(analyzeQuery.fulfilled, (state, action) =>{
-            if(action.payload instanceof SuccessQueryExecutionResult){
-                state.analysisResult = (action.payload as SuccessQueryExecutionResult).result;
+            if(action.payload instanceof SuccessQueryAnalysisResult){
+                state.analysisResult = (action.payload as SuccessQueryAnalysisResult).result;
                 state.error = null;
                 state.loading = "succeeded";
             }else{

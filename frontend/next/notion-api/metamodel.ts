@@ -1,7 +1,7 @@
 import {AxiosInstance} from "axios";
-import {Metamodel} from "@/notion-api/model/metadata/Metamodel";
 import {DatabaseDefinition} from "@/notion-api/model/DatabaseDefinition";
 import RequestError from "@/notion-api/model/RequestError";
+import Metamodel from "@/notion-api/model/metadata/Metamodel";
 
 export default class MetamodelApi {
     private client: AxiosInstance;

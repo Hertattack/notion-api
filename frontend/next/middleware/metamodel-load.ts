@@ -1,6 +1,7 @@
 import {createListenerMiddleware} from "@reduxjs/toolkit";
 import {loadMetamodel, errorUpdatingDatabaseDefinition, updateWithDatabaseDefinition} from "@/features/metamodel/metamodel-slice";
 import notionApi from "../notion-api";
+import DatabaseReference from "@/notion-api/model/metadata/DatabaseReference";
 
 const metamodelLoadedListenerMiddleware = createListenerMiddleware()
 
@@ -10,7 +11,7 @@ metamodelLoadedListenerMiddleware.startListening({
         // Can cancel other running instances
         listenerApi.cancelActiveListeners();
 
-        await Promise.all(action.payload.databases.map(async d => {
+        await Promise.all(action.payload.databases.map(async (d : DatabaseReference) => {
            try{
                let databaseDefinition = await notionApi.metamodel.GetDatabaseDefinition(d.alias);
                listenerApi.dispatch(updateWithDatabaseDefinition(databaseDefinition))

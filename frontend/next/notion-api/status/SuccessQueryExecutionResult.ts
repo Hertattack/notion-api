@@ -1,5 +1,5 @@
 import QueryApiResult from "./QueryApiResult";
-import {QueryResult} from "../query";
+import QueryResult from "@/notion-api/model/QueryResult";
 export default class SuccessQueryExecutionResult extends QueryApiResult {
     public result: QueryResult;
 
