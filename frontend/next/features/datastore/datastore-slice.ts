@@ -1,9 +1,10 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {QueryResult} from "../../notion-api/query";
-import {DatabaseReference, Metamodel} from "@/notion-api/model/metadata/Metamodel";
 import {DatabaseDefinitions} from "../metamodel/metamodel-slice";
 import FieldIdentifier from "@/notion-api/model/FieldIdentifier";
 import {DatabaseDefinition} from "@/notion-api/model/DatabaseDefinition";
+import QueryResult from "@/notion-api/model/QueryResult";
+import Metamodel from "@/notion-api/model/metadata/Metamodel";
+import DatabaseReference from "@/notion-api/model/metadata/DatabaseReference";
 
 interface Category {
     id: string,
@@ -19,7 +20,8 @@ export interface Node {
 
 interface Edge {
     source: number,
-    target: number
+    target: number,
+    roles: string[]
 }
 
 interface DataStore {
@@ -61,7 +63,7 @@ const dataStoreSlice = createSlice({
 
         let nodeIds: string[] = [];
         let updatedNodes: {[nodeId: string]: Node} = {}
-        let potentialRelations: {sourceId: string, targetId: string}[]  = [];
+        let potentialRelations: {sourceId: string, targetId: string, role: string | undefined}[]  = [];
         queryResult.rows.forEach( r => {
             databaseAliases.forEach( d => {
                 let valueSet = r.fieldValueSets[d].values;
@@ -84,7 +86,7 @@ const dataStoreSlice = createSlice({
                     relationsPerDatabaseAlias[d].forEach(r => {
                         let fieldValue = valueSet[r.id] as string[];
                         if (fieldValue !== undefined) {
-                            fieldValue.forEach(v => potentialRelations.push({sourceId: pageId, targetId: v}));
+                            fieldValue.forEach(v => potentialRelations.push({sourceId: pageId, targetId: v, role: r.role}));
                         }
                     });
                 }
@@ -101,8 +103,13 @@ const dataStoreSlice = createSlice({
                 if(sourceIndex === undefined || targetIndex === undefined)
                     return;
 
-                if(!edges.some( e=>e.target === targetIndex && e.source === sourceIndex))
-                    edges.push({ source: sourceIndex, target: targetIndex });
+                const edge = edges.find(e=>e.target === targetIndex && e.source === sourceIndex);
+                if(edge === undefined)
+                    edges.push({ source: sourceIndex, target: targetIndex, roles: [r.role ?? "undefined"] });
+                else{
+                    if(!edge.roles.some(role=>role == r.role ?? "undefined"))
+                        edge.roles.push(r.role ?? "undefined");
+                }
             });
     }
    }
@@ -135,32 +142,34 @@ function updateCategories(databases: DatabaseReference[], categories: Category[]
     return categoryMapping;
 }
 
-function getRelationFieldsPerAlias(metamodel: Metamodel) : { [p: string]: [{ id: string; databaseAlias: string }] } {
-    let relationFieldsPerAlias: { [databaseAlias: string]: [{id: string, databaseAlias: string}]}= {};
+function getRelationFieldsPerAlias(metamodel: Metamodel) : { [p: string]: [{ id: string; databaseAlias: string, role: string | undefined }] } {
+    let relationFieldsPerAlias: { [databaseAlias: string]: [{id: string, databaseAlias: string, role: string | undefined}]}= {};
 
     metamodel.edges.forEach( e => {
         let fromAlias = e.from.alias;
         let toAlias = e.to.alias;
+        let forwardRole = e.navigability.forward?.role;
         let forwardFieldLabel = e.navigability.forward?.label;
+        let reverseRole = e.navigability.forward?.role;
         let reverseFieldLabel = e.navigability.reverse?.label;
 
         if(fromAlias && forwardFieldLabel){
             let fieldsForAlias = relationFieldsPerAlias[fromAlias];
             if(!fieldsForAlias){
-                fieldsForAlias = [{id: forwardFieldLabel, databaseAlias: toAlias}]
+                fieldsForAlias = [{id: forwardFieldLabel, databaseAlias: toAlias, role: forwardRole}]
                 relationFieldsPerAlias[fromAlias] = fieldsForAlias;
             }else if(!fieldsForAlias.some( f=>f.id === forwardFieldLabel )){
-                fieldsForAlias.push({id: forwardFieldLabel, databaseAlias: toAlias});
+                fieldsForAlias.push({id: forwardFieldLabel, databaseAlias: toAlias, role: forwardRole});
             }
         }
 
         if(toAlias && reverseFieldLabel){
             let fieldsForAlias = relationFieldsPerAlias[toAlias];
             if(!fieldsForAlias){
-                fieldsForAlias = [{id: reverseFieldLabel, databaseAlias: fromAlias}]
+                fieldsForAlias = [{id: reverseFieldLabel, databaseAlias: fromAlias, role: reverseRole}]
                 relationFieldsPerAlias[toAlias] = fieldsForAlias;
             }else if(!fieldsForAlias.some(f=>f.id === reverseFieldLabel)){
-                fieldsForAlias.push({id: reverseFieldLabel, databaseAlias: fromAlias});
+                fieldsForAlias.push({id: reverseFieldLabel, databaseAlias: fromAlias, role: reverseRole});
             }
         }
     });

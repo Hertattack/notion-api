@@ -71,3 +71,12 @@
 .query-visualization-select-steps {
     padding: 5px;
 }
+
+.inherit-link-style,
+.inherit-link-style:visited,
+.inherit-link-style:active,
+.inherit-link-style:link {
+    background-color: inherit;
+    color: inherit;
+    text-decoration: inherit;
+}
