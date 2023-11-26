@@ -6,16 +6,16 @@ function App() {
 
   return (
     <>
-        <div>
-            <Xwrapper>
-                <DraggableBox id={'elem1'}/>
-                <br/>
-                <br/>
-                <br/>
-                <DraggableBox id={'elem2'}/>
-                <Xarrow start={'elem1'} end="elem2" strokeWidth={1}/>
-            </Xwrapper>
-        </div>
+        <Xwrapper>
+            <div>
+            <DraggableBox id={'elem1'}/>
+            <br/>
+            <br/>
+            <br/>
+            <DraggableBox id={'elem2'}/>
+            </div>
+            <Xarrow start={'elem1'} end="elem2" strokeWidth={1}/>
+        </Xwrapper>
     </>
   )
 }
