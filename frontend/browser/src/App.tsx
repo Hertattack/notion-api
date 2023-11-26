@@ -13,7 +13,7 @@ function App() {
                 <br/>
                 <br/>
                 <DraggableBox id={'elem2'}/>
-                <Xarrow start={'elem1'} end="elem2"/>
+                <Xarrow start={'elem1'} end="elem2" strokeWidth={1}/>
             </Xwrapper>
         </div>
     </>
