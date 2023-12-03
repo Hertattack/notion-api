@@ -1,4 +1,4 @@
-import FieldValueSet from "@/notion-api/model/FieldValueSet";
+import FieldValueSet from "./FieldValueSet.ts";
 
 export default interface Row {
     fieldValueSets : {

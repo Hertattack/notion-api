@@ -1,6 +1,6 @@
-import QueryDatabaseReference from "@/notion-api/model/analysis/QueryDatabaseReference";
-import OutputPropertySelection from "@/notion-api/model/analysis/OutputPropertySelection";
-import QuerySelectStep from "@/notion-api/model/analysis/QuerySelectStep";
+import QueryDatabaseReference from "./QueryDatabaseReference.ts";
+import OutputPropertySelection from "./OutputPropertySelection.ts";
+import QuerySelectStep from "./QuerySelectStep.ts";
 
 export default interface QuerySpecification {
     databaseReferences : QueryDatabaseReference[],

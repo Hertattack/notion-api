@@ -1,4 +1,4 @@
-import QueryDatabaseReference from "@/notion-api/model/analysis/QueryDatabaseReference";
+import QueryDatabaseReference from "./QueryDatabaseReference.ts";
 
 export default interface OutputPropertySelection {
     databaseReference : QueryDatabaseReference;

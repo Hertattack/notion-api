@@ -4,15 +4,16 @@ import Draggable from 'react-draggable';
 import styled from "styled-components";
 
 interface DraggableBoxProps {
-    id: string
+    id: string;
+    children?: React.ReactNode;
 }
 
-export const DraggableBox : React.FC<DraggableBoxProps> = ({id}) => {
+export const DraggableBox : React.FC<DraggableBoxProps> = ({id, children}) => {
     const updateXarrow = useXarrow();
     return (
         <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
             <Box id={id}>
-                {id}
+                {children}
             </Box>
         </Draggable>
     );

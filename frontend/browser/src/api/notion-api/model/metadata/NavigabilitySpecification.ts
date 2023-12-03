@@ -1,4 +1,4 @@
-import NavigationRole from "@/notion-api/model/metadata/NavigationRole";
+import NavigationRole from "./NavigationRole.ts";
 
 export default interface NavigabilitySpecification {
     forward?: NavigationRole,

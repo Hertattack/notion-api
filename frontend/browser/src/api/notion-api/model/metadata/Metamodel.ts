@@ -1,5 +1,5 @@
-import DatabaseReference from "@/notion-api/model/metadata/DatabaseReference";
-import EdgeDefinition from "@/notion-api/model/metadata/EdgeDefinition";
+import DatabaseReference from "./DatabaseReference.ts";
+import EdgeDefinition from "./EdgeDefinition.ts";
 
 
 export default interface Metamodel {

@@ -1,5 +1,5 @@
-import QueryDatabaseReference from "@/notion-api/model/analysis/QueryDatabaseReference";
-import QueryFilterExpression from "@/notion-api/model/analysis/QueryFilterExpression";
+import QueryDatabaseReference from "./QueryDatabaseReference.ts";
+import QueryFilterExpression from "./QueryFilterExpression.ts";
 
 export default interface QuerySelectStep {
     databaseReference : QueryDatabaseReference,

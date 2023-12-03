@@ -1,5 +1,6 @@
 import QueryApiResult from "./QueryApiResult";
-import {QueryPlan} from "@/notion-api/model/analysis/QueryPlan";
+import {QueryPlan} from "../model/analysis/QueryPlan.ts";
+
 export default class SuccessQueryAnalysisResult extends QueryApiResult {
     public result: QueryPlan;
 

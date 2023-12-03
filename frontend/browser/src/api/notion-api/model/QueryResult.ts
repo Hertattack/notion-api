@@ -1,5 +1,5 @@
-import FieldIdentifier from "@/notion-api/model/FieldIdentifier";
-import Row from "@/notion-api/model/Row";
+import FieldIdentifier from "./FieldIdentifier.ts";
+import Row from "./Row.ts";
 
 export default interface QueryResult {
     propertyNames: FieldIdentifier[],

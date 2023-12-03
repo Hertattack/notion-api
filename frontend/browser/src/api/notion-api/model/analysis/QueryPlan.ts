@@ -1,5 +1,5 @@
-import QuerySpecification from "@/notion-api/model/analysis/QuerySpecification";
-import QueryPlanStep from "@/notion-api/model/analysis/QueryPlanStep";
+import QuerySpecification from "./QuerySpecification.ts";
+import QueryPlanStep from "./QueryPlanStep.ts";
 
 export interface QueryPlan {
     querySpecification : QuerySpecification,
