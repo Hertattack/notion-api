@@ -1,5 +1,5 @@
 import React, {createRef, useLayoutEffect} from "react";
-import {Node} from "./components/Node.tsx";
+import {Node, NodeApi, NodeRect} from "./components/Node.tsx";
 import {NodeSpecification} from "./NodeSpecification.ts";
 import {defaultLayoutAlgorithm} from "./lib/basicLayoutAlgorithm.ts";
 
@@ -10,7 +10,7 @@ interface GraphProps {
 }
 
 export const Graph : React.FC<GraphProps> = ({id, nodes})=>{
-    const graphRefs : { [id: string]: React.RefObject<HTMLDivElement> } = {};
+    const graphRefs : { [id: string]: React.RefObject<NodeApi> } = {};
 
     useLayoutEffect(() => {
         const rects = getClientRects(graphRefs);
@@ -24,24 +24,21 @@ export const Graph : React.FC<GraphProps> = ({id, nodes})=>{
     return (
         <div id={id}>
             {nodes.map(n=> {
-                const ref = createRef<HTMLDivElement>();
+                const ref = createRef<NodeApi>();
                 graphRefs[n.id] = ref;
                 return (
-                    <div ref={ref} key={n.id}>
-                        <Node label={n.label} id={n.id}/>
-                    </div>
+                    <Node apiRef={ref} key={n.id}>{n.label}</Node>
                 );
             })}
         </div>
     );
 }
 
-function getClientRects(graphRefs : { [id: string]: React.RefObject<HTMLDivElement> }) : { id: string, rect: DOMRect }[] {
+function getClientRects(graphRefs : { [id: string]: React.RefObject<NodeApi> }) : { id: string, rect: NodeRect | null }[] {
     return Object.getOwnPropertyNames(graphRefs)
         .filter( id => graphRefs[id].current !== null)
         .map( id => {
             const ref = graphRefs[id];
-
             return { rect: ref.current!.getBoundingClientRect(), id};
         });
 }
